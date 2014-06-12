@@ -1,8 +1,8 @@
 package com.github.avarabyeu.restendpoint.async;
 
-import com.atlassian.util.concurrent.RuntimeInterruptedException;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.*;
 
 import java.util.List;
@@ -154,7 +154,7 @@ public final class Wills {
             try {
                 return delegate().get();
             } catch (InterruptedException e) {
-                throw new RuntimeInterruptedException(e);
+                throw Throwables.propagate(e); //throw new RuntimeInterruptedException(e);
             } catch (ExecutionException e) {
                 final Throwable cause = e.getCause();
                 if (cause instanceof RuntimeException) {
