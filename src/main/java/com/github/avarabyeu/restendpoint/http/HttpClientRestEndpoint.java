@@ -1,7 +1,7 @@
 package com.github.avarabyeu.restendpoint.http;
 
-import com.github.avarabyeu.restendpoint.async.Wills;
 import com.github.avarabyeu.restendpoint.async.Will;
+import com.github.avarabyeu.restendpoint.async.Wills;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.google.common.base.Preconditions;
@@ -18,8 +18,10 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.nio.entity.NByteArrayEntity;
 import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -28,6 +30,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -125,6 +128,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         HttpPost post = new HttpPost(spliceUrl(resource));
 
         try {
+
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             for (MultiPartRequest.MultiPartSerialized<RQ> serializedPart : request.getSerializedRQs()) {
                 Serializer serializer = getSupportedSerializer(serializedPart);
@@ -140,7 +144,24 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                 );
             }
 
-            post.setEntity(builder.build());
+            /* Here is some dirty hack to avoid problem with MultipartEntity and asynchronous http client
+             *  Details can be found here: http://comments.gmane.org/gmane.comp.apache.httpclient.user/2426
+             *
+             *  The main idea is to replace MultipartEntity with NByteArrayEntity once first doesn't support #getContent method
+             *  which is required for async client implementation. So, we are copying response body as byte array to NByteArrayEntity to
+             *  leave it unmodified.
+             *
+             *  Alse we need to add boundary value to content type header. Details are here: http://en.wikipedia.org/wiki/Delimiter#Content_boundary
+             *  MultipartEntity generates correct header by yourself, but we need to put it manually once we replaced entity type to NByteArrayEntity
+             */
+            String boundary = "-------------" + UUID.randomUUID().toString();
+            builder.setBoundary(boundary);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            builder.build().writeTo(baos);
+
+            post.setEntity(new NByteArrayEntity(baos.toByteArray(), ContentType.MULTIPART_FORM_DATA));
+            post.setHeader("Content-Type", "multipart/form-data;boundary=" + boundary);
 
         } catch (Exception e) {
             throw new RestEndpointIOException("Unable to build post multipart request", e);
@@ -411,7 +432,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
         @Override
         public RS callback(HttpEntity entity) throws IOException {
-            return getSupported(entity.getContentType().getValue()).deserialize(EntityUtils.toByteArray(entity), clazz);
+            return getSupported(ContentType.get(entity).getMimeType()).deserialize(EntityUtils.toByteArray(entity), clazz);
         }
 
     }
