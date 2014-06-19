@@ -3,6 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
 
 
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
     <groupId>com.github.avarabyeu</groupId>
     <artifactId>restendpoint</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -38,15 +44,6 @@
                     <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-jgitflow-plugin</artifactId>
-                <version>1.0-alpha27</version>
-                <configuration>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
@@ -60,7 +57,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
-            <version>4.3.2</version>
+            <version>4.3.4</version>
         </dependency>
 
         <dependency>
