@@ -3,10 +3,13 @@ package com.github.avarabyeu.restendpoint.http.endpoint;
 import com.google.mockwebserver.MockResponse;
 import com.google.mockwebserver.RecordedRequest;
 import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Created by andrey.vorobyov on 17/04/14.
  */
+@Ignore
 public class BaseRestEndointTest {
 
     public static final String SERIALIZED_STRING = "{\"intField\":100,\"stringField\":\"test string\"}";
