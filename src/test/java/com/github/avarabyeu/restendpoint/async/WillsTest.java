@@ -32,6 +32,7 @@ public class WillsTest {
     @Test
     public void testMap() {
         Will<String> will = Wills.will(TEST_STRING).map(new Function<String, String>() {
+
             @Nullable
             @Override
             public String apply(@Nullable String input) {
