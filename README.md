@@ -5,7 +5,7 @@ Asynchronous REST client based on Apache Http Async Client
 * [Maven Dependencies](#maven-dependencies)
 * [Getting Started](#getting-started)
 
-Basically, restendpoint is convinient wrapper around 
+Basically, **restendpoint** is convenient wrapper around 
 [Apache HttpComponents Async Client](http://hc.apache.org/httpcomponents-asyncclient-4.0.x/)
 
 ## Maven Dependencies
