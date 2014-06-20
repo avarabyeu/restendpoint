@@ -18,7 +18,7 @@ import static org.hamcrest.CoreMatchers.is;
  */
 public class WillsTest {
 
-    public static final String TEST_STRING = "test";
+    private static final String TEST_STRING = "test";
 
     @Test
     public void testWill() {
