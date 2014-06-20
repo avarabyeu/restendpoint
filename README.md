@@ -1,4 +1,4 @@
-#restendpoint
+# restendpoint
 
 Asynchronous REST client based on Apache Http Async Client
 
@@ -20,3 +20,12 @@ Last stable version:
 ```
 
 ## Getting Started
+
+```java
+RestEndpoint restEndpoint = new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),
+                Lists.<Serializer>newArrayList(
+                        new StringSerializer(), 
+                        new ByteArraySerializer()), 
+                new DefaultErrorHandler(),
+                "http://REST_SERVICE_URL");
+```
