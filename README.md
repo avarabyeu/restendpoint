@@ -2,8 +2,6 @@
 
 Asynchronous REST client based on Apache Http Async Client
 
-# QATools Properties
-
 * [Maven Dependencies](#maven-dependencies)
 * [Getting Started](#getting-started)
 
