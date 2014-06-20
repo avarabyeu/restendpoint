@@ -1,9 +1,5 @@
 package com.github.avarabyeu.restendpoint.http;
 
-import com.github.avarabyeu.restendpoint.http.HttpMethod;
-import com.github.avarabyeu.restendpoint.http.RestCommand;
-import com.github.avarabyeu.restendpoint.http.RestEndpoint;
-import com.google.mockwebserver.MockResponse;
 import com.google.mockwebserver.MockWebServer;
 import com.google.mockwebserver.RecordedRequest;
 import org.junit.AfterClass;
