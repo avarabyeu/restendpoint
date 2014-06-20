@@ -1,28 +1,12 @@
-package com.github.avarabyeu.restendpoint.http;
+package com.github.avarabyeu.restendpoint.serializer;
 
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
+import com.google.common.net.MediaType;
+import com.google.common.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 public class StringSerializer implements Serializer {
-
-    /**
-     * List of supported MIME types. It will be good to introduce encoding here,
-     * but first implementation uses UTF-8 only <br>
-     * TODO: Add encoding handling here. <br>
-     * TODO: Support not only JSON mime types
-     */
-    private List<String> MIME_TYPES = new ArrayList<String>() {
-        private static final long serialVersionUID = 7394081878944516157L;
-
-        {
-            add("application/json");
-            add("application/+json");
-            add("application/json;charset=UTF-8");
-        }
-    };
 
     /*
      * (non-Javadoc)
@@ -59,7 +43,7 @@ public class StringSerializer implements Serializer {
      */
     @Override
     public String getMimeType() {
-        return MIME_TYPES.get(0);
+        return MediaType.PLAIN_TEXT_UTF_8.toString();
     }
 
     /**
@@ -67,7 +51,9 @@ public class StringSerializer implements Serializer {
      */
     @Override
     public boolean canRead(String mimeType) {
-        return MIME_TYPES.contains(mimeType);
+        MediaType type = MediaType.parse(mimeType).withoutParameters();
+        return MediaType.ANY_TEXT_TYPE.is(type) || MediaType.APPLICATION_XML_UTF_8.withoutParameters().is(type)
+                || MediaType.JSON_UTF_8.withoutParameters().is(type);
     }
 
     @Override
@@ -78,7 +64,7 @@ public class StringSerializer implements Serializer {
     /**
      * Validates that provided class is assignable from java.lang.String
      *
-     * @param clazz
+     * @param clazz Type of object to be validated
      * @throws SerializerException
      */
     private void validateString(Class<?> clazz) throws SerializerException {
@@ -90,11 +76,11 @@ public class StringSerializer implements Serializer {
     /**
      * Validates that provided type is assignable from java.lang.String
      *
-     * @param type
+     * @param type Type of object to be validated
      * @throws SerializerException
      */
     private void validateString(Type type) throws SerializerException {
-        if (null != type && String.class.equals(type)) {
+        if (null != type && String.class.equals(TypeToken.of(type).getRawType())) {
             throw new SerializerException("String serializer is able to work only with data types assignable from java.lang.String");
         }
     }

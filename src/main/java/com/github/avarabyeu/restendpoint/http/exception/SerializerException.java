@@ -2,7 +2,7 @@ package com.github.avarabyeu.restendpoint.http.exception;
 
 /**
  * Serializer Exception. <br>
- * Throwed from {@link com.github.avarabyeu.restendpoint.http.Serializer}
+ * Throwed from {@link com.github.avarabyeu.restendpoint.serializer.Serializer}
  * implementations
  * 
  * @author Andrei Varabyeu

@@ -1,4 +1,4 @@
-package com.github.avarabyeu.restendpoint.http.endpoint;
+package com.github.avarabyeu.restendpoint.http;
 
 import com.github.avarabyeu.restendpoint.http.HttpMethod;
 import com.github.avarabyeu.restendpoint.http.RestCommand;

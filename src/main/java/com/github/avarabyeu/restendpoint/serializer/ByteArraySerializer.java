@@ -1,10 +1,11 @@
-package com.github.avarabyeu.restendpoint.http;
+package com.github.avarabyeu.restendpoint.serializer;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
+import com.google.common.net.MediaType;
 
 /**
  * Byte array message converter. Actually, just placeholder to be able to work
@@ -14,15 +15,6 @@ import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
  * 
  */
 public class ByteArraySerializer implements Serializer {
-
-	private List<String> MIME_TYPES = new ArrayList<String>() {
-		private static final long serialVersionUID = 7394081878944516157L;
-
-		{
-			add("application/octet-stream");
-			add("image/jpeg");
-		}
-	};
 
 	/*
 	 * (non-Javadoc)
@@ -72,7 +64,7 @@ public class ByteArraySerializer implements Serializer {
 	 */
 	@Override
 	public String getMimeType() {
-		return "application/octet-stream";
+		return MediaType.OCTET_STREAM.toString();
 	}
 
 	/*
@@ -82,7 +74,7 @@ public class ByteArraySerializer implements Serializer {
 	 */
 	@Override
 	public boolean canRead(String mimeType) {
-		return MIME_TYPES.contains(mimeType);
+        return MediaType.ANY_TYPE.is(MediaType.parse(mimeType));
 	}
 
 	/*

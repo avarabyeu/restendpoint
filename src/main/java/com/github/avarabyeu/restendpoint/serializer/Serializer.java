@@ -1,4 +1,4 @@
-package com.github.avarabyeu.restendpoint.http;
+package com.github.avarabyeu.restendpoint.serializer;
 
 import java.lang.reflect.Type;
 

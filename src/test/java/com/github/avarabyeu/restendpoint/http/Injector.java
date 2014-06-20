@@ -1,4 +1,4 @@
-package com.github.avarabyeu.restendpoint.http.endpoint;
+package com.github.avarabyeu.restendpoint.http;
 
 import com.google.inject.Guice;
 import com.google.inject.Key;

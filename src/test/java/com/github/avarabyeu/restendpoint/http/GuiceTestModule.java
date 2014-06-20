@@ -1,6 +1,9 @@
-package com.github.avarabyeu.restendpoint.http.endpoint;
+package com.github.avarabyeu.restendpoint.http;
 
 import com.github.avarabyeu.restendpoint.http.*;
+import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
+import com.github.avarabyeu.restendpoint.serializer.Serializer;
+import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.*;
@@ -52,7 +55,7 @@ public class GuiceTestModule implements Module {
 
 
     /**
-     * Default {@link com.github.avarabyeu.restendpoint.http.Serializer} binding
+     * Default {@link com.github.avarabyeu.restendpoint.serializer.Serializer} binding
      *
      * @return
      */

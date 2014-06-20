@@ -1,4 +1,4 @@
-package com.github.avarabyeu.restendpoint.http.endpoint;
+package com.github.avarabyeu.restendpoint.http;
 
 import com.google.mockwebserver.MockResponse;
 import com.google.mockwebserver.RecordedRequest;
@@ -16,7 +16,7 @@ public class BaseRestEndointTest {
     public static final String SERIALIZED_STRING_PATTERN = "{\"intField\":%d,\"stringField\":\"%s\"}";
 
     protected void validateHeader(RecordedRequest request) {
-        Assert.assertTrue(request.getHeaders().contains("Content-Type: application/json; charset=UTF-8"));
+        Assert.assertTrue(request.getHeaders().contains("Content-Type: text/plain; charset=utf-8"));
     }
 
     protected MockResponse prepareResponse(String body) {

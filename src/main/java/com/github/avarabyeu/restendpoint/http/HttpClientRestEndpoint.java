@@ -4,7 +4,9 @@ import com.github.avarabyeu.restendpoint.async.Will;
 import com.github.avarabyeu.restendpoint.async.Wills;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
+import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.SettableFuture;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
@@ -93,8 +95,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     public <RQ, RS> Will<RS> post(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException {
         HttpPost post = new HttpPost(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
-        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq), ContentType.create(serializer.getMimeType(),
-                Consts.UTF_8));
+        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq), ContentType.create(serializer.getMimeType()));
         post.setEntity(httpEntity);
         return executeInternal(post, new ClassConverterCallback<RS>(serializers, clazz));
 
@@ -110,8 +111,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     public <RQ, RS> Will<RS> post(String resource, RQ rq, Type type) throws RestEndpointIOException {
         HttpPost post = new HttpPost(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
-        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq), ContentType.create(serializer.getMimeType(),
-                Consts.UTF_8));
+        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq), ContentType.create(serializer.getMimeType()));
         post.setEntity(httpEntity);
         return executeInternal(post, new TypeConverterCallback<RS>(serializers, type));
 
@@ -179,8 +179,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     public <RQ, RS> Will<RS> put(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException {
         HttpPut put = new HttpPut(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
-        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq), ContentType.create(serializer.getMimeType(),
-                Consts.UTF_8));
+        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq), ContentType.create(serializer.getMimeType()));
         put.setEntity(httpEntity);
         return executeInternal(put, new ClassConverterCallback<RS>(serializers, clazz));
     }
@@ -195,8 +194,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     public <RQ, RS> Will<RS> put(String resource, RQ rq, Type type) throws RestEndpointIOException {
         HttpPut put = new HttpPut(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
-        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq), ContentType.create(serializer.getMimeType(),
-                Consts.UTF_8));
+        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq), ContentType.create(serializer.getMimeType()));
         put.setEntity(httpEntity);
         return executeInternal(put, new TypeConverterCallback<RS>(serializers, type));
     }
@@ -264,13 +262,13 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                 serializer = getSupportedSerializer(command.getRequest());
                 rq = new HttpPost(uri);
                 ((HttpPost) rq).setEntity(new ByteArrayEntity(serializer.serialize(command.getRequest()), ContentType.create(
-                        serializer.getMimeType(), Consts.UTF_8)));
+                        serializer.getMimeType())));
                 break;
             case PUT:
                 serializer = getSupportedSerializer(command.getRequest());
                 rq = new HttpPut(uri);
                 ((HttpPut) rq).setEntity(new ByteArrayEntity(serializer.serialize(command.getRequest()), ContentType.create(
-                        serializer.getMimeType(), Consts.UTF_8)));
+                        serializer.getMimeType())));
                 break;
             case DELETE:
                 rq = new HttpDelete(uri);
@@ -279,7 +277,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                 serializer = getSupportedSerializer(command.getRequest());
                 rq = new HttpPatch(uri);
                 ((HttpPatch) rq).setEntity(new ByteArrayEntity(serializer.serialize(command.getRequest()), ContentType.create(
-                        serializer.getMimeType(), Consts.UTF_8)));
+                        serializer.getMimeType())));
                 break;
             default:
                 throw new IllegalArgumentException("Method '" + command.getHttpMethod() + "' is unsupported");

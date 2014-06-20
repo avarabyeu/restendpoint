@@ -1,4 +1,4 @@
-package com.github.avarabyeu.restendpoint.http.endpoint;
+package com.github.avarabyeu.restendpoint.http;
 
 import com.github.avarabyeu.restendpoint.http.ErrorHandler;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointClientException;
