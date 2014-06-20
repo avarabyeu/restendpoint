@@ -41,6 +41,7 @@ public class WillsTest {
             }
         });
 
+
         Assert.assertThat(will.obtain(), is(TEST_STRING.toUpperCase()));
     }
 
