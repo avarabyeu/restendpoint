@@ -2,7 +2,7 @@
 
 Asynchronous REST client based on Apache Http Async Client
 
-[![Build Status](https://avarabyeu.ci.cloudbees.com/job/restendpoint/badge/icon)](https://avarabyeu.ci.cloudbees.com/job/restendpoint/)
+[![Build Status](https://avarabyeu.ci.cloudbees.com/buildStatus/icon?job=restendpoint)](https://avarabyeu.ci.cloudbees.com/job/restendpoint/)
 
 
 * [Maven Dependencies](#maven-dependencies)
