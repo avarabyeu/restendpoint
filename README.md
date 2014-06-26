@@ -1,8 +1,7 @@
-# restendpoint 
+# restendpoint [![Build Status](https://avarabyeu.ci.cloudbees.com/buildStatus/icon?job=restendpoint)](https://avarabyeu.ci.cloudbees.com/job/restendpoint/)
 
 Asynchronous REST client based on Apache Http Async Client
 
-[![Build Status](https://avarabyeu.ci.cloudbees.com/buildStatus/icon?job=restendpoint)](https://avarabyeu.ci.cloudbees.com/job/restendpoint/)
 
 * [Maven Dependencies](#maven-dependencies)
 * [Getting Started](#getting-started)
