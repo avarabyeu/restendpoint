@@ -38,8 +38,7 @@ RestEndpoint endpoint = RestEndpoints.createDefault("http://airports.pidgets.com
 Will<String> airports = endpoint.get(
    "/v1/airports",
    ImmutableMap.<String, String>builder()
-         .put("country", "Belarus")
-         .put("format", "json").build(),
+      .put("country", "Belarus").put("format", "json").build(),
    String.class);
 
 /* Waits for result and prints it once received */
