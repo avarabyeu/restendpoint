@@ -25,15 +25,41 @@ Last stable version:
 
 ## Getting Started
 
-### Creating
+### As Simple As Its Possible
+
 ```java
-RestEndpoint restEndpoint = new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),
-                Lists.<Serializer>newArrayList(
-                        new StringSerializer(), 
-                        new ByteArraySerializer()), 
-                new DefaultErrorHandler(),
-                "http://REST_SERVICE_URL");
+/* Creates default RestEndpoint */
+RestEndpoint endpoint = RestEndpoints.createDefault("http://airports.pidgets.com/");
+/* Executes GET request to
+Will<String> airports = endpoint.get(
+   "/v1/airports",
+   ImmutableMap.<String, String>builder()
+         .put("country", "Belarus")
+         .put("format", "json").build(),
+   String.class);
+
+/* Waits for result and prints it once received */
+System.out.println(airports.obtain());
 ```
+
+### Creating
+
+#### Default and Simpliest
+```java
+RestEndpoint endpoint = RestEndpoints.createDefault("http://airports.pidgets.com/");
+```
+Creates RestEndpoint with all availible serializers, default error handler and http client configuration
+
+#### Using Builder
+```java
+RestEndpoint endpoint = RestEndpoints.create()
+   .withBaseUrl("http://base_url_of_rest_service")
+   .withSerializer(new GsonSerializer())
+   .withErrorHandler(new YourCustomErrorHandler())
+   .withBasicAuth("login", "password")
+   .build();
+```   
+Creates RestEndpoint with only JSON serializer based on Google GSON, with your custom error handler. Each request to server will contain Basic Authentication headers (preemptive authentication, see more details here: [Apache Client Authentication](http://hc.apache.org/httpcomponents-client-ga/tutorial/html/authentication.html))
 ### Sending Requests
 
 #### GET
