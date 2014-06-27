@@ -6,7 +6,7 @@ Asynchronous REST client based on Apache Http Async Client
 * [Maven Dependencies](#maven-dependencies)
 * [Getting Started](#getting-started)
     * [Creating](#creating)    
-    * [As Simple As It's Possible](#as-simple-as-it's-possible)
+    * [As Simple As It's Possible](#as-simple-as-its-possible)
     * [Sending Requests](#sending-requests)
         * [GET](#get)
 
