@@ -5,10 +5,13 @@ Asynchronous REST client based on Apache Http Async Client
 
 * [Maven Dependencies](#maven-dependencies)
 * [Getting Started](#getting-started)
-    * [Creating](#creating)    
-    * [As Simple As It's Possible](#as-simple-as-its-possible)
-    * [Sending Requests](#sending-requests)
-        * [GET](#get)
+   * [As Simple As It's Possible](#as-simple-as-its-possible)
+   * [Creating](#creating)    
+      * [Default and Simpliest](#default-and-simpliest)
+      * [Using Builder](#using-builder)
+      * [Build HttpAsyncClient explicitly](#build-httpasyncclient-explicitly)      
+   * [Sending Requests](#sending-requests)
+      * [GET](#get)
 
 Basically, **restendpoint** is convenient wrapper around 
 [Apache HttpComponents Async Client](http://hc.apache.org/httpcomponents-asyncclient-4.0.x/)
