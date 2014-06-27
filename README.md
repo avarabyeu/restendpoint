@@ -53,6 +53,7 @@ RestEndpoint endpoint = RestEndpoints.createDefault("http://airports.pidgets.com
 ```
 Creates RestEndpoint with all availible serializers, default error handler and http client configuration
 
+
 #### Using Builder
 ```java
 RestEndpoint endpoint = RestEndpoints.create()
@@ -63,6 +64,7 @@ RestEndpoint endpoint = RestEndpoints.create()
    .build();
 ```   
 Creates RestEndpoint with only JSON serializer based on Google GSON, with your custom error handler. Each request to server will contain Basic Authentication headers (preemptive authentication, see more details here: [Apache Client Authentication](http://hc.apache.org/httpcomponents-client-ga/tutorial/html/authentication.html))
+
 
 ### Sending Requests
 
