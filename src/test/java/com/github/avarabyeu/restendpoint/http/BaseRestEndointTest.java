@@ -20,10 +20,11 @@ import com.google.mockwebserver.MockResponse;
 import com.google.mockwebserver.RecordedRequest;
 import org.junit.Assert;
 import org.junit.Ignore;
-import org.junit.Test;
 
 /**
- * Created by andrey.vorobyov on 17/04/14.
+ * Base HTTP test
+ *
+ * @author Andrei Varabyeu
  */
 @Ignore
 public class BaseRestEndointTest {

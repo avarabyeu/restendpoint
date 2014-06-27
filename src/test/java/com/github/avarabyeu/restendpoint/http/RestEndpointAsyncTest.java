@@ -26,7 +26,9 @@ import org.junit.Test;
 import java.io.IOException;
 
 /**
- * Created by andrey.vorobyov on 17/04/14.
+ * Tests for asynchronous client methods
+ *
+ * @author Andrei Varabyeu
  */
 public class RestEndpointAsyncTest extends BaseRestEndointTest {
 

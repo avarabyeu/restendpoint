@@ -17,31 +17,103 @@
 
 package com.github.avarabyeu.restendpoint.http;
 
+import com.github.avarabyeu.restendpoint.async.Will;
+import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
+import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
+import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
+import com.google.common.net.HttpHeaders;
+import com.google.mockwebserver.MockWebServer;
+import org.apache.commons.codec.binary.Base64;
+import org.hamcrest.CoreMatchers;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
+
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
 /**
+ * {@link com.github.avarabyeu.restendpoint.http.RestEndpoints} tests
+ *
  * @author avarabyeu
  */
-public class RestEndpointsTest {
+public class RestEndpointsTest extends BaseRestEndointTest {
 
-    public static final String HTTP_TEST_URK = "http://test.test";
+    public static final String HTTP_TEST_URK = "http://localhost:" + GuiceTestModule.MOCK_PORT;
+    public static final String ECHO_STRING = "Hello world!";
+    public static final String RESOURCE = "/";
 
-    @Test
-    public void testDefault() {
 
-        RestEndpoint endpoint = RestEndpoints.createDefault(HTTP_TEST_URK);
-        Assert.assertThat(endpoint, notNullValue());
+    private static MockWebServer server = Injector.getInstance().getBean(MockWebServer.class);
+
+    @BeforeClass
+    public static void before() throws IOException {
+        server.play(GuiceTestModule.MOCK_PORT);
     }
 
+    @AfterClass
+    public static void after() throws IOException {
+        server.shutdown();
+    }
+
+
     @Test
-    public void testBuilderHappy() {
+    public void testDefault() throws RestEndpointIOException {
+        RestEndpoint endpoint = RestEndpoints.createDefault(HTTP_TEST_URK);
+        Assert.assertThat(endpoint, notNullValue());
+
+        server.enqueue(prepareResponse(ECHO_STRING));
+        Will<String> helloRS = endpoint.post(RESOURCE, ECHO_STRING, String.class);
+        Assert.assertThat(helloRS.obtain(), is(ECHO_STRING));
+
+    }
+
+    /**
+     * Put wrong serializer into non-default configuration
+     *
+     * @throws RestEndpointIOException
+     */
+    @Test(expected = SerializerException.class)
+    public void testNoSerializer() throws RestEndpointIOException {
         RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK)
                 .withSerializer(new ByteArraySerializer())
                 .build();
         Assert.assertThat(endpoint, notNullValue());
+
+        server.enqueue(prepareResponse(ECHO_STRING));
+        Will<String> helloRS = endpoint.post(RESOURCE, ECHO_STRING, String.class);
+        Assert.assertThat(helloRS.obtain(), is(ECHO_STRING));
     }
+
+    @Test
+    public void testBuilderHappy() throws RestEndpointIOException {
+        RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK)
+                .withSerializer(new StringSerializer())
+                .build();
+        Assert.assertThat(endpoint, notNullValue());
+
+        server.enqueue(prepareResponse(ECHO_STRING));
+        Will<String> helloRS = endpoint.post(RESOURCE, ECHO_STRING, String.class);
+        Assert.assertThat(helloRS.obtain(), is(ECHO_STRING));
+    }
+
+    @Test
+    public void testBuilderBasicAuth() throws RestEndpointIOException, InterruptedException {
+        RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK)
+                .withSerializer(new StringSerializer()).withBasicAuth("login", "password")
+                .build();
+        Assert.assertThat(endpoint, notNullValue());
+
+        server.enqueue(prepareResponse(ECHO_STRING));
+        endpoint.post(RESOURCE, ECHO_STRING, String.class).obtain();
+
+        String basicAuthHeader = server.takeRequest().getHeader(HttpHeaders.AUTHORIZATION);
+        Assert.assertThat(basicAuthHeader, is("Basic " + Base64.encodeBase64String("login:password".getBytes())));
+    }
+
+    //TODO add test for SSL
 }

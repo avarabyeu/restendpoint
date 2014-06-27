@@ -344,7 +344,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                 return s;
             }
         }
-        throw new SerializerException("Unable to fins serializer for object with type '" + o.getClass() + "'");
+        throw new SerializerException("Unable to find serializer for object with type '" + o.getClass() + "'");
     }
 
     /**
