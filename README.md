@@ -67,7 +67,7 @@ RestEndpoint endpoint = RestEndpoints.create()
 Creates RestEndpoint with only JSON serializer based on Google GSON, your custom error handler. Each request to server will contain Basic Authentication headers (preemptive authentication, see more details here: [Apache Client Authentication](http://hc.apache.org/httpcomponents-client-ga/tutorial/html/authentication.html))
 
 
-#### Custom HttpClient
+#### Build HttpAsyncClient explicitly
 Sometimes you need more deep http client configuration. Here is the example:
 
 ```java
