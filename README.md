@@ -30,7 +30,11 @@ Last stable version:
 ```java
 /* Creates default RestEndpoint */
 RestEndpoint endpoint = RestEndpoints.createDefault("http://airports.pidgets.com/");
-/* Executes GET request to
+
+ /* Executes GET request to
+  * http://airports.pidgets.com/v1/airports?country=Belarus&format=json
+  * asynchronously
+  */
 Will<String> airports = endpoint.get(
    "/v1/airports",
    ImmutableMap.<String, String>builder()
