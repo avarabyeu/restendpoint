@@ -22,9 +22,7 @@ import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.SettableFuture;
-import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.*;
@@ -90,8 +88,12 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      */
     public HttpClientRestEndpoint(CloseableHttpAsyncClient httpClient, List<Serializer> serializers, ErrorHandler<HttpResponse> errorHandler,
                                   String baseUrl) {
-        this.serializers = Preconditions.checkNotNull(serializers, "Serializer should'be be null");
-        this.baseUrl = Preconditions.checkNotNull(baseUrl, "Base URL shouldn't be null");
+
+        Preconditions.checkArgument(null != serializers && !serializers.isEmpty(), "There is no any serializer provided");
+        this.serializers = serializers;
+
+        Preconditions.checkArgument(IOUtils.isValidUrl(baseUrl), "'%s' is not valid URL", baseUrl);
+        this.baseUrl = baseUrl;
 
         this.errorHandler = errorHandler == null ? new DefaultErrorHandler() : errorHandler;
         this.httpClient = httpClient;

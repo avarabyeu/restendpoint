@@ -33,6 +33,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 /**
