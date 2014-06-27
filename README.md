@@ -5,7 +5,8 @@ Asynchronous REST client based on Apache Http Async Client
 
 * [Maven Dependencies](#maven-dependencies)
 * [Getting Started](#getting-started)
-    * [Creating](#creating)
+    * [Creating](#creating)    
+    * [As Simple As It's Possible](#as-simple-as-it's-possible)
     * [Sending Requests](#sending-requests)
         * [GET](#get)
 
@@ -25,7 +26,7 @@ Last stable version:
 
 ## Getting Started
 
-### As Simple As Its Possible
+### As Simple As It's Possible
 
 ```java
 /* Creates default RestEndpoint */
@@ -51,7 +52,7 @@ System.out.println(airports.obtain());
 ```java
 RestEndpoint endpoint = RestEndpoints.createDefault("http://airports.pidgets.com/");
 ```
-Creates RestEndpoint with all availible serializers, default error handler and http client configuration
+Creates RestEndpoint with all availible serializers, default http client configuration and built-in error handler. 
 
 
 #### Using Builder
@@ -63,7 +64,7 @@ RestEndpoint endpoint = RestEndpoints.create()
    .withBasicAuth("login", "password")
    .build();
 ```   
-Creates RestEndpoint with only JSON serializer based on Google GSON, with your custom error handler. Each request to server will contain Basic Authentication headers (preemptive authentication, see more details here: [Apache Client Authentication](http://hc.apache.org/httpcomponents-client-ga/tutorial/html/authentication.html))
+Creates RestEndpoint with only JSON serializer based on Google GSON, your custom error handler. Each request to server will contain Basic Authentication headers (preemptive authentication, see more details here: [Apache Client Authentication](http://hc.apache.org/httpcomponents-client-ga/tutorial/html/authentication.html))
 
 
 ### Sending Requests
