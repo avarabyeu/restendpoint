@@ -98,6 +98,7 @@ public class GuiceTestModule implements Module {
         ServerSocket socket = null;
         try {
             socket = new ServerSocket(0);
+            System.out.println("Used Port: " + socket.getLocalPort());
             return socket.getLocalPort();
         } catch (IOException e) {
             throw new RuntimeException("Unable to find free port", e);
