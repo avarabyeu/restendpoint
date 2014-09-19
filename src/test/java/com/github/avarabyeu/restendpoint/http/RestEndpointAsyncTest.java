@@ -17,7 +17,8 @@
 package com.github.avarabyeu.restendpoint.http;
 
 import com.github.avarabyeu.restendpoint.async.Will;
-import com.google.mockwebserver.MockWebServer;
+
+import com.squareup.okhttp.mockwebserver.MockWebServer;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;

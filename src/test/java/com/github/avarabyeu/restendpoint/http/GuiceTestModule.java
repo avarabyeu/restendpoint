@@ -16,7 +16,6 @@
 
 package com.github.avarabyeu.restendpoint.http;
 
-import com.github.avarabyeu.restendpoint.http.*;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
@@ -24,16 +23,15 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.*;
 import com.google.inject.name.Names;
-import com.google.mockwebserver.MockResponse;
-import com.google.mockwebserver.MockWebServer;
-import com.google.mockwebserver.QueueDispatcher;
-import com.google.mockwebserver.RecordedRequest;
+import com.squareup.okhttp.mockwebserver.MockResponse;
+import com.squareup.okhttp.mockwebserver.MockWebServer;
+import com.squareup.okhttp.mockwebserver.QueueDispatcher;
+import com.squareup.okhttp.mockwebserver.RecordedRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 /**

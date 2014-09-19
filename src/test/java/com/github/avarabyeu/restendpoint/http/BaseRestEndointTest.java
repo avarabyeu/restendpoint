@@ -16,8 +16,8 @@
 
 package com.github.avarabyeu.restendpoint.http;
 
-import com.google.mockwebserver.MockResponse;
-import com.google.mockwebserver.RecordedRequest;
+import com.squareup.okhttp.mockwebserver.MockResponse;
+import com.squareup.okhttp.mockwebserver.RecordedRequest;
 import org.junit.Assert;
 import org.junit.Ignore;
 
