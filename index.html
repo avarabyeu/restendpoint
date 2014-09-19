@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Restendpoint by avarabyeu</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Restendpoint</h1>
+        <h2>Asynchronous REST client based on Apache Http Async</h2>
+        <a href="https://github.com/avarabyeu/restendpoint" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="restendpoint-" class="anchor" href="#restendpoint-"><span class="octicon octicon-link"></span></a>restendpoint <a href="https://travis-ci.org/avarabyeu/restendpoint"><img src="https://travis-ci.org/avarabyeu/restendpoint.svg?branch=master" alt="Build Status"></a>
+</h1>
+
+<p>Asynchronous REST client based on Apache Http Async Client</p>
+
+<ul>
+<li><a href="#maven-dependencies">Maven Dependencies</a></li>
+<li>
+<a href="#getting-started">Getting Started</a>
+
+<ul>
+<li><a href="#as-simple-as-its-possible">As Simple As It's Possible</a></li>
+<li>
+<a href="#creating">Creating</a><br><ul>
+<li><a href="#default-and-simpliest">Default and Simpliest</a></li>
+<li><a href="#using-builder">Using Builder</a></li>
+<li>
+<a href="#build-httpasyncclient-explicitly">Build HttpAsyncClient explicitly</a><br>
+</li>
+</ul>
+</li>
+<li>
+<a href="#sending-requests">Sending Requests</a>
+
+<ul>
+<li><a href="#get">GET</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><p>Basically, <strong>restendpoint</strong> is convenient wrapper around 
+<a href="http://hc.apache.org/httpcomponents-asyncclient-4.0.x/">Apache HttpComponents Async Client</a></p>
+
+<h2>
+<a name="maven-dependencies" class="anchor" href="#maven-dependencies"><span class="octicon octicon-link"></span></a>Maven Dependencies</h2>
+
+<p>Last stable version:</p>
+
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>com.github.avarabyeu<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>restendpoint<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.0.2<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+
+<h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<h3>
+<a name="as-simple-as-its-possible" class="anchor" href="#as-simple-as-its-possible"><span class="octicon octicon-link"></span></a>As Simple As It's Possible</h3>
+
+<div class="highlight highlight-java"><pre><span class="cm">/* Creates default RestEndpoint */</span>
+<span class="n">RestEndpoint</span> <span class="n">endpoint</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">createDefault</span><span class="o">(</span><span class="s">"http://airports.pidgets.com/"</span><span class="o">);</span>
+
+ <span class="cm">/* Executes GET request to</span>
+<span class="cm">  * http://airports.pidgets.com/v1/airports?country=Belarus&amp;format=json</span>
+<span class="cm">  * asynchronously</span>
+<span class="cm">  */</span>
+<span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">airports</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">get</span><span class="o">(</span>
+   <span class="s">"/v1/airports"</span><span class="o">,</span>
+   <span class="n">ImmutableMap</span><span class="o">.&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span><span class="n">builder</span><span class="o">()</span>
+      <span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"country"</span><span class="o">,</span> <span class="s">"Belarus"</span><span class="o">).</span><span class="na">put</span><span class="o">(</span><span class="s">"format"</span><span class="o">,</span> <span class="s">"json"</span><span class="o">).</span><span class="na">build</span><span class="o">(),</span>
+   <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+<span class="cm">/* Waits for result and prints it once received */</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">airports</span><span class="o">.</span><span class="na">obtain</span><span class="o">());</span>
+</pre></div>
+
+<h3>
+<a name="creating" class="anchor" href="#creating"><span class="octicon octicon-link"></span></a>Creating</h3>
+
+<h4>
+<a name="default-and-simpliest" class="anchor" href="#default-and-simpliest"><span class="octicon octicon-link"></span></a>Default and Simpliest</h4>
+
+<div class="highlight highlight-java"><pre><span class="n">RestEndpoint</span> <span class="n">endpoint</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">createDefault</span><span class="o">(</span><span class="s">"http://airports.pidgets.com/"</span><span class="o">);</span>
+</pre></div>
+
+<p>Creates RestEndpoint with all availible serializers, default http client configuration and built-in error handler. </p>
+
+<h4>
+<a name="using-builder" class="anchor" href="#using-builder"><span class="octicon octicon-link"></span></a>Using Builder</h4>
+
+<div class="highlight highlight-java"><pre><span class="n">RestEndpoint</span> <span class="n">endpoint</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">create</span><span class="o">()</span>
+   <span class="o">.</span><span class="na">withBaseUrl</span><span class="o">(</span><span class="s">"http://base_url_of_rest_service"</span><span class="o">)</span>
+   <span class="o">.</span><span class="na">withSerializer</span><span class="o">(</span><span class="k">new</span> <span class="nf">GsonSerializer</span><span class="o">())</span>
+   <span class="o">.</span><span class="na">withErrorHandler</span><span class="o">(</span><span class="k">new</span> <span class="nf">YourCustomErrorHandler</span><span class="o">())</span>
+   <span class="o">.</span><span class="na">withBasicAuth</span><span class="o">(</span><span class="s">"login"</span><span class="o">,</span> <span class="s">"password"</span><span class="o">)</span>
+   <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</pre></div>
+
+<p>Creates RestEndpoint with only JSON serializer based on Google GSON, your custom error handler. Each request to server will contain Basic Authentication headers (preemptive authentication, see more details here: <a href="http://hc.apache.org/httpcomponents-client-ga/tutorial/html/authentication.html">Apache Client Authentication</a>)</p>
+
+<h4>
+<a name="build-httpasyncclient-explicitly" class="anchor" href="#build-httpasyncclient-explicitly"><span class="octicon octicon-link"></span></a>Build HttpAsyncClient explicitly</h4>
+
+<p>Sometimes you need more deep http client configuration. Here is the example:</p>
+
+<div class="highlight highlight-java"><pre><span class="n">HttpAsyncClientBuilder</span> <span class="n">httpClientBuilder</span> <span class="o">=</span> <span class="n">HttpAsyncClientBuilder</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+<span class="n">CredentialsProvider</span> <span class="n">credentialsProvider</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">BasicCredentialsProvider</span><span class="o">();</span>
+<span class="n">credentialsProvider</span><span class="o">.</span><span class="na">setCredentials</span><span class="o">(</span><span class="n">AuthScope</span><span class="o">.</span><span class="na">ANY</span><span class="o">,</span> <span class="k">new</span> <span class="nf">UsernamePasswordCredentials</span><span class="o">(</span><span class="s">"user"</span><span class="o">,</span> <span class="s">"password"</span><span class="o">));</span>
+<span class="n">httpClientBuilder</span><span class="o">.</span><span class="na">setDefaultCredentialsProvider</span><span class="o">(</span><span class="n">credentialsProvider</span><span class="o">);</span>
+<span class="n">httpClientBuilder</span><span class="o">.</span><span class="na">setMaxConnTotal</span><span class="o">(</span><span class="mi">20</span><span class="o">);</span>
+<span class="n">httpClientBuilder</span><span class="o">.</span><span class="na">setMaxConnPerRoute</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>
+
+<span class="n">RestEndpoint</span> <span class="n">endpoint</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">create</span><span class="o">().</span><span class="na">withBaseUrl</span><span class="o">(</span><span class="n">HTTP_TEST_URK</span><span class="o">)</span>
+   <span class="o">.</span><span class="na">withSerializer</span><span class="o">(</span><span class="k">new</span> <span class="nf">StringSerializer</span><span class="o">()).</span><span class="na">withHttpClient</span><span class="o">(</span><span class="n">httpClientBuilder</span><span class="o">.</span><span class="na">build</span><span class="o">())</span>
+   <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</pre></div>
+
+<p>So, you are able to configure HttpClient explicitly, but in this case builder's methods like #withBasicAuth() <b>will be overwritten</b>.</p>
+
+<h3>
+<a name="sending-requests" class="anchor" href="#sending-requests"><span class="octicon octicon-link"></span></a>Sending Requests</h3>
+
+<h4>
+<a name="get" class="anchor" href="#get"><span class="octicon octicon-link"></span></a>GET</h4>
+
+<div class="highlight highlight-java"><pre><span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">responseBody</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/"</span><span class="o">,</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</pre></div>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/avarabyeu/restendpoint/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/avarabyeu/restendpoint/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/avarabyeu/restendpoint"></a> is maintained by <a href="https://github.com/avarabyeu">avarabyeu</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
