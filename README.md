@@ -1,4 +1,4 @@
-# restendpoint [![Build Status](https://avarabyeu.ci.cloudbees.com/buildStatus/icon?job=restendpoint)](https://avarabyeu.ci.cloudbees.com/job/restendpoint/)
+# restendpoint [![Build Status](https://travis-ci.org/avarabyeu/restendpoint.svg?branch=master)](https://travis-ci.org/avarabyeu/restendpoint)
 
 Asynchronous REST client based on Apache Http Async Client
 
