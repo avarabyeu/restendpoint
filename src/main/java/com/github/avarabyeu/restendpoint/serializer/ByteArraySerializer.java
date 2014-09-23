@@ -90,7 +90,7 @@ public class ByteArraySerializer implements Serializer {
 	 */
 	@Override
 	public boolean canRead(String mimeType) {
-        return MediaType.ANY_TYPE.is(MediaType.parse(mimeType));
+        return MediaType.parse(mimeType).is(MediaType.ANY_TYPE);
 	}
 
 	/*

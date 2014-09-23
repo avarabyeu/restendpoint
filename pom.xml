@@ -118,6 +118,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.smarttested</groupId>
+            <artifactId>smartassert</artifactId>
+            <version>1.0.0</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <!--Disable unit tests which start web server. Cloudbees doesn't accept opening ports during build-->

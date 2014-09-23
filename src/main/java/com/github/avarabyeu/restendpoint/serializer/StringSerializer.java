@@ -68,7 +68,7 @@ public class StringSerializer implements Serializer {
     @Override
     public boolean canRead(String mimeType) {
         MediaType type = MediaType.parse(mimeType).withoutParameters();
-        return MediaType.ANY_TEXT_TYPE.is(type) || MediaType.APPLICATION_XML_UTF_8.withoutParameters().is(type)
+        return type.is(MediaType.ANY_TEXT_TYPE) || MediaType.APPLICATION_XML_UTF_8.withoutParameters().is(type)
                 || MediaType.JSON_UTF_8.withoutParameters().is(type);
     }
 
