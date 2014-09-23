@@ -27,7 +27,7 @@ import org.junit.Test;
  */
 public class GsonSerializerTest {
 
-    private static final String TEST_STRING = "{ \"someField\" : \"someValue\" }";
+    private static final String TEST_STRING = "{\"someField\":\"someValue\"}";
     private static final TestBean TEST_BEAN = new TestBean("someValue");
 
     private GsonSerializer serializer = new GsonSerializer();
