@@ -1,6 +1,6 @@
 language: java
 
-test: mvn test -PnoServerTests
+script: mvn test -PnoServerTests
 
 jdk:
   - oraclejdk8

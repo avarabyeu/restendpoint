@@ -54,7 +54,7 @@ public class GuiceTestModule implements Module {
         }).to(DefaultErrorHandler.class).in(Scopes.SINGLETON);
 
 
-        binder.bind(MockWebServer.class);
+        binder.bind(MockWebServer.class).in(Scopes.NO_SCOPE);
 
         MockWebServer mockWebServer = new MockWebServer();
         mockWebServer.setDispatcher(new QueueDispatcher() {
