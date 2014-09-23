@@ -27,7 +27,10 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 
 /**
- * Created by andrey.vorobyov on 20/06/14.
+ * JSON serializer using GSON library
+ *
+ * @author Andrey Vorobyov
+ * @see <a href="https://code.google.com/p/google-gson/">GSON</a>
  */
 public class GsonSerializer implements Serializer {
 
