@@ -16,19 +16,22 @@
 
 package com.github.avarabyeu.restendpoint.serializer;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Bean for unit tests
  *
  * @author Andrey Vorobyov
  */
-class TestBean {
+@XmlRootElement
+public class TestBean {
 
     private String someField;
 
-    TestBean() {
+    public TestBean() {
     }
 
-    TestBean(String someField) {
+    public TestBean(String someField) {
         this.someField = someField;
     }
 

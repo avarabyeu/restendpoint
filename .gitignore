@@ -13,3 +13,6 @@ hs_err_pid*
 
 # IDEA project files
 .idea
+
+# Maven
+target

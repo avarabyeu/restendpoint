@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.github.avarabyeu.restendpoint.serializer;
+package com.github.avarabyeu.restendpoint.serializer.json;
 
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
+import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;

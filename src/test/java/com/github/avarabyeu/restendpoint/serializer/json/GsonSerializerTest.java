@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.avarabyeu.restendpoint.serializer;
+package com.github.avarabyeu.restendpoint.serializer.json;
 
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
+import com.github.avarabyeu.restendpoint.serializer.TestBean;
+import com.github.avarabyeu.restendpoint.serializer.json.GsonSerializer;
 import com.google.common.net.MediaType;
 import com.smarttested.qa.smartassert.SmartAssert;
 import org.hamcrest.CoreMatchers;
@@ -35,7 +37,7 @@ public class GsonSerializerTest {
     @Test
     public void testSerialize() throws SerializerException {
         byte[] result = serializer.serialize(TEST_BEAN);
-        SmartAssert.verifyHard(
+        SmartAssert.assertHard(
                 result,
                 CoreMatchers
                         .is(TEST_STRING.getBytes()), "Incorrect serialization result");
@@ -44,7 +46,7 @@ public class GsonSerializerTest {
     @Test
     public void testDeserialize() throws SerializerException {
         TestBean result = serializer.deserialize(TEST_STRING.getBytes(), TestBean.class);
-        SmartAssert.verifyHard(
+        SmartAssert.assertHard(
                 result,
                 CoreMatchers
                         .is(TEST_BEAN), "Incorrect deserialization result");
@@ -58,7 +60,7 @@ public class GsonSerializerTest {
         SmartAssert.assertSoft(serializer.canRead(MediaType.JSON_UTF_8.toString()),
                 CoreMatchers.is(true), "Wrong content type handling - cannot read application/json");
 
-        SmartAssert.assertSoft(serializer.canWrite(TestBean.class),
+        SmartAssert.assertSoft(serializer.canWrite(new TestBean()),
                 CoreMatchers.is(true), "Wrong content type handling. Cannot write byte array");
 
         SmartAssert.validateSoftAsserts();

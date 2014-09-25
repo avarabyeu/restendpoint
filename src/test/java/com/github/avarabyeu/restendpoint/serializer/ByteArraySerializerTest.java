@@ -33,7 +33,7 @@ public class ByteArraySerializerTest {
     @Test
     public void testSerialize() throws SerializerException {
         byte[] result = serializer.serialize(TEST_STRING.getBytes());
-        SmartAssert.verifyHard(
+        SmartAssert.assertHard(
                 result,
                 CoreMatchers
                         .is(TEST_STRING.getBytes()), "Incorrect serialization result");
@@ -42,7 +42,7 @@ public class ByteArraySerializerTest {
     @Test
     public void testDeserialize() throws SerializerException {
         byte[] result = serializer.deserialize(TEST_STRING.getBytes(), byte[].class);
-        SmartAssert.verifyHard(
+        SmartAssert.assertHard(
                 result,
                 CoreMatchers
                         .is(TEST_STRING.getBytes()), "Incorrect deserialization result");
