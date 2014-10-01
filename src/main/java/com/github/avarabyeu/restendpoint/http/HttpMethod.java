@@ -18,10 +18,19 @@ package com.github.avarabyeu.restendpoint.http;
 
 /**
  * HTTP Methods Representation
- * 
+ *
  * @author Andrei Varabyeu
- * 
  */
 public enum HttpMethod {
-	GET, POST, PUT, PATCH, DELETE
+    GET(false), POST(true), PUT(true), PATCH(true), DELETE(false);
+
+    private boolean hasBody;
+
+    HttpMethod(boolean hasBody) {
+        this.hasBody = hasBody;
+    }
+
+    boolean hasBody() {
+        return hasBody;
+    }
 }

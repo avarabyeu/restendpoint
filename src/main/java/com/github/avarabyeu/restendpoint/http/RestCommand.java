@@ -16,9 +16,11 @@
 
 package com.github.avarabyeu.restendpoint.http;
 
-import com.google.common.reflect.TypeResolver;
+import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 
 /**
@@ -36,11 +38,11 @@ public class RestCommand<RQ, RS> {
     private Type responseType;
 
 
-    public RestCommand(String uri, HttpMethod method, RQ request, Class<RS> responseClass) {
+    public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request, @Nonnull Class<RS> responseClass) {
         this(uri, method, request, TypeToken.of(responseClass).getType());
     }
 
-    public RestCommand(String uri, HttpMethod method, RQ request, Type responseType) {
+    public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request, @Nonnull Type responseType) {
         this.httpMethod = method;
         this.request = request;
         this.uri = uri;
@@ -66,8 +68,10 @@ public class RestCommand<RQ, RS> {
     }
 
     private void validate() {
-        if (HttpMethod.GET.equals(this.httpMethod) && null != this.request) {
-            throw new RuntimeException("'GET' request cannot contain body");
+
+        /* Requests with no body should pass body parameter as NULL */
+        if (!this.httpMethod.hasBody()) {
+            Preconditions.checkState(null == this.request, "'%s' shouldn't contain body", this.httpMethod);
         }
     }
 }
