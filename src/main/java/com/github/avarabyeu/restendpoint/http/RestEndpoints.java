@@ -17,11 +17,15 @@
 
 package com.github.avarabyeu.restendpoint.http;
 
+import com.github.avarabyeu.restendpoint.http.proxy.RestEndpointInvocationHandler;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
-import com.github.avarabyeu.restendpoint.serializer.json.GsonSerializer;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
+import com.github.avarabyeu.restendpoint.serializer.json.GsonSerializer;
 import com.google.common.collect.Lists;
+import com.google.common.reflect.Invokable;
+import com.google.common.reflect.Reflection;
+import com.google.common.reflect.TypeToken;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -34,6 +38,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy;
 
+import javax.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
 import java.io.InputStream;
 import java.util.List;
@@ -164,6 +169,14 @@ public class RestEndpoints {
             httpClientBuilder.setSSLStrategy(sslSessionStrategy);
 
             return this;
+        }
+
+        public <T> T forInterface(@Nonnull Class<T> clazz) {
+            if (!clazz.isInterface()){
+                //TODO fix exception
+                throw new RuntimeException("Provided class is not interface!");
+            }
+            return Reflection.newProxy(clazz, new RestEndpointInvocationHandler(clazz, build()));
         }
 
     }

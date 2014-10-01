@@ -16,53 +16,56 @@
 
 package com.github.avarabyeu.restendpoint.http;
 
+import com.google.common.reflect.TypeToken;
+
 import java.lang.reflect.Type;
 
 /**
  * Base Rest request representation
- * 
+ *
+ * @param <RQ> - type of request
+ * @param <RS> - type of response
  * @author Andrei Varabyeu
- * 
- * @param <RQ>
- *            - type of request
- * @param <RS>
- *            - type of response
  */
 public class RestCommand<RQ, RS> {
 
-	private HttpMethod httpMethod;
-	private RQ request;
-	private String uri;
-	private ParameterizedTypeReference<RS> typeReference;
+    private HttpMethod httpMethod;
+    private RQ request;
+    private String uri;
+    private TypeToken<RS> responseType;
 
-	public RestCommand(String uri, HttpMethod method, RQ request) {
-		this.httpMethod = method;
-		this.request = request;
-		this.uri = uri;
-		this.typeReference = new ParameterizedTypeReference<RS>() {
-		};
-		validate();
-	}
+    public RestCommand(String uri, HttpMethod method, RQ request) {
+        this(uri, method, request, new TypeToken<RS>() {
+        });
+    }
 
-	public HttpMethod getHttpMethod() {
-		return httpMethod;
-	}
+    public RestCommand(String uri, HttpMethod method, RQ request, TypeToken<RS> responseType) {
+        this.httpMethod = method;
+        this.request = request;
+        this.uri = uri;
+        this.responseType = responseType;
+        validate();
+    }
 
-	public RQ getRequest() {
-		return request;
-	}
+    public HttpMethod getHttpMethod() {
+        return httpMethod;
+    }
 
-	public String getUri() {
-		return uri;
-	}
+    public RQ getRequest() {
+        return request;
+    }
 
-	public Type getType() {
-		return typeReference.getType();
-	}
+    public String getUri() {
+        return uri;
+    }
 
-	private void validate() {
-		if (HttpMethod.GET.equals(this.httpMethod) && null != this.request) {
-			throw new RuntimeException("'GET' request cannot contain body");
-		}
-	}
+    public Type getResponseType() {
+        return responseType.getType();
+    }
+
+    private void validate() {
+        if (HttpMethod.GET.equals(this.httpMethod) && null != this.request) {
+            throw new RuntimeException("'GET' request cannot contain body");
+        }
+    }
 }

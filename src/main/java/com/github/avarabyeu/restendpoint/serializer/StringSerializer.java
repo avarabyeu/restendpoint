@@ -96,7 +96,7 @@ public class StringSerializer implements Serializer {
      * @throws SerializerException
      */
     private void validateString(Type type) throws SerializerException {
-        if (null != type && String.class.equals(TypeToken.of(type).getRawType())) {
+        if (null == type || !String.class.equals(TypeToken.of(type).getRawType())) {
             throw new SerializerException("String serializer is able to work only with data types assignable from java.lang.String");
         }
     }

@@ -78,7 +78,7 @@ public interface RestEndpoint {
      *
      * @param resource - REST resource
      * @param rq       - Request body
-     * @param clazz    - {@link Type} of Response
+     * @param type    - {@link Type} of Response
      * @return - Response body
      * @throws RestEndpointIOException
      */
@@ -108,7 +108,7 @@ public interface RestEndpoint {
      * HTTP GET
      *
      * @param resource - REST Resource
-     * @param clazz    - Response Body Type
+     * @param type    - Response Body Type
      * @return - Response Body
      * @throws RestEndpointIOException
      */

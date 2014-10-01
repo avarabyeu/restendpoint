@@ -265,7 +265,6 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @param command
      * @return
      * @throws RestEndpointIOException
-     * @throws URISyntaxException
      */
     @Override
     public <RQ, RS> Will<RS> executeRequest(RestCommand<RQ, RS> command) throws RestEndpointIOException {
@@ -301,7 +300,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                 throw new IllegalArgumentException("Method '" + command.getHttpMethod() + "' is unsupported");
         }
 
-        return executeInternal(rq, new TypeConverterCallback<RS>(serializers, command.getType()));
+        return executeInternal(rq, new TypeConverterCallback<RS>(serializers, command.getResponseType()));
     }
 
     /**
@@ -313,7 +312,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      */
     private URI spliceUrl(String resource) throws RestEndpointIOException {
         try {
-            return new URIBuilder(baseUrl).setPath(resource).build();
+            return new URI(baseUrl.concat(resource));
         } catch (URISyntaxException e) {
             throw new RestEndpointIOException("Unable to builder URL with base url '" + baseUrl + "' and resouce '" + resource + "'", e);
         }
