@@ -130,7 +130,7 @@ class RestMethodInfo {
 
     @SuppressWarnings("unchecked")
     public RestCommand<?, ?> createRestCommand(Object... args) {
-        return new RestCommand(createUrl(args), this.method, createBody(args), responseType);
+        return new RestCommand(createUrl(args), this.method, createBody(args), responseType.getType());
     }
 
 }

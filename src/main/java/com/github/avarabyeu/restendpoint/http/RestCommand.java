@@ -16,6 +16,7 @@
 
 package com.github.avarabyeu.restendpoint.http;
 
+import com.google.common.reflect.TypeResolver;
 import com.google.common.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -32,18 +33,19 @@ public class RestCommand<RQ, RS> {
     private HttpMethod httpMethod;
     private RQ request;
     private String uri;
-    private TypeToken<RS> responseType;
+    private Type responseType;
 
-    public RestCommand(String uri, HttpMethod method, RQ request) {
-        this(uri, method, request, new TypeToken<RS>() {
-        });
+
+    public RestCommand(String uri, HttpMethod method, RQ request, Class<RS> responseClass) {
+        this(uri, method, request, TypeToken.of(responseClass).getType());
     }
 
-    public RestCommand(String uri, HttpMethod method, RQ request, TypeToken<RS> responseType) {
+    public RestCommand(String uri, HttpMethod method, RQ request, Type responseType) {
         this.httpMethod = method;
         this.request = request;
         this.uri = uri;
         this.responseType = responseType;
+
         validate();
     }
 
@@ -60,7 +62,7 @@ public class RestCommand<RQ, RS> {
     }
 
     public Type getResponseType() {
-        return responseType.getType();
+        return responseType;
     }
 
     private void validate() {

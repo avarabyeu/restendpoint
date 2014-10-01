@@ -96,7 +96,7 @@ public class RestEndointTest extends BaseRestEndointTest {
     public void testCommand() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
 
-        RestCommand<String, String> command = new RestCommand<String, String>("/", HttpMethod.POST, SERIALIZED_STRING);
+        RestCommand<String, String> command = new RestCommand<String, String>("/", HttpMethod.POST, SERIALIZED_STRING, String.class);
 
         String to = endpoint.executeRequest(command).obtain();
 

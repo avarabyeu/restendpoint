@@ -17,7 +17,6 @@
 package com.github.avarabyeu.restendpoint.http;
 
 import com.github.avarabyeu.restendpoint.async.Will;
-
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -78,7 +77,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testCommand() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        RestCommand<String, String> command = new RestCommand<String, String>("/", HttpMethod.POST, SERIALIZED_STRING);
+        RestCommand<String, String> command = new RestCommand<String, String>("/", HttpMethod.POST, SERIALIZED_STRING, String.class);
         Will<String> to = endpoint.executeRequest(command);
         Assert.assertTrue(!to.isDone());
 
