@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.avarabyeu.restendpoint.http.proxy.annotation;
+package com.github.avarabyeu.restendpoint.http.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

@@ -1,6 +1,8 @@
-package com.github.avarabyeu.restendpoint.http.proxy.annotation;
+package com.github.avarabyeu.restendpoint.http.annotation;
 
 import com.github.avarabyeu.restendpoint.http.HttpMethod;
+import com.github.avarabyeu.restendpoint.http.annotation.Path;
+import com.github.avarabyeu.restendpoint.http.annotation.Rest;
 
 /**
  * @author Andrey Vorobyov
