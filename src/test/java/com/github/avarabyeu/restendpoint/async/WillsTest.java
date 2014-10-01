@@ -74,4 +74,25 @@ public class WillsTest {
         will.obtain();
         Assert.assertThat(results, hasItem(TEST_STRING));
     }
+
+    @Test
+    public void testWhenFailed() {
+        final List<Throwable> results = Lists.newArrayList();
+        RuntimeException throwable = new RuntimeException("");
+        Will<String> will = Wills.failedWill(throwable, String.class).whenFailed(new Action<Throwable>() {
+            @Override
+            public void apply(Throwable throwable) {
+                results.add(throwable);
+            }
+        });
+
+
+        try {
+            /* waits for done */
+            will.obtain();
+        } catch (RuntimeException e) {
+            Assert.assertThat(e, is(throwable));
+        }
+        Assert.assertThat(results, hasItem(throwable));
+    }
 }
