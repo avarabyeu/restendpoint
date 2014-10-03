@@ -142,13 +142,13 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * MultiPartRequest, java.lang.Class)
      */
     @Override
-    public <RQ, RS> Will<RS> post(String resource, MultiPartRequest<RQ> request, Class<RS> clazz) throws RestEndpointIOException {
+    public <RS> Will<RS> post(String resource, MultiPartRequest request, Class<RS> clazz) throws RestEndpointIOException {
         HttpPost post = new HttpPost(spliceUrl(resource));
 
         try {
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-            for (MultiPartRequest.MultiPartSerialized<RQ> serializedPart : request.getSerializedRQs()) {
+            for (MultiPartRequest.MultiPartSerialized<?> serializedPart : request.getSerializedRQs()) {
                 Serializer serializer = getSupportedSerializer(serializedPart);
                 builder.addPart(serializedPart.getPartName(), new StringBody(new String(serializer.serialize(serializedPart.getRequest())),
                         ContentType.parse(serializer.getMimeType())));
@@ -262,15 +262,16 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     /**
      * Executes request command
      *
-     * @param command
-     * @return
+     * @param command REST request representation
+     * @return Future wrapper of REST response
      * @throws RestEndpointIOException
+     * @see {@link com.github.avarabyeu.restendpoint.async.Will}
      */
     @Override
     public <RQ, RS> Will<RS> executeRequest(RestCommand<RQ, RS> command) throws RestEndpointIOException {
         URI uri = spliceUrl(command.getUri());
-        HttpUriRequest rq = null;
-        Serializer serializer = null;
+        HttpUriRequest rq;
+        Serializer serializer;
         switch (command.getHttpMethod()) {
             case GET:
                 rq = new HttpGet(uri);
@@ -306,8 +307,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     /**
      * Splice base URL and URL of resource
      *
-     * @param resource
-     * @return
+     * @param resource REST Resource Path
+     * @return Absolute URL to the REST Resource including server and port
      * @throws RestEndpointIOException
      */
     private URI spliceUrl(String resource) throws RestEndpointIOException {
@@ -321,8 +322,9 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     /**
      * Splice base URL and URL of resource
      *
-     * @param resource
-     * @return
+     * @param resource   REST Resource Path
+     * @param parameters Map of query parameters
+     * @return Absolute URL to the REST Resource including server and port
      * @throws RestEndpointIOException
      */
     private URI spliceUrl(String resource, Map<String, String> parameters) throws RestEndpointIOException {

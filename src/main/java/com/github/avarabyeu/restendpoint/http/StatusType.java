@@ -50,8 +50,8 @@ public enum StatusType {
 	 * Obrains {@link StatusType} from HTTP status code. If there are no status
 	 * defined throws {@link java.lang.IllegalArgumentException}
 	 * 
-	 * @param status
-	 * @return
+	 * @param status HTTP status code
+	 * @return HTTP Response Type
 	 */
 	public static StatusType valueOf(int status) {
 		int seriesCode = status / 100;

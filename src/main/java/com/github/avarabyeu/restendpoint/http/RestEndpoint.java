@@ -60,7 +60,7 @@ public interface RestEndpoint {
      * @return - Response Body
      * @throws RestEndpointIOException
      */
-    <RQ, RS> Will<RS> post(String resource, MultiPartRequest<RQ> request, Class<RS> clazz) throws RestEndpointIOException;
+    <RS> Will<RS> post(String resource, MultiPartRequest request, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP PUT
