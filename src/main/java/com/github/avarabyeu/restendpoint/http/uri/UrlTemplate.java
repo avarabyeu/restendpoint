@@ -73,7 +73,7 @@ public class UrlTemplate {
     /**
      * Merges template. Merger is mutable and cannot be used by several threads
      */
-    public class Merger {
+    public static class Merger {
 
         private StringBuilder template;
 
