@@ -26,14 +26,17 @@ public class RestMethodInfoTest {
         SmartAssert.assertSoft(isAsynchronous(testVoidMethod), is(false), "Incorrect void method detection");
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     String testSyncronousMethod() {
         return null;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     Will<String> testAsyncronousMethod() {
         return null;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     void testVoidMethod() {
 
     }
