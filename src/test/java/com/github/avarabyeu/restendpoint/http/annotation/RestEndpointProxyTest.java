@@ -17,7 +17,7 @@ import java.io.IOException;
  *
  * @author Andrei Varabyeu
  */
-public class AsyncRestEndpointProxyTest1 extends BaseRestEndointTest {
+public class RestEndpointProxyTest extends BaseRestEndointTest {
     private static MockWebServer server = Injector.getInstance().getBean(MockWebServer.class);
 
     private RestInterface restInterface = Injector.getInstance().getBean(RestInterface.class);
