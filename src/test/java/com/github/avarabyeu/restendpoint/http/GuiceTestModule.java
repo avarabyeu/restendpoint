@@ -16,6 +16,7 @@
 
 package com.github.avarabyeu.restendpoint.http;
 
+import com.github.avarabyeu.restendpoint.http.annotation.RestInterface;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
@@ -90,6 +91,15 @@ public class GuiceTestModule implements Module {
         return new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),
                 Lists.<Serializer>newArrayList(new StringSerializer(), new ByteArraySerializer()), new DefaultErrorHandler(),
                 "http://localhost:" + MOCK_PORT);
+    }
+
+    @Provides
+    public RestInterface provideProxy(){
+        return RestEndpoints.create().withBaseUrl("http://localhost:" + MOCK_PORT)
+                .withSerializer(new StringSerializer())
+                .withSerializer(new ByteArraySerializer())
+                .withErrorHandler(new DefaultErrorHandler())
+                .forInterface(RestInterface.class);
     }
 
     private static int findFreePort() {

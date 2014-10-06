@@ -23,7 +23,7 @@ import java.util.Map;
 
 /**
  * REST interface methods parser.
- * Parses all needed metainformation from annotations and builds {@link com.github.avarabyeu.restendpoint.http.RestCommand} based on it
+ * Parses all needed meta information from annotations and builds {@link com.github.avarabyeu.restendpoint.http.RestCommand} based on it
  *
  * @author Andrei Varabyeu
  */
@@ -99,9 +99,9 @@ class RestMethodInfo {
                 }
 
                 pathArguments.put(i, path.value());
-            } else if (method.isAnnotationPresent(Body.class)) {
+            } else if (parameter.isAnnotationPresent(Body.class)) {
                 this.bodyArgument = Optional.of(i);
-            } else if (method.isAnnotationPresent(Query.class)) {
+            } else if (parameter.isAnnotationPresent(Query.class)) {
                 this.queryParameter = Optional.of(i);
             }
         }
