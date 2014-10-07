@@ -33,6 +33,11 @@ public class JaxbSerializerTest {
                         .is(TEST_STRING), "Incorrect serialization result");
     }
 
+    @Test(expected = SerializerException.class)
+    public void testSerializeWrongObject() throws SerializerException {
+        serializer.serialize("this is not a JAXB bean");
+    }
+
     @Test
     public void testDeserialize() throws SerializerException {
         TestBean result = serializer.deserialize(TEST_STRING.getBytes(), TestBean.class);
@@ -40,6 +45,11 @@ public class JaxbSerializerTest {
                 result,
                 CoreMatchers
                         .is(TEST_BEAN), "Incorrect deserialization result");
+    }
+
+    @Test(expected = SerializerException.class)
+    public void testDeserializeNotXml() throws SerializerException {
+        serializer.deserialize("this is not xml".getBytes(), TestBean.class);
     }
 
     @Test
@@ -54,5 +64,10 @@ public class JaxbSerializerTest {
                 CoreMatchers.is(true), "Wrong content type handling. Cannot write test object");
 
         SmartAssert.validateSoftAsserts();
+    }
+
+    @Test(expected = SerializerException.class)
+    public void testWrongContextPath() throws SerializerException {
+        new JaxbSerializer(this.getClass().getPackage().getName());
     }
 }

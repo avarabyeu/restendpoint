@@ -66,13 +66,10 @@ public class DefaultErrorHandler implements ErrorHandler<HttpResponse> {
         switch (statusType) {
             case CLIENT_ERROR:
                 handleClientError(statusCode, statusMessage, errorBody);
-                break;
             case SERVER_ERROR:
                 handleServerError(statusCode, statusMessage, errorBody);
-                break;
             default:
                 handleDefaultError(statusCode, statusMessage, errorBody);
-                break;
         }
     }
 

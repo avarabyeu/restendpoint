@@ -18,6 +18,7 @@ package com.github.avarabyeu.restendpoint.serializer;
 
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.google.common.net.MediaType;
+import com.google.common.reflect.TypeToken;
 import com.smarttested.qa.smartassert.SmartAssert;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
@@ -42,6 +43,15 @@ public class ByteArraySerializerTest {
     @Test
     public void testDeserialize() throws SerializerException {
         byte[] result = serializer.deserialize(TEST_STRING.getBytes(), byte[].class);
+        SmartAssert.assertHard(
+                result,
+                CoreMatchers
+                        .is(TEST_STRING.getBytes()), "Incorrect deserialization result");
+    }
+
+    @Test
+    public void testDeserializeByType() throws SerializerException {
+        byte[] result = serializer.deserialize(TEST_STRING.getBytes(), TypeToken.of(byte[].class).getType());
         SmartAssert.assertHard(
                 result,
                 CoreMatchers

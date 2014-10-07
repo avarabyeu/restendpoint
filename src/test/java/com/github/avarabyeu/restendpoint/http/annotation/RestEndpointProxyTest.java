@@ -3,14 +3,20 @@ package com.github.avarabyeu.restendpoint.http.annotation;
 import com.github.avarabyeu.restendpoint.http.BaseRestEndointTest;
 import com.github.avarabyeu.restendpoint.http.GuiceTestModule;
 import com.github.avarabyeu.restendpoint.http.Injector;
+import com.smarttested.qa.smartassert.SmartAssert;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
+import org.hamcrest.CoreMatchers;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+
+import static com.smarttested.qa.smartassert.SmartAssert.assertSoft;
+import static com.smarttested.qa.smartassert.SmartAssert.validateSoftAsserts;
+import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Tests for synchronous rest endpoint proxy methods
@@ -77,5 +83,19 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
 
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "DELETE / HTTP/1.1", request.getRequestLine());
+    }
+
+    @Test
+    public void testGetWithPath() throws IOException, InterruptedException {
+        String somePath = "somePath";
+        server.enqueue(prepareResponse(SERIALIZED_STRING));
+        String to = restInterface.getWithPath(somePath);
+        Assert.assertNotNull("Recieved Object is null", to);
+        RecordedRequest request = server.takeRequest();
+
+        assertSoft(request.getRequestLine(), is("GET /somePath HTTP/1.1"), "Incorrect Request Line");
+        assertSoft(request.getPath(), is("/" + somePath), "Incorrect Request Path");
+
+        validateSoftAsserts();
     }
 }

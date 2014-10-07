@@ -11,6 +11,9 @@ public interface RestInterface {
     @Rest(method = HttpMethod.GET, url = "/")
     String get();
 
+    @Rest(method = HttpMethod.GET, url = "/{path}")
+    String getWithPath(@Path("path") String path);
+
     @Rest(method = HttpMethod.POST, url = "/")
     String post(@Body String body);
 

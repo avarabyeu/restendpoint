@@ -1,6 +1,8 @@
 package com.github.avarabyeu.restendpoint.http.uri;
 
+
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 
 import javax.annotation.Nullable;
 import java.util.LinkedList;
@@ -53,6 +55,14 @@ public class UrlTemplate {
         return pathVariables.contains(name);
     }
 
+    /**
+     * Returns all found path variables
+     *
+     * @return
+     */
+    public List<String> getPathVariables() {
+        return pathVariables;
+    }
 
     /**
      * Creates new merger. Leaves template instance immutable
@@ -87,9 +97,8 @@ public class UrlTemplate {
             StringBuffer sb = new StringBuffer();
             while (m.find()) {
                 Object replacement = pathParameters.get(m.group(1));
-                if (null == replacement) {
-                    throw new RuntimeException("Unknown path variable: " + m.group(1));
-                }
+                Preconditions.checkState(null != replacement, "Unknown path variable: %s", m.group(1));
+
                 m.appendReplacement(sb, Matcher.quoteReplacement(replacement.toString()));
             }
             m.appendTail(sb);

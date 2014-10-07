@@ -8,8 +8,11 @@ import com.github.avarabyeu.restendpoint.http.annotation.Path;
 import com.github.avarabyeu.restendpoint.http.annotation.Query;
 import com.github.avarabyeu.restendpoint.http.annotation.Rest;
 import com.github.avarabyeu.restendpoint.http.uri.UrlTemplate;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 import com.google.common.reflect.Invokable;
 import com.google.common.reflect.Parameter;
 import com.google.common.reflect.TypeToken;
@@ -94,10 +97,8 @@ class RestMethodInfo {
                 Path path = parameter.getAnnotation(Path.class);
 
                 assert path != null;
-                if (!urlTemplate.hasPathVariable(path.value())) {
-                    throw new RuntimeException("There is no path parameter with name '" + "' declared in url template ['" + urlTemplate + "']");
-                }
-
+                Preconditions.checkState(urlTemplate.hasPathVariable(path.value()),
+                        "There is no path parameter with name '%s' declared in url template", path.value());
                 pathArguments.put(i, path.value());
             } else if (parameter.isAnnotationPresent(Body.class)) {
                 this.bodyArgument = Optional.of(i);
@@ -105,6 +106,15 @@ class RestMethodInfo {
                 this.queryParameter = Optional.of(i);
             }
         }
+
+        validationPathArguments(method);
+    }
+
+    private void validationPathArguments(Invokable<?, ?> method) {
+        Sets.SetView<String> difference = Sets.difference(Sets.newHashSet(urlTemplate.getPathVariables()), Sets.newHashSet(pathArguments.values()));
+        Preconditions.checkState(difference.isEmpty(), "The following path arguments found in URL template, but not found in method signature: [%s]. " +
+                        "Class: [%s]. Method [%s]. Did you forget @Path annotation?", Joiner.on(',').join(difference), method.getDeclaringClass().getSimpleName(),
+                method.getName());
     }
 
     @SuppressWarnings("unchecked")

@@ -53,4 +53,8 @@ public class Injector {
 	public <T> T getBean(Key<T> key) {
         return injector.getInstance(key);
 	}
+
+    public void injectMembers(Object object){
+        this.injector.injectMembers(object);
+    }
 }

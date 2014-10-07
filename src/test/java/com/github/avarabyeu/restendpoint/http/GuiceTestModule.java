@@ -23,7 +23,7 @@ import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.*;
-import com.google.inject.name.Names;
+import com.google.inject.name.Named;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.QueueDispatcher;
@@ -57,16 +57,6 @@ public class GuiceTestModule implements Module {
 
         binder.bind(MockWebServer.class).in(Scopes.NO_SCOPE);
 
-        MockWebServer mockWebServer = new MockWebServer();
-        mockWebServer.setDispatcher(new QueueDispatcher() {
-            @Override
-            public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
-                Uninterruptibles.sleepUninterruptibly(5l, TimeUnit.SECONDS);
-                return super.dispatch(request);
-            }
-        });
-        binder.bind(MockWebServer.class).annotatedWith(Names.named("slow")).toInstance(mockWebServer);
-
     }
 
 
@@ -83,18 +73,31 @@ public class GuiceTestModule implements Module {
     /**
      * Default {@link com.github.avarabyeu.restendpoint.http.RestEndpoint} binding
      *
-     * @param serializer
      * @return
      */
     @Provides
-    public RestEndpoint provideRestEndpoint(Serializer serializer) {
+    public RestEndpoint provideRestEndpoint(ErrorHandler<HttpResponse> errorHandler) {
         return new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),
-                Lists.<Serializer>newArrayList(new StringSerializer(), new ByteArraySerializer()), new DefaultErrorHandler(),
+                Lists.newArrayList(new StringSerializer(), new ByteArraySerializer()), errorHandler,
                 "http://localhost:" + MOCK_PORT);
     }
 
     @Provides
-    public RestInterface provideProxy(){
+    @Named("slow")
+    public MockWebServer provideSlowWsMock() {
+        MockWebServer mockWebServer = new MockWebServer();
+        mockWebServer.setDispatcher(new QueueDispatcher() {
+            @Override
+            public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
+                Uninterruptibles.sleepUninterruptibly(5l, TimeUnit.SECONDS);
+                return super.dispatch(request);
+            }
+        });
+        return mockWebServer;
+    }
+
+    @Provides
+    public RestInterface provideProxy() {
         return RestEndpoints.create().withBaseUrl("http://localhost:" + MOCK_PORT)
                 .withSerializer(new StringSerializer())
                 .withSerializer(new ByteArraySerializer())
