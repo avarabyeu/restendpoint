@@ -22,6 +22,7 @@ import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
 import com.github.avarabyeu.restendpoint.serializer.json.GsonSerializer;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.Invokable;
 import com.google.common.reflect.Reflection;
@@ -172,10 +173,6 @@ public class RestEndpoints {
         }
 
         public <T> T forInterface(@Nonnull Class<T> clazz) {
-            if (!clazz.isInterface()){
-                //TODO fix exception
-                throw new RuntimeException("Provided class is not interface!");
-            }
             return Reflection.newProxy(clazz, new RestEndpointInvocationHandler(clazz, build()));
         }
 

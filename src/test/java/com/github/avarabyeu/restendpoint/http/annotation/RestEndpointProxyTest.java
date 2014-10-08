@@ -3,6 +3,8 @@ package com.github.avarabyeu.restendpoint.http.annotation;
 import com.github.avarabyeu.restendpoint.http.BaseRestEndointTest;
 import com.github.avarabyeu.restendpoint.http.GuiceTestModule;
 import com.github.avarabyeu.restendpoint.http.Injector;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
 import com.smarttested.qa.smartassert.SmartAssert;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
@@ -13,6 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static com.smarttested.qa.smartassert.SmartAssert.assertSoft;
 import static com.smarttested.qa.smartassert.SmartAssert.validateSoftAsserts;
@@ -95,6 +98,26 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
 
         assertSoft(request.getRequestLine(), is("GET /somePath HTTP/1.1"), "Incorrect Request Line");
         assertSoft(request.getPath(), is("/" + somePath), "Incorrect Request Path");
+
+        validateSoftAsserts();
+    }
+
+    @Test
+    public void testGetWithQuert() throws IOException, InterruptedException {
+        Map<String, String> queryParams = ImmutableMap.<String, String>builder()
+                .put("param1", "value1")
+                .put("param2", "value2")
+                .build();
+
+        server.enqueue(prepareResponse(SERIALIZED_STRING));
+        String to = restInterface.getWithQuery(queryParams);
+        Assert.assertNotNull("Recieved Object is null", to);
+        RecordedRequest request = server.takeRequest();
+
+        assertSoft(request.getRequestLine(), is("GET /?param1=value1&param2=value2 HTTP/1.1"), "Incorrect Request Line");
+        assertSoft(request.getPath(), is("/?" + Joiner.on("&")
+                .withKeyValueSeparator("=")
+                .join(queryParams)), "Incorrect Request Path");
 
         validateSoftAsserts();
     }

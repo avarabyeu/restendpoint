@@ -112,8 +112,15 @@ public class UrlTemplate {
                 return this;
             }
 
-            if (template.indexOf("?") != -1) {
-                template.append("&");
+            /* remove last '/' if exists */
+            int lastCharIndex = template.length() - 1;
+            if ('/' == template.charAt(lastCharIndex)){
+                template.deleteCharAt(lastCharIndex);
+            }
+
+            /* add '?' if doesn't exist */
+            if (template.indexOf("?") == -1) {
+                template.append("?");
             }
             Joiner.on('&').withKeyValueSeparator("=").appendTo(template, parameters);
             return this;
