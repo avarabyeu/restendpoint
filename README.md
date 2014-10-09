@@ -27,7 +27,7 @@ Last stable version:
 <dependency>
     <groupId>com.github.avarabyeu</groupId>
     <artifactId>restendpoint</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.5</version>
 </dependency>
 ```
 
@@ -180,11 +180,11 @@ MultiPartRequest multiPartRequest = new MultiPartRequest.Builder().
         build();
 
 Will<String> post = endpoint.post("/", multiPartRequest, String.class);
+```
 
 Take a look at the request builder. We have possibility to provide some part as is (binary part, as byte array) and also
 we can add part which will be serialized using some serializer. This pretty convenient when you need to send multipart request
 with JSON's, for example
-```
 
 #### DELETE
 
@@ -198,3 +198,25 @@ Will<String> deleteResponseBody = endpoint.delete("/", String.class);
 RestCommand<String, String> command = new RestCommand<String, String>("/", HttpMethod.POST, "request body", String.class);
 Will<String> to = endpoint.executeRequest(command);
 ```
+
+### Serializers
+To provide a convenient way for working with different data formats, RestEndpoint uses serializers. 
+Serializer is basically abstraction for converting data between java data types and data transmission formats (JSON, XML, String, etc). 
+For example, if content type of your responses is 'application/json' you need to add GsonSerializer, based on Google Gson library (https://code.google.com/p/google-gson/)
+
+```java
+RestEndpoint endpoint = RestEndpoints.create()
+   .withBaseUrl("http://base_url_of_rest_service")
+   .withSerializer(new GsonSerializer()).build();
+```
+RestEndpoint reads content type of incoming response and decides which serializer to use (based on response content type). It also adds correct content type to your
+outcoming requests depending on serializer used for body converting.
+
+For now, RestEndpoints supports the following list of serializers:
+
+* XML (based on JAXB - JaxbSerializer) 
+* JSON (based on Gson - GsonSerializer)
+* Plain String (StringSerializer)
+* Byte Array (ByteArraySerializer)
+
+By the way, you can implement your own serializer (by implementing appropriate interface) and provide it to RestEndpoint. 
