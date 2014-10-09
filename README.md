@@ -43,43 +43,43 @@ Only thing you need is to create interface with method declarations marked with 
 
 public interface SomeYourService {
     /* just simple GET request */
-    @Rest(method = HttpMethod.GET, url = "/")
+    @Request(method = HttpMethod.GET, url = "/")
     String get();
 
     /* GET request with placeholder in path */
-    @Rest(method = HttpMethod.GET, url = "/{path}")
+    @Request(method = HttpMethod.GET, url = "/{path}")
     String getWithPath(@Path("path") String path);
 
     /* GET request with query parameters, e.g. ?someParameter=someValue */
-    @Rest(method = HttpMethod.GET, url = "/")
+    @Request(method = HttpMethod.GET, url = "/")
     String getWithQuery(@Query Map<String, String> queryParams);
 
     /* POST request with some body */
-    @Rest(method = HttpMethod.POST, url = "/")
+    @Request(method = HttpMethod.POST, url = "/")
     String post(@Body String body);
 
     /* PUT request with some body */
-    @Rest(method = HttpMethod.PUT, url = "/")
+    @Request(method = HttpMethod.PUT, url = "/")
     String put(@Body String body);
 
     /* DELETE request */
-    @Rest(method = HttpMethod.DELETE, url = "/")
+    @Request(method = HttpMethod.DELETE, url = "/")
     String delete();
 
     /* Asynchronous GET request */
-    @Rest(method = HttpMethod.GET, url = "/")
+    @Request(method = HttpMethod.GET, url = "/")
     Will<String> getAsync();
 
     /* Asynchronous POST request */
-    @Rest(method = HttpMethod.POST, url = "/")
+    @Request(method = HttpMethod.POST, url = "/")
     Will<String> postAsync(@Body String body);
 
     /* Asynchronous PUT request */
-    @Rest(method = HttpMethod.PUT, url = "/")
+    @Request(method = HttpMethod.PUT, url = "/")
     Will<String> putAsync(@Body String body);
 
     /* Asynchronous DELETE request */
-    @Rest(method = HttpMethod.DELETE, url = "/")
+    @Request(method = HttpMethod.DELETE, url = "/")
     Will<String> deleteAsync();
 }
 
