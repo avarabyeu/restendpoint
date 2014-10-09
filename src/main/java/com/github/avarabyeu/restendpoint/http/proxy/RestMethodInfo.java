@@ -6,7 +6,7 @@ import com.github.avarabyeu.restendpoint.http.RestCommand;
 import com.github.avarabyeu.restendpoint.http.annotation.Body;
 import com.github.avarabyeu.restendpoint.http.annotation.Path;
 import com.github.avarabyeu.restendpoint.http.annotation.Query;
-import com.github.avarabyeu.restendpoint.http.annotation.Rest;
+import com.github.avarabyeu.restendpoint.http.annotation.Request;
 import com.github.avarabyeu.restendpoint.http.uri.UrlTemplate;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
@@ -64,7 +64,7 @@ class RestMethodInfo {
     }
 
     static boolean isRestMethodDefinition(Method m) {
-        return m.isAnnotationPresent(Rest.class);
+        return m.isAnnotationPresent(Request.class);
     }
 
     static boolean isAsynchronous(Invokable<?, ?> method) {
@@ -82,11 +82,11 @@ class RestMethodInfo {
     }
 
     private void parseMethod(Invokable<?, ?> method) {
-        Rest rest = method.getAnnotation(Rest.class);
+        Request request = method.getAnnotation(Request.class);
 
-        this.urlTemplate = UrlTemplate.create(rest.url());
+        this.urlTemplate = UrlTemplate.create(request.url());
         this.asynchronous = isAsynchronous(method);
-        this.method = rest.method();
+        this.method = request.method();
         this.responseType = method.getReturnType();
 
         /* walk through method parameters and find marked with internal annotations */

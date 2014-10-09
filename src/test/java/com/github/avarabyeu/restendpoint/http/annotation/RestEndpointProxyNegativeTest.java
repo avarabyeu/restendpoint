@@ -59,14 +59,14 @@ public class RestEndpointProxyNegativeTest {
     }
 
     interface PathIncorrectInterface {
-        @Rest(method = HttpMethod.GET, url = "/{path}")
+        @Request(method = HttpMethod.GET, url = "/{path}")
         String getWithPathIncorrect(String path);
 
     }
 
     interface MapParameterIncorrectInterface {
 
-        @Rest(method = HttpMethod.GET, url = "/")
+        @Request(method = HttpMethod.GET, url = "/")
         String getWithQueryString(@Query String queryParams);
 
     }
