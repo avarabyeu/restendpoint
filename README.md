@@ -199,7 +199,7 @@ RestCommand<String, String> command = new RestCommand<String, String>("/", HttpM
 Will<String> to = endpoint.executeRequest(command);
 ```
 
-### Serializers
+## Serializers
 To provide a convenient way for working with different data formats, RestEndpoint uses serializers. 
 Serializer is basically abstraction for converting data between java data types and data transmission formats (JSON, XML, String, etc). 
 For example, if content type of your responses is 'application/json' you need to add GsonSerializer, based on Google Gson library (https://code.google.com/p/google-gson/)
