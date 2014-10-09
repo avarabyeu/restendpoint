@@ -87,9 +87,10 @@ public interface SomeYourService {
 ... and create instance of your service:
 
 ```java
-      SomeYourService service = RestEndpoints.create().withBaseUrl("http://localhost")
-                .withSerializer(new StringSerializer())                
-                .forInterface(RestInterface.class);
+SomeYourService service = RestEndpoints.create()
+        .withBaseUrl("http://localhost")
+        .withSerializer(new StringSerializer())                
+        .forInterface(RestInterface.class);
 }
 
 ```
