@@ -21,7 +21,7 @@
       <div class="inner">
         <h1>Restendpoint</h1>
         <h2>Asynchronous REST client based on Apache Http Async</h2>
-        <a href="https://github.com/avarabyeu/restendpoint" class="button"><small>View project on</small>GitHub</a>
+        <a href="https://github.com/avarabyeu/restendpoint" class="button"><small>View project on</small> GitHub</a>
       </div>
     </header>
 
@@ -55,8 +55,12 @@
 
 <ul>
 <li><a href="#get">GET</a></li>
+<li><a href="#post/put">POST/PUT</a></li>
+<li><a href="#post-multipart">POST Multipart</a></li>
+<li><a href="#as-command">As Command</a></li>
 </ul>
 </li>
+<li><a href="#serializers">Serializers</a></li>
 </ul>
 </li>
 </ul><p>Basically, <strong>restendpoint</strong> is convenient wrapper around 
@@ -70,7 +74,7 @@
 <div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>com.github.avarabyeu<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>restendpoint<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.0.2<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.0.5<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div>
 
@@ -79,6 +83,71 @@
 
 <h3>
 <a name="as-simple-as-its-possible" class="anchor" href="#as-simple-as-its-possible"><span class="octicon octicon-link"></span></a>As Simple As It's Possible</h3>
+
+<h4>
+<a name="interface-based-restendpoint" class="anchor" href="#interface-based-restendpoint"><span class="octicon octicon-link"></span></a>Interface-based RestEndpoint</h4>
+
+<p>Using RestEndpoint, you do not need to create implementation of you http client. No any implementation at all! 
+Only thing you need is to create interface with method declarations marked with appropriate annotations:</p>
+
+<div class="highlight highlight-java"><pre>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SomeYourService</span> <span class="o">{</span>
+    <span class="cm">/* just simple GET request */</span>
+    <span class="nd">@Rest</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
+    <span class="n">String</span> <span class="nf">get</span><span class="o">();</span>
+
+    <span class="cm">/* GET request with placeholder in path */</span>
+    <span class="nd">@Rest</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/{path}"</span><span class="o">)</span>
+    <span class="n">String</span> <span class="nf">getWithPath</span><span class="o">(</span><span class="nd">@Path</span><span class="o">(</span><span class="s">"path"</span><span class="o">)</span> <span class="n">String</span> <span class="n">path</span><span class="o">);</span>
+
+    <span class="cm">/* GET request with query parameters, e.g. ?someParameter=someValue */</span>
+    <span class="nd">@Rest</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
+    <span class="n">String</span> <span class="nf">getWithQuery</span><span class="o">(</span><span class="nd">@Query</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">queryParams</span><span class="o">);</span>
+
+    <span class="cm">/* POST request with some body */</span>
+    <span class="nd">@Rest</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">POST</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
+    <span class="n">String</span> <span class="nf">post</span><span class="o">(</span><span class="nd">@Body</span> <span class="n">String</span> <span class="n">body</span><span class="o">);</span>
+
+    <span class="cm">/* PUT request with some body */</span>
+    <span class="nd">@Rest</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">PUT</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
+    <span class="n">String</span> <span class="nf">put</span><span class="o">(</span><span class="nd">@Body</span> <span class="n">String</span> <span class="n">body</span><span class="o">);</span>
+
+    <span class="cm">/* DELETE request */</span>
+    <span class="nd">@Rest</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">DELETE</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
+    <span class="n">String</span> <span class="nf">delete</span><span class="o">();</span>
+
+    <span class="cm">/* Asynchronous GET request */</span>
+    <span class="nd">@Rest</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
+    <span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">getAsync</span><span class="o">();</span>
+
+    <span class="cm">/* Asynchronous POST request */</span>
+    <span class="nd">@Rest</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">POST</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
+    <span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">postAsync</span><span class="o">(</span><span class="nd">@Body</span> <span class="n">String</span> <span class="n">body</span><span class="o">);</span>
+
+    <span class="cm">/* Asynchronous PUT request */</span>
+    <span class="nd">@Rest</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">PUT</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
+    <span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">putAsync</span><span class="o">(</span><span class="nd">@Body</span> <span class="n">String</span> <span class="n">body</span><span class="o">);</span>
+
+    <span class="cm">/* Asynchronous DELETE request */</span>
+    <span class="nd">@Rest</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">DELETE</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
+    <span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">deleteAsync</span><span class="o">();</span>
+<span class="o">}</span>
+
+</pre></div>
+
+<p>... and create instance of your service:</p>
+
+<div class="highlight highlight-java"><pre>      <span class="n">SomeYourService</span> <span class="n">service</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">create</span><span class="o">().</span><span class="na">withBaseUrl</span><span class="o">(</span><span class="s">"http://localhost"</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">withSerializer</span><span class="o">(</span><span class="k">new</span> <span class="nf">StringSerializer</span><span class="o">())</span>                
+                <span class="o">.</span><span class="na">forInterface</span><span class="o">(</span><span class="n">RestInterface</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="o">}</span>
+
+</pre></div>
+
+<p>That's it! RestEndpoint reads your interface and builds implementation based on Java Proxies. No any actions is required from you, http client is done. </p>
+
+<h4>
+<a name="classic-restendpoint" class="anchor" href="#classic-restendpoint"><span class="octicon octicon-link"></span></a>Classic RestEndpoint</h4>
 
 <div class="highlight highlight-java"><pre><span class="cm">/* Creates default RestEndpoint */</span>
 <span class="n">RestEndpoint</span> <span class="n">endpoint</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">createDefault</span><span class="o">(</span><span class="s">"http://airports.pidgets.com/"</span><span class="o">);</span>
@@ -106,7 +175,7 @@
 <div class="highlight highlight-java"><pre><span class="n">RestEndpoint</span> <span class="n">endpoint</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">createDefault</span><span class="o">(</span><span class="s">"http://airports.pidgets.com/"</span><span class="o">);</span>
 </pre></div>
 
-<p>Creates RestEndpoint with all availible serializers, default http client configuration and built-in error handler. </p>
+<p>Creates RestEndpoint with all available serializers, default http client configuration and built-in error handler. </p>
 
 <h4>
 <a name="using-builder" class="anchor" href="#using-builder"><span class="octicon octicon-link"></span></a>Using Builder</h4>
@@ -148,6 +217,67 @@
 
 <div class="highlight highlight-java"><pre><span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">responseBody</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/"</span><span class="o">,</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
 </pre></div>
+
+<h4>
+<a name="postput" class="anchor" href="#postput"><span class="octicon octicon-link"></span></a>POST/PUT</h4>
+
+<div class="highlight highlight-java"><pre><span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">postResponseBody</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">post</span><span class="o">(</span><span class="s">"/"</span><span class="o">,</span> <span class="s">"this is request body"</span><span class="o">,</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">putResponseBody</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"/"</span><span class="o">,</span> <span class="s">"this is request body"</span><span class="o">,</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</pre></div>
+
+<h4>
+<a name="post-multipart" class="anchor" href="#post-multipart"><span class="octicon octicon-link"></span></a>POST Multipart</h4>
+
+<div class="highlight highlight-java"><pre><span class="n">MultiPartRequest</span> <span class="n">multiPartRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MultiPartRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">().</span>
+        <span class="n">addBinaryPart</span><span class="o">(</span><span class="s">"part name"</span><span class="o">,</span> <span class="s">"filename.txt"</span><span class="o">,</span>
+        <span class="n">MediaType</span><span class="o">.</span><span class="na">OCTET_STREAM</span><span class="o">.</span><span class="na">toString</span><span class="o">(),</span>
+        <span class="n">ByteSource</span><span class="o">.</span><span class="na">wrap</span><span class="o">(</span><span class="s">"here is body"</span><span class="o">.</span><span class="na">getBytes</span><span class="o">())).</span>
+        <span class="n">addSerializedPart</span><span class="o">(</span><span class="s">"this part will be serialized using serializer"</span><span class="o">,</span> <span class="s">"part body"</span><span class="o">).</span>
+        <span class="n">build</span><span class="o">();</span>
+
+<span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">post</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">post</span><span class="o">(</span><span class="s">"/"</span><span class="o">,</span> <span class="n">multiPartRequest</span><span class="o">,</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</pre></div>
+
+<p>Take a look at the request builder. We have possibility to provide some part as is (binary part, as byte array) and also
+we can add part which will be serialized using some serializer. This pretty convenient when you need to send multipart request
+with JSON's, for example</p>
+
+<h4>
+<a name="delete" class="anchor" href="#delete"><span class="octicon octicon-link"></span></a>DELETE</h4>
+
+<div class="highlight highlight-java"><pre><span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">deleteResponseBody</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">delete</span><span class="o">(</span><span class="s">"/"</span><span class="o">,</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</pre></div>
+
+<h4>
+<a name="as-command" class="anchor" href="#as-command"><span class="octicon octicon-link"></span></a>AS COMMAND</h4>
+
+<div class="highlight highlight-java"><pre><span class="n">RestCommand</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">command</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RestCommand</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;(</span><span class="s">"/"</span><span class="o">,</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">POST</span><span class="o">,</span> <span class="s">"request body"</span><span class="o">,</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">to</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">executeRequest</span><span class="o">(</span><span class="n">command</span><span class="o">);</span>
+</pre></div>
+
+<h3>
+<a name="serializers" class="anchor" href="#serializers"><span class="octicon octicon-link"></span></a>Serializers</h3>
+
+<p>To provide a convenient way for working with different data formats, RestEndpoint uses serializers. 
+Serializer is basically abstraction for converting data between java data types and data transmission formats (JSON, XML, String, etc). 
+For example, if content type of your responses is 'application/json' you need to add GsonSerializer, based on Google Gson library (<a href="https://code.google.com/p/google-gson/">https://code.google.com/p/google-gson/</a>)</p>
+
+<div class="highlight highlight-java"><pre><span class="n">RestEndpoint</span> <span class="n">endpoint</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">create</span><span class="o">()</span>
+   <span class="o">.</span><span class="na">withBaseUrl</span><span class="o">(</span><span class="s">"http://base_url_of_rest_service"</span><span class="o">)</span>
+   <span class="o">.</span><span class="na">withSerializer</span><span class="o">(</span><span class="k">new</span> <span class="nf">GsonSerializer</span><span class="o">()).</span><span class="na">build</span><span class="o">();</span>
+</pre></div>
+
+<p>RestEndpoint reads content type of incoming response and decides which serializer to use (based on response content type). It also adds correct content type to your
+outcoming requests depending on serializer used for body converting.</p>
+
+<p>For now, RestEndpoints supports the following list of serializers:</p>
+
+<ul>
+<li>XML (based on JAXB - JaxbSerializer) </li>
+<li>JSON (based on Gson - GsonSerializer)</li>
+<li>Plain String (StringSerializer)</li>
+<li>Byte Array (ByteArraySerializer)</li>
+</ul><p>By the way, you can implement your own serializer (by implementing appropriate interface) and provide it to RestEndpoint. </p>
         </section>
 
         <aside id="sidebar">
