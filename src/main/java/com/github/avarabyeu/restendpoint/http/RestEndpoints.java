@@ -22,11 +22,8 @@ import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
 import com.github.avarabyeu.restendpoint.serializer.json.GsonSerializer;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Invokable;
 import com.google.common.reflect.Reflection;
-import com.google.common.reflect.TypeToken;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -66,6 +63,19 @@ public class RestEndpoints {
                         new ByteArraySerializer(), new GsonSerializer()),
                 new DefaultErrorHandler(),
                 endpointUrl);
+    }
+
+    /**
+     * Creates interface implementation (via proxy) of provided class using RestEndpoint as rest client
+     * <b>Only interfaces are supported!</>
+     *
+     * @param clazz    - interface to be proxied
+     * @param endpoint - RestEndpoint to be used as rest client
+     * @param <T>      - Type of interface to be proxied
+     * @return interface implementation (e.g.) just proxy
+     */
+    public static <T> T forInterface(@Nonnull Class<T> clazz, RestEndpoint endpoint) {
+        return Reflection.newProxy(clazz, new RestEndpointInvocationHandler(clazz, endpoint));
     }
 
     /**
@@ -172,8 +182,16 @@ public class RestEndpoints {
             return this;
         }
 
+        /**
+         * Builds RestEndpoints and created proxy implementation for provided class
+         * <b>Only interfaces are supported!</>
+         *
+         * @param clazz - interface to be proxied
+         * @param <T>   - type of interface to be proxied
+         * @return - interface implementation based on proxy
+         */
         public <T> T forInterface(@Nonnull Class<T> clazz) {
-            return Reflection.newProxy(clazz, new RestEndpointInvocationHandler(clazz, build()));
+            return RestEndpoints.forInterface(clazz, build());
         }
 
     }
