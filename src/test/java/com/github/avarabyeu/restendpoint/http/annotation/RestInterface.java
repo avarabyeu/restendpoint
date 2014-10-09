@@ -17,9 +17,6 @@ public interface RestInterface {
     String getWithPath(@Path("path") String path);
 
     @Rest(method = HttpMethod.GET, url = "/")
-    String getWithQuery(@Query String queryParams);
-
-    @Rest(method = HttpMethod.GET, url = "/")
     String getWithQuery(@Query Map<String, String> queryParams);
 
     @Rest(method = HttpMethod.POST, url = "/")

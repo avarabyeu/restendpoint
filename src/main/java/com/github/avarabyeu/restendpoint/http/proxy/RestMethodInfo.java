@@ -103,6 +103,8 @@ class RestMethodInfo {
             } else if (parameter.isAnnotationPresent(Body.class)) {
                 this.bodyArgument = Optional.of(i);
             } else if (parameter.isAnnotationPresent(Query.class)) {
+                Preconditions.checkArgument(TypeToken.of(Map.class).isAssignableFrom(parameter.getType()),
+                        "@Query parameters are expected to be maps. '%s' is not a Map", parameter.getType());
                 this.queryParameter = Optional.of(i);
             }
         }

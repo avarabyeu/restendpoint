@@ -5,20 +5,15 @@ import com.github.avarabyeu.restendpoint.http.GuiceTestModule;
 import com.github.avarabyeu.restendpoint.http.Injector;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
-import com.smarttested.qa.smartassert.SmartAssert;
+import com.smarttested.qa.smartassert.junit.SoftAssertVerifier;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
-import org.hamcrest.CoreMatchers;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.IOException;
 import java.util.Map;
 
 import static com.smarttested.qa.smartassert.SmartAssert.assertSoft;
-import static com.smarttested.qa.smartassert.SmartAssert.validateSoftAsserts;
 import static org.hamcrest.CoreMatchers.is;
 
 /**
@@ -41,6 +36,10 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
     public static void after() throws IOException {
         server.shutdown();
     }
+
+    @Rule
+    public SoftAssertVerifier runInThread = SoftAssertVerifier.instance();
+
 
     @Test
     public void testGet() throws IOException, InterruptedException {
@@ -98,12 +97,10 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
 
         assertSoft(request.getRequestLine(), is("GET /somePath HTTP/1.1"), "Incorrect Request Line");
         assertSoft(request.getPath(), is("/" + somePath), "Incorrect Request Path");
-
-        validateSoftAsserts();
     }
 
     @Test
-    public void testGetWithQuert() throws IOException, InterruptedException {
+    public void testGetWithQuery() throws IOException, InterruptedException {
         Map<String, String> queryParams = ImmutableMap.<String, String>builder()
                 .put("param1", "value1")
                 .put("param2", "value2")
@@ -119,6 +116,17 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
                 .withKeyValueSeparator("=")
                 .join(queryParams)), "Incorrect Request Path");
 
-        validateSoftAsserts();
     }
+
+    @Test
+    public void testGetWithQueryNull() throws IOException, InterruptedException {
+        server.enqueue(prepareResponse(SERIALIZED_STRING));
+        String to = restInterface.getWithQuery(null);
+        Assert.assertNotNull("Recieved Object is null", to);
+        RecordedRequest request = server.takeRequest();
+
+        assertSoft(request.getRequestLine(), is("GET / HTTP/1.1"), "Incorrect Request Line");
+        assertSoft(request.getPath(), is("/"), "Incorrect Request Path");
+    }
+
 }
