@@ -145,8 +145,6 @@ Only thing you need is to create interface with method declarations marked with 
         <span class="o">.</span><span class="na">withBaseUrl</span><span class="o">(</span><span class="s">"http://localhost"</span><span class="o">)</span>
         <span class="o">.</span><span class="na">withSerializer</span><span class="o">(</span><span class="k">new</span> <span class="nf">StringSerializer</span><span class="o">())</span>                
         <span class="o">.</span><span class="na">forInterface</span><span class="o">(</span><span class="n">RestInterface</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-<span class="o">}</span>
-
 </pre></div>
 
 <p>That's it! RestEndpoint reads your interface and builds implementation based on Java Proxies. No any actions is required from you, http client is done. </p>
