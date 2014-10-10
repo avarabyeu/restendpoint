@@ -91,8 +91,6 @@ SomeYourService service = RestEndpoints.create()
         .withBaseUrl("http://localhost")
         .withSerializer(new StringSerializer())                
         .forInterface(RestInterface.class);
-}
-
 ```
 
 That's it! RestEndpoint reads your interface and builds implementation based on Java Proxies. No any actions is required from you, http client is done. 
