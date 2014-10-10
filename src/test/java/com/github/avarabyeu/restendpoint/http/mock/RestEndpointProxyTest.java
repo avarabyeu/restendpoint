@@ -54,7 +54,7 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
     }
 
     @Rule
-    public SoftAssertVerifier runInThread = SoftAssertVerifier.instance();
+    public SoftAssertVerifier verifier = SoftAssertVerifier.instance();
 
 
     @Test
