@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package com.github.avarabyeu.restendpoint.http.annotation;
+package com.github.avarabyeu.restendpoint.http.mock;
 
 import com.github.avarabyeu.restendpoint.async.Will;
 import com.github.avarabyeu.restendpoint.http.HttpMethod;
+import com.github.avarabyeu.restendpoint.http.annotation.Body;
+import com.github.avarabyeu.restendpoint.http.annotation.Path;
+import com.github.avarabyeu.restendpoint.http.annotation.Query;
+import com.github.avarabyeu.restendpoint.http.annotation.Request;
 
 import java.util.Map;
 

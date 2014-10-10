@@ -16,7 +16,7 @@
 
 package com.github.avarabyeu.restendpoint.http;
 
-import com.github.avarabyeu.restendpoint.http.annotation.RestInterface;
+import com.github.avarabyeu.restendpoint.http.mock.RestInterface;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;

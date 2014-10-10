@@ -138,7 +138,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <excludes>
-                                <exclude>**/http/*.java</exclude>
+                                <exclude>**/http/mock/*.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>

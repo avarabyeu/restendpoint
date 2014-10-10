@@ -15,9 +15,10 @@
  */
 
 
-package com.github.avarabyeu.restendpoint.http;
+package com.github.avarabyeu.restendpoint.http.mock;
 
 import com.github.avarabyeu.restendpoint.async.Will;
+import com.github.avarabyeu.restendpoint.http.*;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;

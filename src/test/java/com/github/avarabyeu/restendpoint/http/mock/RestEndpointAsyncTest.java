@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.github.avarabyeu.restendpoint.http;
+package com.github.avarabyeu.restendpoint.http.mock;
 
 import com.github.avarabyeu.restendpoint.async.Will;
+import com.github.avarabyeu.restendpoint.http.*;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import org.junit.AfterClass;
 import org.junit.Assert;

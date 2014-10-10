@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.avarabyeu.restendpoint.http.annotation;
+package com.github.avarabyeu.restendpoint.http.mock;
 
 import com.github.avarabyeu.restendpoint.async.Will;
 import com.github.avarabyeu.restendpoint.http.BaseRestEndointTest;
