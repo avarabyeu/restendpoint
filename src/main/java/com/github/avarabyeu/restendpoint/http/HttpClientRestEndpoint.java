@@ -16,11 +16,11 @@
 
 package com.github.avarabyeu.restendpoint.http;
 
-import com.github.avarabyeu.restendpoint.async.Will;
-import com.github.avarabyeu.restendpoint.async.Wills;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
+import com.github.avarabyeu.wills.Will;
+import com.github.avarabyeu.wills.Wills;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.SettableFuture;
 import org.apache.http.HttpEntity;
@@ -265,7 +265,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @param command REST request representation
      * @return Future wrapper of REST response
      * @throws RestEndpointIOException
-     * @see {@link com.github.avarabyeu.restendpoint.async.Will}
+     * @see {@link com.github.avarabyeu.wills.Will}
      */
     @Override
     public <RQ, RS> Will<RS> executeRequest(RestCommand<RQ, RS> command) throws RestEndpointIOException {

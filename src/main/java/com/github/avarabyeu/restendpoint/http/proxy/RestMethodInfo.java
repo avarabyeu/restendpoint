@@ -1,6 +1,5 @@
 package com.github.avarabyeu.restendpoint.http.proxy;
 
-import com.github.avarabyeu.restendpoint.async.Will;
 import com.github.avarabyeu.restendpoint.http.HttpMethod;
 import com.github.avarabyeu.restendpoint.http.RestCommand;
 import com.github.avarabyeu.restendpoint.http.annotation.Body;
@@ -8,6 +7,7 @@ import com.github.avarabyeu.restendpoint.http.annotation.Path;
 import com.github.avarabyeu.restendpoint.http.annotation.Query;
 import com.github.avarabyeu.restendpoint.http.annotation.Request;
 import com.github.avarabyeu.restendpoint.http.uri.UrlTemplate;
+import com.github.avarabyeu.wills.Will;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;

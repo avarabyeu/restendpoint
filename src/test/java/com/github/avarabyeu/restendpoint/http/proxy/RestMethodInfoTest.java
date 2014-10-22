@@ -15,9 +15,11 @@
  */
 package com.github.avarabyeu.restendpoint.http.proxy;
 
-import com.github.avarabyeu.restendpoint.async.Will;
+import com.github.avarabyeu.wills.Will;
 import com.google.common.reflect.Invokable;
 import com.smarttested.qa.smartassert.SmartAssert;
+import com.smarttested.qa.smartassert.junit.SoftAssertVerifier;
+import org.junit.Rule;
 import org.junit.Test;
 
 import static com.github.avarabyeu.restendpoint.http.proxy.RestMethodInfo.isAsynchronous;
@@ -28,6 +30,8 @@ import static org.hamcrest.CoreMatchers.is;
  */
 public class RestMethodInfoTest {
 
+    @Rule
+    public SoftAssertVerifier verifier = SoftAssertVerifier.instance();
 
     @Test
     public void testSynchronousParser() throws NoSuchMethodException {

@@ -16,8 +16,8 @@
 
 package com.github.avarabyeu.restendpoint.http;
 
-import com.github.avarabyeu.restendpoint.async.Will;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
+import com.github.avarabyeu.wills.Will;
 
 import java.lang.reflect.Type;
 import java.util.Map;

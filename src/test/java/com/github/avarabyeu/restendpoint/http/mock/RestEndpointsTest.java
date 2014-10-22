@@ -17,12 +17,12 @@
 
 package com.github.avarabyeu.restendpoint.http.mock;
 
-import com.github.avarabyeu.restendpoint.async.Will;
 import com.github.avarabyeu.restendpoint.http.*;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
+import com.github.avarabyeu.wills.Will;
 import com.google.common.net.HttpHeaders;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import org.apache.commons.codec.binary.Base64;

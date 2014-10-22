@@ -1,8 +1,8 @@
 package com.github.avarabyeu.restendpoint.http.proxy;
 
-import com.github.avarabyeu.restendpoint.async.Will;
 import com.github.avarabyeu.restendpoint.http.RestEndpoint;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
+import com.github.avarabyeu.wills.Will;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
