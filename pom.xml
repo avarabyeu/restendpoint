@@ -10,7 +10,7 @@
 
     <groupId>com.github.avarabyeu</groupId>
     <artifactId>restendpoint</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7-SNAPSHOT</version>
 
     <name>RestEndpoint</name>
     <description>Asynchronous Rest/HTTP client based on Apache Async HTTP Client</description>
