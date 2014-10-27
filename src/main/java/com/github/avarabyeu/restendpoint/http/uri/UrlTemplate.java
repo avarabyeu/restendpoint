@@ -3,6 +3,7 @@ package com.github.avarabyeu.restendpoint.http.uri;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.google.common.net.UrlEscapers;
 
 import javax.annotation.Nullable;
 import java.util.LinkedList;
@@ -99,7 +100,7 @@ public class UrlTemplate {
                 Object replacement = pathParameters.get(m.group(1));
                 Preconditions.checkState(null != replacement, "Unknown path variable: %s", m.group(1));
 
-                m.appendReplacement(sb, Matcher.quoteReplacement(replacement.toString()));
+                m.appendReplacement(sb, Matcher.quoteReplacement(UrlEscapers.urlPathSegmentEscaper().escape(replacement.toString())));
             }
             m.appendTail(sb);
 
