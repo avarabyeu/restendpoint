@@ -53,8 +53,22 @@ public class RestEndpoints {
      * Creates default {@link com.github.avarabyeu.restendpoint.http.RestEndpoint} for provided endpoint URL. <\br>
      * Adds {@link com.github.avarabyeu.restendpoint.http.DefaultErrorHandler} and all possible serializers
      *
-     * @param endpointUrl
-     * @return
+     * @return created RestEndpoint
+     */
+    public static RestEndpoint createDefault() {
+        return new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),
+                Lists.<Serializer>newArrayList(
+                        new StringSerializer(),
+                        new ByteArraySerializer(), new GsonSerializer()),
+                new DefaultErrorHandler());
+    }
+
+    /**
+     * Creates default {@link com.github.avarabyeu.restendpoint.http.RestEndpoint} for provided endpoint URL. <\br>
+     * Adds {@link com.github.avarabyeu.restendpoint.http.DefaultErrorHandler} and all possible serializers
+     *
+     * @param endpointUrl Base endpoint URL
+     * @return created RestEndpoint
      */
     public static RestEndpoint createDefault(String endpointUrl) {
         return new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),

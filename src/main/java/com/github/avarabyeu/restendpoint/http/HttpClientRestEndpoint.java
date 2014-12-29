@@ -22,6 +22,7 @@ import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.github.avarabyeu.wills.Will;
 import com.github.avarabyeu.wills.Wills;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.util.concurrent.SettableFuture;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -84,6 +85,17 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @param httpClient   Apache Async Http Client
      * @param serializers  Serializer for converting HTTP messages. Shouldn't be null
      * @param errorHandler Error handler for HTTP messages
+     */
+    public HttpClientRestEndpoint(CloseableHttpAsyncClient httpClient, List<Serializer> serializers, ErrorHandler<HttpResponse> errorHandler) {
+        this(httpClient, serializers, errorHandler, null);
+    }
+
+    /**
+     * Default constructor.
+     *
+     * @param httpClient   Apache Async Http Client
+     * @param serializers  Serializer for converting HTTP messages. Shouldn't be null
+     * @param errorHandler Error handler for HTTP messages
      * @param baseUrl      REST WebService Base URL
      */
     public HttpClientRestEndpoint(CloseableHttpAsyncClient httpClient, List<Serializer> serializers, ErrorHandler<HttpResponse> errorHandler,
@@ -92,7 +104,9 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         Preconditions.checkArgument(null != serializers && !serializers.isEmpty(), "There is no any serializer provided");
         this.serializers = serializers;
 
-        Preconditions.checkArgument(IOUtils.isValidUrl(baseUrl), "'%s' is not valid URL", baseUrl);
+        if (!Strings.isNullOrEmpty(baseUrl)) {
+            Preconditions.checkArgument(IOUtils.isValidUrl(baseUrl), "'%s' is not valid URL", baseUrl);
+        }
         this.baseUrl = baseUrl;
 
         this.errorHandler = errorHandler == null ? new DefaultErrorHandler() : errorHandler;
@@ -327,9 +341,15 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @return Absolute URL to the REST Resource including server and port
      * @throws RestEndpointIOException
      */
-    private URI spliceUrl(String resource, Map<String, String> parameters) throws RestEndpointIOException {
+    URI spliceUrl(String resource, Map<String, String> parameters) throws RestEndpointIOException {
         try {
-            URIBuilder builder = new URIBuilder(baseUrl).setPath(resource);
+            URIBuilder builder;
+            if (!Strings.isNullOrEmpty(baseUrl)) {
+                builder = new URIBuilder(baseUrl);
+                builder.setPath(builder.getPath() + resource);
+            } else {
+                builder = new URIBuilder(resource);
+            }
             for (Entry<String, String> parameter : parameters.entrySet()) {
                 builder.addParameter(parameter.getKey(), parameter.getValue());
             }
