@@ -24,14 +24,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Andrey Vorobyov
  */
 @XmlRootElement
-public class TestBean {
+public class DemoBean {
 
     private String someField;
 
-    public TestBean() {
+    public DemoBean() {
     }
 
-    public TestBean(String someField) {
+    public DemoBean(String someField) {
         this.someField = someField;
     }
 
@@ -48,9 +48,9 @@ public class TestBean {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TestBean testBean = (TestBean) o;
+        DemoBean demoBean = (DemoBean) o;
 
-        if (!someField.equals(testBean.someField)) return false;
+        if (!someField.equals(demoBean.someField)) return false;
 
         return true;
     }
