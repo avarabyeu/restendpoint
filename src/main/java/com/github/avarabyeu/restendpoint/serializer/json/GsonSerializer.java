@@ -81,8 +81,8 @@ public class GsonSerializer implements Serializer {
     }
 
     @Override
-    public boolean canRead(String mimeType) {
-        return MediaType.JSON_UTF_8.withoutParameters().is(MediaType.parse(mimeType).withoutParameters());
+    public boolean canRead(MediaType mimeType) {
+        return MediaType.JSON_UTF_8.withoutParameters().is(mimeType.withoutParameters());
     }
 
     /**

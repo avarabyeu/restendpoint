@@ -50,10 +50,10 @@ public class StringSerializerTest {
 
     @Test
     public void testContentType() {
-        SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM.toString()),
+        SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM),
                 CoreMatchers.is(false), "Wrong content type handling - octeat/stream");
 
-        SmartAssert.assertSoft(serializer.canRead(MediaType.ANY_TEXT_TYPE.toString()),
+        SmartAssert.assertSoft(serializer.canRead(MediaType.ANY_TEXT_TYPE),
                 CoreMatchers.is(true), "Wrong content type handling");
 
         SmartAssert.assertSoft(serializer.canWrite(new byte[]{}),

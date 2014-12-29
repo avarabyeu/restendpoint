@@ -19,6 +19,7 @@ package com.github.avarabyeu.restendpoint.serializer;
 import java.lang.reflect.Type;
 
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
+import com.google.common.net.MediaType;
 
 /**
  * HTTP Message Serializer. Converts messages to/from byte array
@@ -77,7 +78,7 @@ public interface Serializer {
 	 * 
 	 * @return TRUE if specified type is supported
 	 */
-	boolean canRead(String mimeType);
+	boolean canRead(MediaType mimeType);
 
 	/**
 	 * Check whether object can be serializer via this serializer implementation

@@ -18,7 +18,6 @@ package com.github.avarabyeu.restendpoint.serializer.json;
 
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.github.avarabyeu.restendpoint.serializer.TestBean;
-import com.github.avarabyeu.restendpoint.serializer.json.GsonSerializer;
 import com.google.common.net.MediaType;
 import com.smarttested.qa.smartassert.SmartAssert;
 import org.hamcrest.CoreMatchers;
@@ -54,10 +53,10 @@ public class GsonSerializerTest {
 
     @Test
     public void testContentType() {
-        SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM.toString()),
+        SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM),
                 CoreMatchers.is(false), "Wrong content type handling - octeat/stream");
 
-        SmartAssert.assertSoft(serializer.canRead(MediaType.JSON_UTF_8.toString()),
+        SmartAssert.assertSoft(serializer.canRead(MediaType.JSON_UTF_8),
                 CoreMatchers.is(true), "Wrong content type handling - cannot read application/json");
 
         SmartAssert.assertSoft(serializer.canWrite(new TestBean()),

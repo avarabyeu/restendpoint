@@ -23,6 +23,7 @@ import com.github.avarabyeu.wills.Will;
 import com.github.avarabyeu.wills.Wills;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.SettableFuture;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -430,7 +431,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
             this.serializers = serializers;
         }
 
-        protected Serializer getSupported(String contentType) throws SerializerException {
+        protected Serializer getSupported(MediaType contentType) throws SerializerException {
             for (Serializer s : serializers) {
                 if (s.canRead(contentType)) {
                     return s;
@@ -453,7 +454,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
         @Override
         public RS callback(HttpEntity entity) throws IOException {
-            return getSupported(entity.getContentType().getValue()).deserialize(EntityUtils.toByteArray(entity), type);
+            return getSupported(null == entity.getContentType() ? MediaType.ANY_TYPE :
+                    MediaType.parse(entity.getContentType().getValue())).deserialize(EntityUtils.toByteArray(entity), type);
         }
 
     }
@@ -469,7 +471,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
         @Override
         public RS callback(HttpEntity entity) throws IOException {
-            return getSupported(ContentType.get(entity).getMimeType()).deserialize(EntityUtils.toByteArray(entity), clazz);
+            return getSupported(null == entity.getContentType() ? MediaType.ANY_TYPE :
+                    MediaType.parse(entity.getContentType().getValue())).deserialize(EntityUtils.toByteArray(entity), clazz);
         }
 
     }

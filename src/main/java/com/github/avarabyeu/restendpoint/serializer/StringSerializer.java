@@ -20,6 +20,7 @@ import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.google.common.net.MediaType;
 import com.google.common.reflect.TypeToken;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Type;
 
 public class StringSerializer implements Serializer {
@@ -66,8 +67,8 @@ public class StringSerializer implements Serializer {
      * Checks whether mime types is supported by this serializer implementation
      */
     @Override
-    public boolean canRead(String mimeType) {
-        MediaType type = MediaType.parse(mimeType).withoutParameters();
+    public boolean canRead(@Nonnull MediaType mimeType) {
+        MediaType type = mimeType.withoutParameters();
         return type.is(MediaType.ANY_TEXT_TYPE) || MediaType.APPLICATION_XML_UTF_8.withoutParameters().is(type)
                 || MediaType.JSON_UTF_8.withoutParameters().is(type);
     }

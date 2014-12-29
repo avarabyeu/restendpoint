@@ -54,10 +54,10 @@ public class JaxbSerializerTest {
 
     @Test
     public void testContentType() {
-        SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM.toString()),
+        SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM),
                 CoreMatchers.is(false), "Wrong content type handling - octeat/stream");
 
-        SmartAssert.assertSoft(serializer.canRead(MediaType.APPLICATION_XML_UTF_8.toString()),
+        SmartAssert.assertSoft(serializer.canRead(MediaType.APPLICATION_XML_UTF_8),
                 CoreMatchers.is(true), "Wrong content type handling - cannot read application/xml");
 
         SmartAssert.assertSoft(serializer.canWrite(new TestBean()),
