@@ -9,7 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Created by andrey.vorobyov on 9/25/14.
+ * @author Andrei Varabyeu
  */
 public class JaxbSerializerTest {
 

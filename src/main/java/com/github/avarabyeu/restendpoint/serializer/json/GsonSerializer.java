@@ -17,10 +17,8 @@
 package com.github.avarabyeu.restendpoint.serializer.json;
 
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
-import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
-import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -30,10 +28,10 @@ import java.lang.reflect.Type;
 /**
  * JSON serializer using GSON library
  *
- * @author Andrey Vorobyov
+ * @author Andrei Varabyeu
  * @see <a href="https://code.google.com/p/google-gson/">GSON</a>
  */
-public class GsonSerializer implements Serializer {
+public class GsonSerializer extends AbstractJsonSerializer {
 
     private Gson gson;
 
@@ -75,24 +73,5 @@ public class GsonSerializer implements Serializer {
         }
     }
 
-    @Override
-    public String getMimeType() {
-        return MediaType.JSON_UTF_8.toString();
-    }
 
-    @Override
-    public boolean canRead(MediaType mimeType) {
-        return MediaType.JSON_UTF_8.withoutParameters().is(mimeType.withoutParameters());
-    }
-
-    /**
-     * GSON can try to serialize and object so just leave TRUE here
-     *
-     * @param o - Object to be serialized
-     * @return
-     */
-    @Override
-    public boolean canWrite(Object o) {
-        return true;
-    }
 }
