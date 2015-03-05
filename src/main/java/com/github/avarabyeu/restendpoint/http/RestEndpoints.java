@@ -28,6 +28,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.impl.client.BasicCredentialsProvider;
@@ -57,7 +58,7 @@ public class RestEndpoints {
      */
     public static RestEndpoint createDefault() {
         return new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),
-                Lists.<Serializer>newArrayList(
+                Lists.newArrayList(
                         new StringSerializer(),
                         new ByteArraySerializer(), new GsonSerializer()),
                 new DefaultErrorHandler());
@@ -72,7 +73,7 @@ public class RestEndpoints {
      */
     public static RestEndpoint createDefault(String endpointUrl) {
         return new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),
-                Lists.<Serializer>newArrayList(
+                Lists.newArrayList(
                         new StringSerializer(),
                         new ByteArraySerializer(), new GsonSerializer()),
                 new DefaultErrorHandler(),
@@ -95,7 +96,7 @@ public class RestEndpoints {
     /**
      * Creates default builder which uses Apache Http Commons Async client as endpoint implementation
      *
-     * @return
+     * @return New Builder instance
      */
     public static Builder create() {
         return new Builder();
@@ -112,7 +113,7 @@ public class RestEndpoints {
 
         private HttpAsyncClientBuilder httpClientBuilder;
 
-        private ErrorHandler<HttpResponse> errorHandler;
+        private ErrorHandler<HttpUriRequest, HttpResponse> errorHandler;
 
         private String endpointUrl;
 
@@ -140,7 +141,7 @@ public class RestEndpoints {
             return this;
         }
 
-        public Builder withErrorHandler(ErrorHandler<HttpResponse> errorHandler) {
+        public Builder withErrorHandler(ErrorHandler<HttpUriRequest, HttpResponse> errorHandler) {
             this.errorHandler = errorHandler;
             return this;
         }
@@ -154,7 +155,7 @@ public class RestEndpoints {
          * Uses provided {@link org.apache.http.impl.nio.client.CloseableHttpAsyncClient}
          * <b>May override some configuration methods like {@link #withBasicAuth(String, String)}</b>
          *
-         * @return
+         * @return this Builder
          */
         public Builder withHttpClient(CloseableHttpAsyncClient httpClient) {
             this.httpClient = httpClient;
@@ -164,7 +165,7 @@ public class RestEndpoints {
         /**
          * Adds Preemptive Basic authentication to the client
          *
-         * @return
+         * @return this Builder
          */
         public Builder withBasicAuth(String username, String password) {
             CredentialsProvider credentialsProvider = new BasicCredentialsProvider();

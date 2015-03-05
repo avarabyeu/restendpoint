@@ -19,10 +19,12 @@ package com.github.avarabyeu.restendpoint.http;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
+import com.github.avarabyeu.restendpoint.serializer.VoidSerializer;
 import com.github.avarabyeu.wills.Will;
 import com.github.avarabyeu.wills.Wills;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.SettableFuture;
 import org.apache.http.HttpEntity;
@@ -73,7 +75,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     /**
      * Error Handler for HttpResponses
      */
-    private ErrorHandler<HttpResponse> errorHandler;
+    private ErrorHandler<HttpUriRequest, HttpResponse> errorHandler;
 
     /**
      * HTTP Client
@@ -87,7 +89,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @param serializers  Serializer for converting HTTP messages. Shouldn't be null
      * @param errorHandler Error handler for HTTP messages
      */
-    public HttpClientRestEndpoint(CloseableHttpAsyncClient httpClient, List<Serializer> serializers, ErrorHandler<HttpResponse> errorHandler) {
+    public HttpClientRestEndpoint(CloseableHttpAsyncClient httpClient, List<Serializer> serializers, ErrorHandler<HttpUriRequest, HttpResponse> errorHandler) {
         this(httpClient, serializers, errorHandler, null);
     }
 
@@ -99,11 +101,12 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @param errorHandler Error handler for HTTP messages
      * @param baseUrl      REST WebService Base URL
      */
-    public HttpClientRestEndpoint(CloseableHttpAsyncClient httpClient, List<Serializer> serializers, ErrorHandler<HttpResponse> errorHandler,
+    public HttpClientRestEndpoint(CloseableHttpAsyncClient httpClient, List<Serializer> serializers, ErrorHandler<HttpUriRequest, HttpResponse> errorHandler,
                                   String baseUrl) {
 
         Preconditions.checkArgument(null != serializers && !serializers.isEmpty(), "There is no any serializer provided");
-        this.serializers = serializers;
+        //noinspection ConstantConditions
+        this.serializers = ImmutableList.<Serializer>builder().addAll(serializers).add(new VoidSerializer()).build();
 
         if (!Strings.isNullOrEmpty(baseUrl)) {
             Preconditions.checkArgument(IOUtils.isValidUrl(baseUrl), "'%s' is not valid URL", baseUrl);
@@ -377,7 +380,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @return - Serialized Response Body
      * @throws RestEndpointIOException
      */
-    private <RS> Will<RS> executeInternal(HttpUriRequest rq, final HttpEntityCallback<RS> callback) throws RestEndpointIOException {
+    private <RS> Will<RS> executeInternal(final HttpUriRequest rq, final HttpEntityCallback<RS> callback) throws RestEndpointIOException {
 
         final SettableFuture<RS> future = SettableFuture.create();
         httpClient.execute(rq, new FutureCallback<org.apache.http.HttpResponse>() {
@@ -386,7 +389,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                     public void completed(final org.apache.http.HttpResponse response) {
                         try {
                             if (errorHandler.hasError(response)) {
-                                errorHandler.handle(response);
+                                errorHandler.handle(rq, response);
                             }
                             HttpEntity entity = response.getEntity();
                             future.set(callback.callback(entity));
@@ -431,15 +434,6 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
             this.serializers = serializers;
         }
 
-        protected Serializer getSupported(MediaType contentType) throws SerializerException {
-            for (Serializer s : serializers) {
-                if (s.canRead(contentType)) {
-                    return s;
-                }
-            }
-            throw new SerializerException("Unsupported media type '" + contentType);
-        }
-
         abstract public RS callback(HttpEntity entity) throws IOException;
     }
 
@@ -455,7 +449,16 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         @Override
         public RS callback(HttpEntity entity) throws IOException {
             return getSupported(null == entity.getContentType() ? MediaType.ANY_TYPE :
-                    MediaType.parse(entity.getContentType().getValue())).deserialize(EntityUtils.toByteArray(entity), type);
+                    MediaType.parse(entity.getContentType().getValue()), type).deserialize(EntityUtils.toByteArray(entity), type);
+        }
+
+        protected Serializer getSupported(MediaType contentType, Type resultType) throws SerializerException {
+            for (Serializer s : serializers) {
+                if (s.canRead(contentType, resultType)) {
+                    return s;
+                }
+            }
+            throw new SerializerException("Conversion media type '" + contentType + "' to type '" + resultType + "' is not supported");
         }
 
     }
@@ -472,7 +475,16 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         @Override
         public RS callback(HttpEntity entity) throws IOException {
             return getSupported(null == entity.getContentType() ? MediaType.ANY_TYPE :
-                    MediaType.parse(entity.getContentType().getValue())).deserialize(EntityUtils.toByteArray(entity), clazz);
+                    MediaType.parse(entity.getContentType().getValue()), clazz).deserialize(EntityUtils.toByteArray(entity), clazz);
+        }
+
+        private Serializer getSupported(MediaType contentType, Class<?> resultType) throws SerializerException {
+            for (Serializer s : serializers) {
+                if (s.canRead(contentType, resultType)) {
+                    return s;
+                }
+            }
+            throw new SerializerException("Conversion media type '" + contentType + "' to type '" + resultType + "' is not supported");
         }
 
     }

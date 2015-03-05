@@ -24,13 +24,17 @@ import org.apache.http.Consts;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.EnglishReasonPhraseCatalog;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Locale;
 
 /**
@@ -40,11 +44,23 @@ import java.util.Locale;
  */
 public class DefaultErrorHandlerTest {
 
-    private ErrorHandler<HttpResponse> handler = Injector.getInstance().getBean(new Key<ErrorHandler<HttpResponse>>() {
+    private ErrorHandler<HttpUriRequest, HttpResponse> handler = Injector.getInstance().getBean(new Key<ErrorHandler<HttpUriRequest, HttpResponse>>() {
     });
+
+    private HttpUriRequest request = Mockito.mock(HttpUriRequest.class);
+
+    {
+        Mockito.when(request.getMethod()).thenReturn("GET");
+        try {
+            Mockito.when(request.getURI()).thenReturn(new URI("http://google.com"));
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Incorrect URI");
+        }
+    }
 
     @Test
     public void errorHandlerCheckClientError() {
+
         HttpResponse response = getHttpResponse(404, "Not Found");
         Assert.assertTrue("Client Error is not handled", handler.hasError(response));
     }
@@ -76,31 +92,31 @@ public class DefaultErrorHandlerTest {
     @Test(expected = RestEndpointClientException.class)
     public void testErrorHandlerClientError() throws RestEndpointIOException {
         HttpResponse response = getHttpResponse(404, "Not Found");
-        handler.handle(response);
+        handler.handle(request, response);
     }
 
     @Test(expected = RestEndpointServerException.class)
     public void testErrorHandlerServerError() throws RestEndpointIOException {
         HttpResponse response = getHttpResponse(500, "Internal Server Error");
-        handler.handle(response);
+        handler.handle(request, response);
     }
 
     @Test
     public void testHandlerInformationalResponse() throws RestEndpointIOException {
         HttpResponse response = getHttpResponse(100, "Continue");
-        handler.handle(response);
+        handler.handle(request, response);
     }
 
     @Test
     public void testErrorHandlerSuccessResponse() throws RestEndpointIOException {
         HttpResponse response = getHttpResponse(200, "Success");
-        handler.handle(response);
+        handler.handle(request, response);
     }
 
     @Test
     public void testHandlerRedirectionResponse() throws RestEndpointIOException {
         HttpResponse response = getHttpResponse(302, "Found");
-        handler.handle(response);
+        handler.handle(request, response);
     }
 
     private HttpResponse getHttpResponse(int statusCode, String message) {

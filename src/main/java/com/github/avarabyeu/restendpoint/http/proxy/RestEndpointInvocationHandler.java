@@ -3,6 +3,7 @@ package com.github.avarabyeu.restendpoint.http.proxy;
 import com.github.avarabyeu.restendpoint.http.RestEndpoint;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.wills.Will;
+import com.google.common.base.Preconditions;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -33,6 +34,8 @@ public class RestEndpointInvocationHandler implements InvocationHandler {
     }
 
     private Object executeRestMethod(Method method, Object[] args) throws RestEndpointIOException {
+
+        Preconditions.checkState(restMethods.containsKey(method), "Method with name [%s] is not mapped", method.getName());
 
         /* find appropriate method information*/
         RestMethodInfo methodInfo = restMethods.get(method);

@@ -16,6 +16,10 @@
 
 package com.github.avarabyeu.restendpoint.http.exception;
 
+import com.github.avarabyeu.restendpoint.http.HttpMethod;
+
+import java.net.URI;
+
 /**
  * Base HTTP error representation
  *
@@ -24,6 +28,16 @@ package com.github.avarabyeu.restendpoint.http.exception;
 public class RestEndpointException extends RuntimeException {
 
     private static final long serialVersionUID = 728718628763519460L;
+
+    /**
+     * Request URI
+     */
+    private URI requestUri;
+
+    /**
+     * Request Method
+     */
+    private HttpMethod requestMethod;
 
     /**
      * HTTP Status Code
@@ -40,7 +54,9 @@ public class RestEndpointException extends RuntimeException {
      */
     protected byte[] content;
 
-    public RestEndpointException(int statusCode, String statusMessage, byte[] content) {
+    public RestEndpointException(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage, byte[] content) {
+        this.requestUri = requestUri;
+        this.requestMethod = requestMethod;
         this.statusCode = statusCode;
         this.statusMessage = statusMessage;
         this.content = content;
@@ -54,7 +70,8 @@ public class RestEndpointException extends RuntimeException {
     @Override
     public String getMessage() {
         return new StringBuilder()
-                .append("Some REST error occured\n")
+                .append("Request [").append(requestMethod.toString()).append("] ")
+                .append("to URL: ").append(requestUri).append(" has failed with ")
                 .append("Status code: ")
                 .append(statusCode).append("\n")
                 .append("Status message: ")

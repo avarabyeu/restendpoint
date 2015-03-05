@@ -29,6 +29,7 @@ import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.QueueDispatcher;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 
 import java.io.IOException;
@@ -51,7 +52,7 @@ public class GuiceTestModule implements Module {
     public void configure(Binder binder) {
 
         /** Error Handler binding */
-        binder.bind(new Key<ErrorHandler<HttpResponse>>() {
+        binder.bind(new Key<ErrorHandler<HttpUriRequest, HttpResponse>>() {
         }).to(DefaultErrorHandler.class).in(Scopes.SINGLETON);
 
 
@@ -63,7 +64,7 @@ public class GuiceTestModule implements Module {
     /**
      * Default {@link com.github.avarabyeu.restendpoint.serializer.Serializer} binding
      *
-     * @return
+     * @return Serializer
      */
     @Provides
     public Serializer provideSeriazer() {
@@ -73,10 +74,10 @@ public class GuiceTestModule implements Module {
     /**
      * Default {@link com.github.avarabyeu.restendpoint.http.RestEndpoint} binding
      *
-     * @return
+     * @return Created RestEndpont
      */
     @Provides
-    public RestEndpoint provideRestEndpoint(ErrorHandler<HttpResponse> errorHandler) {
+    public RestEndpoint provideRestEndpoint(ErrorHandler<HttpUriRequest, HttpResponse> errorHandler) {
         return new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),
                 Lists.newArrayList(new StringSerializer(), new ByteArraySerializer()), errorHandler,
                 "http://localhost:" + MOCK_PORT);

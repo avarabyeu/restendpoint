@@ -18,6 +18,7 @@ package com.github.avarabyeu.restendpoint.serializer;
 
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.google.common.net.MediaType;
+import com.google.common.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 
@@ -86,8 +87,13 @@ public class ByteArraySerializer implements Serializer {
      * @see Serializer#canRead(java.lang.String)
      */
     @Override
-    public boolean canRead(MediaType mimeType) {
-        return mimeType.is(MediaType.ANY_TYPE);
+    public boolean canRead(MediaType mimeType, Class<?> resultType) {
+        return mimeType.is(MediaType.ANY_TYPE) && byte[].class.equals(resultType);
+    }
+
+    @Override
+    public boolean canRead(MediaType mimeType, Type resultType) {
+        return canRead(mimeType, TypeToken.of(resultType).getRawType());
     }
 
     /*
@@ -98,6 +104,7 @@ public class ByteArraySerializer implements Serializer {
      */
     @Override
     public boolean canWrite(Object o) {
+        //noinspection EqualsBetweenInconvertibleTypes
         return byte[].class.equals(o.getClass());
     }
 

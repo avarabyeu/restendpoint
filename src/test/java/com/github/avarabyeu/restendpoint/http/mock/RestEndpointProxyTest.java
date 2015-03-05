@@ -81,6 +81,19 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
     }
 
     @Test
+    public void testPostVoid() throws IOException, InterruptedException {
+        server.enqueue(prepareResponse(""));
+        restInterface.postVoid(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
+        //Assert.assertNotNull("Recieved Object is null", to);
+
+        RecordedRequest request = server.takeRequest();
+        Assert.assertEquals("Incorrect Request Line", "POST / HTTP/1.1", request.getRequestLine());
+        validateHeader(request);
+        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, new String(request.getBody()));
+
+    }
+
+    @Test
     public void testPut() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
         String to = restInterface.put(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));

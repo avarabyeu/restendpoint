@@ -94,6 +94,19 @@ public class RestEndointTest extends BaseRestEndointTest {
     }
 
     @Test
+    public void testVoid() throws IOException, InterruptedException {
+        server.enqueue(prepareResponse(""));
+        endpoint.post("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), Void.class).obtain();
+
+
+        RecordedRequest request = server.takeRequest();
+        Assert.assertEquals("Incorrect Request Line", "POST / HTTP/1.1", request.getRequestLine());
+        validateHeader(request);
+        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, new String(request.getBody()));
+
+    }
+
+    @Test
     public void testCommand() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
 

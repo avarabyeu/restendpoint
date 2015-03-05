@@ -20,27 +20,27 @@ import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 
 /**
  * Error Handler for RestEndpoint
- * 
+ *
+ * @param <RQ> Type of Request
+ * @param <RS> - Type of Response
  * @author Andrei Varabyeu
- * 
- * @param <RS>
- *            - Type of Response
  */
-public interface ErrorHandler<RS> {
+public interface ErrorHandler<RQ, RS> {
 
-	/**
-	 * Checks whether there is an error in response
-	 * 
-	 * @param rs
-	 * @return
-	 */
-	boolean hasError(RS rs);
+    /**
+     * Checks whether there is an error in response
+     *
+     * @param rs response instance
+     * @return TRUE if response contains error
+     */
+    boolean hasError(RS rs);
 
-	/**
-	 * Handles response if there is an error
-	 * 
-	 * @param rs
-	 * @throws com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException
-	 */
-	void handle(RS rs) throws RestEndpointIOException;
+    /**
+     * Handles response if there is an error
+     *
+     * @param rq request instance
+     * @param rs response instance
+     * @throws com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException
+     */
+    void handle(RQ rq, RS rs) throws RestEndpointIOException;
 }

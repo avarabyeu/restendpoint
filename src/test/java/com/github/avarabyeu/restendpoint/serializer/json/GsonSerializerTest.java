@@ -53,10 +53,10 @@ public class GsonSerializerTest {
 
     @Test
     public void testContentType() {
-        SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM),
+        SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM, Object.class),
                 CoreMatchers.is(false), "Wrong content type handling - octeat/stream");
 
-        SmartAssert.assertSoft(serializer.canRead(MediaType.JSON_UTF_8),
+        SmartAssert.assertSoft(serializer.canRead(MediaType.JSON_UTF_8, Object.class),
                 CoreMatchers.is(true), "Wrong content type handling - cannot read application/json");
 
         SmartAssert.assertSoft(serializer.canWrite(new DemoBean()),

@@ -38,10 +38,10 @@ public class JacksonSerializerTest {
 
     @Test
     public void testContentType() {
-        SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM),
+        SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM, byte[].class),
                 CoreMatchers.is(false), "Wrong content type handling - octeat/stream");
 
-        SmartAssert.assertSoft(serializer.canRead(MediaType.JSON_UTF_8),
+        SmartAssert.assertSoft(serializer.canRead(MediaType.JSON_UTF_8, byte[].class),
                 CoreMatchers.is(true), "Wrong content type handling - cannot read application/json");
 
         SmartAssert.assertSoft(serializer.canWrite(new DemoBean()),

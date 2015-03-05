@@ -16,76 +16,83 @@
 
 package com.github.avarabyeu.restendpoint.serializer;
 
-import java.lang.reflect.Type;
-
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.google.common.net.MediaType;
 
+import java.lang.reflect.Type;
+
 /**
  * HTTP Message Serializer. Converts messages to/from byte array
- * 
+ *
  * @author Andrei Varabyeu
- * 
  */
 public interface Serializer {
 
-	/**
-	 * Serializes Message into byte array
-	 * 
-	 * @param t
-	 * @return
-	 * @throws com.github.avarabyeu.restendpoint.http.exception.SerializerException
-	 */
-	<T> byte[] serialize(T t) throws SerializerException;
+    /**
+     * Serializes Message into byte array
+     *
+     * @param t Object to be serialized
+     * @return serialized object as byte array
+     * @throws SerializerException
+     */
+    <T> byte[] serialize(T t) throws SerializerException;
 
-	/**
-	 * Deserializes message from byte array
-	 * 
-	 * @param content
-	 * @param clazz
-	 * @return
-	 * @throws SerializerException
-	 */
-	<T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException;
+    /**
+     * Deserializes message from byte array
+     *
+     * @param content Object to be deserialized
+     * @param clazz   Result Type
+     * @return Deserialized Object
+     * @throws SerializerException
+     */
+    <T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException;
 
-	/**
-	 * Deserializes message from byte array
-	 * 
-	 * @param content
-	 * @param type
-	 *            - Representation of type of response. For generic types (e.g.
-	 *            collections) {@link java.lang.reflect.ParameterizedType} may
-	 *            be used
-	 * @return
-	 * @throws SerializerException
-	 */
-	<T> T deserialize(byte[] content, Type type) throws SerializerException;
+    /**
+     * Deserializes message from byte array
+     *
+     * @param content content to be deserialized
+     * @param type    - Representation of type of response. For generic types (e.g.
+     *                collections) {@link java.lang.reflect.ParameterizedType} may
+     *                be used
+     * @return Deserialized Object
+     * @throws SerializerException
+     */
+    <T> T deserialize(byte[] content, Type type) throws SerializerException;
 
-	/**
-	 * Returns MIME type of serialized messages
-	 * 
-	 * @return
-	 */
-	String getMimeType();
+    /**
+     * Returns MIME type of serialized messages
+     *
+     * @return MIME type of serialized messages
+     */
+    String getMimeType();
 
-	/**
-	 * Checks whether mime types is supported by this serializer implementation
-	 * 
-	 * @see http://en.wikipedia.org/wiki/Internet_media_type
-	 * 
-	 * @param mimeType
-	 *            - MIME Type
-	 * 
-	 * @return TRUE if specified type is supported
-	 */
-	boolean canRead(MediaType mimeType);
+    /**
+     * Checks whether mime types is supported by this serializer implementation
+     *
+     * @param resultType - Result Type
+     * @param mimeType   - MIME Type
+     * @return TRUE if specified type is supported
+     * @see <a href="http://en.wikipedia.org/wiki/Internet_media_type">Internet Media Type</a>
+     */
+    boolean canRead(MediaType mimeType, Class<?> resultType);
 
-	/**
-	 * Check whether object can be serializer via this serializer implementation
-	 * 
-	 * @param o
-	 *            - Object to be serialized
-	 * @return
-	 */
-	boolean canWrite(Object o);
+    /**
+     * Checks whether mime types is supported by this serializer implementation
+     *
+     * @param mimeType   - MIME Type
+     * @param resultType - Representation of type of response. For generic types (e.g.
+     *                   collections) {@link java.lang.reflect.ParameterizedType} may
+     *                   be used
+     * @return TRUE if specified type is supported
+     * @see <a href="http://en.wikipedia.org/wiki/Internet_media_type">Internet Media Type</a>
+     */
+    boolean canRead(MediaType mimeType, Type resultType);
+
+    /**
+     * Check whether object can be serializer via this serializer implementation
+     *
+     * @param o - Object to be serialized
+     * @return TRUE if serializer can serialize provided object
+     */
+    boolean canWrite(Object o);
 }

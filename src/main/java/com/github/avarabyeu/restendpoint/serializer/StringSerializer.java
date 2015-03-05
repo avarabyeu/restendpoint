@@ -67,10 +67,20 @@ public class StringSerializer implements Serializer {
      * Checks whether mime types is supported by this serializer implementation
      */
     @Override
-    public boolean canRead(@Nonnull MediaType mimeType) {
+    public boolean canRead(@Nonnull MediaType mimeType, Class<?> resultType) {
         MediaType type = mimeType.withoutParameters();
         return type.is(MediaType.ANY_TEXT_TYPE) || MediaType.APPLICATION_XML_UTF_8.withoutParameters().is(type)
-                || MediaType.JSON_UTF_8.withoutParameters().is(type);
+                || MediaType.JSON_UTF_8.withoutParameters().is(type) && String.class.equals(resultType);
+    }
+
+    /**
+     * Checks whether mime types is supported by this serializer implementation
+     */
+    @Override
+    public boolean canRead(@Nonnull MediaType mimeType, Type resultType) {
+        MediaType type = mimeType.withoutParameters();
+        return type.is(MediaType.ANY_TEXT_TYPE) || MediaType.APPLICATION_XML_UTF_8.withoutParameters().is(type)
+                || MediaType.JSON_UTF_8.withoutParameters().is(type) && String.class.equals(TypeToken.of(resultType).getRawType());
     }
 
     @Override

@@ -104,7 +104,12 @@ public class JaxbSerializer implements Serializer {
     }
 
     @Override
-    public boolean canRead(MediaType mimeType) {
+    public boolean canRead(MediaType mimeType, Class<?> resultType) {
+        return canRead(mimeType, TypeToken.of(resultType).getType());
+    }
+
+    @Override
+    public boolean canRead(MediaType mimeType, Type resultType) {
         return mimeType.withoutParameters().is(MediaType.APPLICATION_XML_UTF_8.withoutParameters());
     }
 

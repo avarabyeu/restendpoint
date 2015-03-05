@@ -22,9 +22,11 @@ import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointServerException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.net.URI;
 
 /**
  * Default implementation of
@@ -32,7 +34,7 @@ import java.io.IOException;
  *
  * @author Andrei Varabyeu
  */
-public class DefaultErrorHandler implements ErrorHandler<HttpResponse> {
+public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpResponse> {
 
     /**
      * Returns TRUE in case status code of response starts with 4 or 5
@@ -54,66 +56,77 @@ public class DefaultErrorHandler implements ErrorHandler<HttpResponse> {
      * Throwed exceptions may be overridden in handle* methods
      */
     @Override
-    public void handle(HttpResponse rs) throws RestEndpointIOException {
+    public void handle(HttpUriRequest rq, HttpResponse rs) throws RestEndpointIOException {
         if (!hasError(rs)) {
             return;
         }
+        HttpMethod httpMethod = HttpMethod.valueOf(rq.getMethod());
+        URI requestUri = rq.getURI();
+
         StatusType statusType = StatusType.valueOf(rs.getStatusLine().getStatusCode());
         int statusCode = rs.getStatusLine().getStatusCode();
         String statusMessage = rs.getStatusLine().getReasonPhrase();
+
         byte[] errorBody = getErrorBody(rs);
+
 
         switch (statusType) {
             case CLIENT_ERROR:
-                handleClientError(statusCode, statusMessage, errorBody);
+                handleClientError(requestUri, httpMethod, statusCode, statusMessage, errorBody);
             case SERVER_ERROR:
-                handleServerError(statusCode, statusMessage, errorBody);
+                handleServerError(requestUri, httpMethod, statusCode, statusMessage, errorBody);
             default:
-                handleDefaultError(statusCode, statusMessage, errorBody);
+                handleDefaultError(requestUri, httpMethod, statusCode, statusMessage, errorBody);
         }
     }
 
     /**
      * Handler methods for HTTP client errors
      *
+     * @param requestUri    - Request URI
+     * @param requestMethod - Request HTTP Method
      * @param statusCode    - HTTP status code
      * @param statusMessage - HTTP status message
      * @param errorBody     - HTTP response body
      * @throws RestEndpointIOException
      */
-    protected void handleClientError(int statusCode, String statusMessage, byte[] errorBody) throws RestEndpointIOException {
-        throw new RestEndpointClientException(statusCode, statusMessage, errorBody);
+    protected void handleClientError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage, byte[] errorBody) throws RestEndpointIOException {
+        throw new RestEndpointClientException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
     }
 
     /**
      * Handler methods for HTTP server errors
      *
+     * @param requestUri    - Request URI
+     * @param requestMethod - Request HTTP Method
      * @param statusCode    - HTTP status code
      * @param statusMessage - HTTP status message
      * @param errorBody     - HTTP response body
      * @throws RestEndpointIOException
      */
-    protected void handleServerError(int statusCode, String statusMessage, byte[] errorBody) throws RestEndpointIOException {
-        throw new RestEndpointServerException(statusCode, statusMessage, errorBody);
+    protected void handleServerError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage, byte[] errorBody) throws RestEndpointIOException {
+        throw new RestEndpointServerException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
     }
 
     /**
      * Handler methods for unclassified errors
      *
+     * @param requestUri    - Request URI
+     * @param requestMethod - Request HTTP Method
      * @param statusCode    - HTTP status code
      * @param statusMessage - HTTP status message
      * @param errorBody     - HTTP response body
      * @throws RestEndpointIOException
      */
-    protected void handleDefaultError(int statusCode, String statusMessage, byte[] errorBody) throws RestEndpointIOException {
-        throw new RestEndpointException(statusCode, statusMessage, errorBody);
+    protected void handleDefaultError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage, byte[] errorBody) throws RestEndpointIOException {
+        throw new RestEndpointException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
     }
 
     /**
      * Parses byte from entity
      *
-     * @param rs
-     * @return
+     * @param rs HTTP Response
+     * @return Body as byte array
      * @throws RestEndpointIOException
      */
     private byte[] getErrorBody(HttpResponse rs) throws RestEndpointIOException {
@@ -124,11 +137,7 @@ public class DefaultErrorHandler implements ErrorHandler<HttpResponse> {
         } catch (IOException e) {
             throw new RestEndpointIOException("Unable to read body from error", e);
         } finally {
-            try {
-                EntityUtils.consume(entity);
-            } catch (IOException e) {
-                throw new RestEndpointIOException("Unable to consume response entity", e);
-            }
+            EntityUtils.consumeQuietly(entity);
         }
     }
 }

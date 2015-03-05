@@ -8,8 +8,18 @@ Improvements:
 
 Improvements:
   
-  - Update Wills versions with several bugfixes
+  - Update Wills version with several bugfixes
   
 Bugfixes:
 
   - Add escaping for URL path parameters (proxy interface UrlTemplate)
+
+## 0.0.9 (2014-10-27)
+
+Improvements:
+
+  - Add support for void methods
+
+Bugfixes:
+
+  - Add validation for method mapping in proxy-style client

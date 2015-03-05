@@ -83,4 +83,12 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
         Assert.assertTrue(!to.isDone());
 
     }
+
+    @Test
+    public void testVoid() throws IOException, InterruptedException {
+        server.enqueue(prepareResponse(""));
+        Will<Void> to = endpoint.post("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), Void.class);
+        Assert.assertTrue(!to.isDone());
+
+    }
 }

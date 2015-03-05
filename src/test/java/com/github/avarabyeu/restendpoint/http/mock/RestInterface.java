@@ -42,6 +42,9 @@ public interface RestInterface {
     @Request(method = HttpMethod.POST, url = "/")
     String post(@Body String body);
 
+    @Request(method = HttpMethod.POST, url = "/")
+    void postVoid(@Body String body);
+
     @Request(method = HttpMethod.PUT, url = "/")
     String put(@Body String body);
 
