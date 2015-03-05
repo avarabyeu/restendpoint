@@ -29,7 +29,7 @@
       <div class="inner clearfix">
         <section id="main-content">
           <h1>
-<a name="restendpoint-" class="anchor" href="#restendpoint-"><span class="octicon octicon-link"></span></a>restendpoint <a href="https://travis-ci.org/avarabyeu/restendpoint"><img src="https://travis-ci.org/avarabyeu/restendpoint.svg?branch=master" alt="Build Status"></a>
+<a id="restendpoint--" class="anchor" href="#restendpoint--" aria-hidden="true"><span class="octicon octicon-link"></span></a>restendpoint <a href="https://travis-ci.org/avarabyeu/restendpoint"><img src="https://travis-ci.org/avarabyeu/restendpoint.svg?branch=master" alt="Build Status"></a> <a href="https://maven-badges.herokuapp.com/maven-central/com.github.avarabyeu/restendpoint"><img src="https://maven-badges.herokuapp.com/maven-central/com.github.avarabyeu/restendpoint/badge.svg" alt="Maven central"></a>
 </h1>
 
 <p>Asynchronous REST client based on Apache Http Async Client</p>
@@ -71,204 +71,191 @@
 <a href="http://hc.apache.org/httpcomponents-asyncclient-4.0.x/">Apache HttpComponents Async Client</a></p>
 
 <h2>
-<a name="maven-dependencies" class="anchor" href="#maven-dependencies"><span class="octicon octicon-link"></span></a>Maven Dependencies</h2>
+<a id="maven-dependencies" class="anchor" href="#maven-dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maven Dependencies</h2>
 
 <p>Last stable version:</p>
 
-<div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>com.github.avarabyeu<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>restendpoint<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.0.5<span class="nt">&lt;/version&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span>
-</pre></div>
+<div class="highlight highlight-xml"><pre>&lt;<span class="pl-ent">dependency</span>&gt;
+    &lt;<span class="pl-ent">groupId</span>&gt;com.github.avarabyeu&lt;/<span class="pl-ent">groupId</span>&gt;
+    &lt;<span class="pl-ent">artifactId</span>&gt;restendpoint&lt;/<span class="pl-ent">artifactId</span>&gt;
+    &lt;<span class="pl-ent">version</span>&gt;X.X.X&lt;/<span class="pl-ent">version</span>&gt;
+&lt;/<span class="pl-ent">dependency</span>&gt;</pre></div>
 
 <h2>
-<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
 
 <h3>
-<a name="as-simple-as-its-possible" class="anchor" href="#as-simple-as-its-possible"><span class="octicon octicon-link"></span></a>As Simple As It's Possible</h3>
+<a id="as-simple-as-its-possible" class="anchor" href="#as-simple-as-its-possible" aria-hidden="true"><span class="octicon octicon-link"></span></a>As Simple As It's Possible</h3>
 
 <h4>
-<a name="interface-based-restendpoint" class="anchor" href="#interface-based-restendpoint"><span class="octicon octicon-link"></span></a>Interface-based RestEndpoint</h4>
+<a id="interface-based-restendpoint" class="anchor" href="#interface-based-restendpoint" aria-hidden="true"><span class="octicon octicon-link"></span></a>Interface-based RestEndpoint</h4>
 
 <p>Using RestEndpoint, you do not need to create implementation of you http client. No any implementation at all! 
 Only thing you need is to create interface with method declarations marked with appropriate annotations:</p>
 
 <div class="highlight highlight-java"><pre>
-<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SomeYourService</span> <span class="o">{</span>
-    <span class="cm">/* just simple GET request */</span>
-    <span class="nd">@Request</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
-    <span class="n">String</span> <span class="nf">get</span><span class="o">();</span>
+<span class="pl-s">public</span> <span class="pl-s">interface</span> <span class="pl-en">SomeYourService</span> {
+    <span class="pl-c">/* just simple GET request */</span>
+    <span class="pl-st">@Request</span>(<span class="pl-c1">method</span> <span class="pl-k">=</span> <span class="pl-stj">HttpMethod</span><span class="pl-c1"><span class="pl-k">.</span>GET</span>, <span class="pl-c1">url</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>)
+    <span class="pl-stj">String</span> <span class="pl-en">get</span>();
 
-    <span class="cm">/* GET request with placeholder in path */</span>
-    <span class="nd">@Request</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/{path}"</span><span class="o">)</span>
-    <span class="n">String</span> <span class="nf">getWithPath</span><span class="o">(</span><span class="nd">@Path</span><span class="o">(</span><span class="s">"path"</span><span class="o">)</span> <span class="n">String</span> <span class="n">path</span><span class="o">);</span>
+    <span class="pl-c">/* GET request with placeholder in path */</span>
+    <span class="pl-st">@Request</span>(<span class="pl-c1">method</span> <span class="pl-k">=</span> <span class="pl-stj">HttpMethod</span><span class="pl-c1"><span class="pl-k">.</span>GET</span>, <span class="pl-c1">url</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>/{path}<span class="pl-pds">"</span></span>)
+    <span class="pl-stj">String</span> <span class="pl-en">getWithPath</span>(<span class="pl-st">@Path</span>(<span class="pl-s1"><span class="pl-pds">"</span>path<span class="pl-pds">"</span></span>) <span class="pl-stj">String</span> <span class="pl-v">path</span>);
 
-    <span class="cm">/* GET request with query parameters, e.g. ?someParameter=someValue */</span>
-    <span class="nd">@Request</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
-    <span class="n">String</span> <span class="nf">getWithQuery</span><span class="o">(</span><span class="nd">@Query</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">queryParams</span><span class="o">);</span>
+    <span class="pl-c">/* GET request with query parameters, e.g. ?someParameter=someValue */</span>
+    <span class="pl-st">@Request</span>(<span class="pl-c1">method</span> <span class="pl-k">=</span> <span class="pl-stj">HttpMethod</span><span class="pl-c1"><span class="pl-k">.</span>GET</span>, <span class="pl-c1">url</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>)
+    <span class="pl-stj">String</span> <span class="pl-en">getWithQuery</span>(<span class="pl-st">@Query</span> <span class="pl-st">Map&lt;<span class="pl-stj">String</span>, <span class="pl-stj">String</span>&gt;</span> <span class="pl-v">queryParams</span>);
 
-    <span class="cm">/* POST request with some body */</span>
-    <span class="nd">@Request</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">POST</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
-    <span class="n">String</span> <span class="nf">post</span><span class="o">(</span><span class="nd">@Body</span> <span class="n">String</span> <span class="n">body</span><span class="o">);</span>
+    <span class="pl-c">/* POST request with some body */</span>
+    <span class="pl-st">@Request</span>(<span class="pl-c1">method</span> <span class="pl-k">=</span> <span class="pl-stj">HttpMethod</span><span class="pl-c1"><span class="pl-k">.</span>POST</span>, <span class="pl-c1">url</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>)
+    <span class="pl-stj">String</span> <span class="pl-en">post</span>(<span class="pl-st">@Body</span> <span class="pl-stj">String</span> <span class="pl-v">body</span>);
 
-    <span class="cm">/* PUT request with some body */</span>
-    <span class="nd">@Request</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">PUT</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
-    <span class="n">String</span> <span class="nf">put</span><span class="o">(</span><span class="nd">@Body</span> <span class="n">String</span> <span class="n">body</span><span class="o">);</span>
+    <span class="pl-c">/* PUT request with some body */</span>
+    <span class="pl-st">@Request</span>(<span class="pl-c1">method</span> <span class="pl-k">=</span> <span class="pl-stj">HttpMethod</span><span class="pl-c1"><span class="pl-k">.</span>PUT</span>, <span class="pl-c1">url</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>)
+    <span class="pl-stj">String</span> <span class="pl-en">put</span>(<span class="pl-st">@Body</span> <span class="pl-stj">String</span> <span class="pl-v">body</span>);
 
-    <span class="cm">/* DELETE request */</span>
-    <span class="nd">@Request</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">DELETE</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
-    <span class="n">String</span> <span class="nf">delete</span><span class="o">();</span>
+    <span class="pl-c">/* DELETE request */</span>
+    <span class="pl-st">@Request</span>(<span class="pl-c1">method</span> <span class="pl-k">=</span> <span class="pl-stj">HttpMethod</span><span class="pl-c1"><span class="pl-k">.</span>DELETE</span>, <span class="pl-c1">url</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>)
+    <span class="pl-stj">String</span> <span class="pl-en">delete</span>();
 
-    <span class="cm">/* Asynchronous GET request */</span>
-    <span class="nd">@Request</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
-    <span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">getAsync</span><span class="o">();</span>
+    <span class="pl-c">/* Asynchronous GET request */</span>
+    <span class="pl-st">@Request</span>(<span class="pl-c1">method</span> <span class="pl-k">=</span> <span class="pl-stj">HttpMethod</span><span class="pl-c1"><span class="pl-k">.</span>GET</span>, <span class="pl-c1">url</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>)
+    <span class="pl-st">Will&lt;<span class="pl-stj">String</span>&gt;</span> <span class="pl-en">getAsync</span>();
 
-    <span class="cm">/* Asynchronous POST request */</span>
-    <span class="nd">@Request</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">POST</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
-    <span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">postAsync</span><span class="o">(</span><span class="nd">@Body</span> <span class="n">String</span> <span class="n">body</span><span class="o">);</span>
+    <span class="pl-c">/* Asynchronous POST request */</span>
+    <span class="pl-st">@Request</span>(<span class="pl-c1">method</span> <span class="pl-k">=</span> <span class="pl-stj">HttpMethod</span><span class="pl-c1"><span class="pl-k">.</span>POST</span>, <span class="pl-c1">url</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>)
+    <span class="pl-st">Will&lt;<span class="pl-stj">String</span>&gt;</span> <span class="pl-en">postAsync</span>(<span class="pl-st">@Body</span> <span class="pl-stj">String</span> <span class="pl-v">body</span>);
 
-    <span class="cm">/* Asynchronous PUT request */</span>
-    <span class="nd">@Request</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">PUT</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
-    <span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">putAsync</span><span class="o">(</span><span class="nd">@Body</span> <span class="n">String</span> <span class="n">body</span><span class="o">);</span>
+    <span class="pl-c">/* Asynchronous PUT request */</span>
+    <span class="pl-st">@Request</span>(<span class="pl-c1">method</span> <span class="pl-k">=</span> <span class="pl-stj">HttpMethod</span><span class="pl-c1"><span class="pl-k">.</span>PUT</span>, <span class="pl-c1">url</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>)
+    <span class="pl-st">Will&lt;<span class="pl-stj">String</span>&gt;</span> <span class="pl-en">putAsync</span>(<span class="pl-st">@Body</span> <span class="pl-stj">String</span> <span class="pl-v">body</span>);
 
-    <span class="cm">/* Asynchronous DELETE request */</span>
-    <span class="nd">@Request</span><span class="o">(</span><span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">DELETE</span><span class="o">,</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
-    <span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">deleteAsync</span><span class="o">();</span>
-<span class="o">}</span>
-
+    <span class="pl-c">/* Asynchronous DELETE request */</span>
+    <span class="pl-st">@Request</span>(<span class="pl-c1">method</span> <span class="pl-k">=</span> <span class="pl-stj">HttpMethod</span><span class="pl-c1"><span class="pl-k">.</span>DELETE</span>, <span class="pl-c1">url</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>)
+    <span class="pl-st">Will&lt;<span class="pl-stj">String</span>&gt;</span> <span class="pl-en">deleteAsync</span>();
+}
 </pre></div>
 
 <p>... and create instance of your service:</p>
 
-<div class="highlight highlight-java"><pre><span class="n">SomeYourService</span> <span class="n">service</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">create</span><span class="o">()</span>
-        <span class="o">.</span><span class="na">withBaseUrl</span><span class="o">(</span><span class="s">"http://localhost"</span><span class="o">)</span>
-        <span class="o">.</span><span class="na">withSerializer</span><span class="o">(</span><span class="k">new</span> <span class="nf">StringSerializer</span><span class="o">())</span>                
-        <span class="o">.</span><span class="na">forInterface</span><span class="o">(</span><span class="n">RestInterface</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-</pre></div>
+<div class="highlight highlight-java"><pre><span class="pl-stj">SomeYourService</span> service <span class="pl-k">=</span> <span class="pl-stj">RestEndpoints</span><span class="pl-k">.</span>create()
+        .withBaseUrl(<span class="pl-s1"><span class="pl-pds">"</span>http://localhost<span class="pl-pds">"</span></span>)
+        .withSerializer(<span class="pl-k">new</span> <span class="pl-stj">StringSerializer</span>())                
+        .forInterface(<span class="pl-stj">RestInterface</span><span class="pl-k">.</span>class);</pre></div>
 
 <p>That's it! RestEndpoint reads your interface and builds implementation based on Java Proxies. No any actions is required from you, http client is done. </p>
 
 <h4>
-<a name="classic-restendpoint" class="anchor" href="#classic-restendpoint"><span class="octicon octicon-link"></span></a>Classic RestEndpoint</h4>
+<a id="classic-restendpoint" class="anchor" href="#classic-restendpoint" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classic RestEndpoint</h4>
 
-<div class="highlight highlight-java"><pre><span class="cm">/* Creates default RestEndpoint */</span>
-<span class="n">RestEndpoint</span> <span class="n">endpoint</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">createDefault</span><span class="o">(</span><span class="s">"http://airports.pidgets.com/"</span><span class="o">);</span>
+<div class="highlight highlight-java"><pre><span class="pl-c">/* Creates default RestEndpoint */</span>
+<span class="pl-stj">RestEndpoint</span> endpoint <span class="pl-k">=</span> <span class="pl-stj">RestEndpoints</span><span class="pl-k">.</span>createDefault(<span class="pl-s1"><span class="pl-pds">"</span>http://airports.pidgets.com/<span class="pl-pds">"</span></span>);
 
- <span class="cm">/* Executes GET request to</span>
-<span class="cm">  * http://airports.pidgets.com/v1/airports?country=Belarus&amp;format=json</span>
-<span class="cm">  * asynchronously</span>
-<span class="cm">  */</span>
-<span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">airports</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">get</span><span class="o">(</span>
-   <span class="s">"/v1/airports"</span><span class="o">,</span>
-   <span class="n">ImmutableMap</span><span class="o">.&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span><span class="n">builder</span><span class="o">()</span>
-      <span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"country"</span><span class="o">,</span> <span class="s">"Belarus"</span><span class="o">).</span><span class="na">put</span><span class="o">(</span><span class="s">"format"</span><span class="o">,</span> <span class="s">"json"</span><span class="o">).</span><span class="na">build</span><span class="o">(),</span>
-   <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+ <span class="pl-c">/* Executes GET request to</span>
+<span class="pl-c">  * http://airports.pidgets.com/v1/airports?country=Belarus&amp;format=json</span>
+<span class="pl-c">  * asynchronously</span>
+<span class="pl-c">  */</span>
+<span class="pl-st">Will&lt;<span class="pl-stj">String</span>&gt;</span> airports <span class="pl-k">=</span> endpoint<span class="pl-k">.</span>get(
+   <span class="pl-s1"><span class="pl-pds">"</span>/v1/airports<span class="pl-pds">"</span></span>,
+   <span class="pl-stj">ImmutableMap</span><span class="pl-k">.</span><span class="pl-k">&lt;</span><span class="pl-stj">String</span>, <span class="pl-stj">String</span><span class="pl-k">&gt;</span>builder()
+      .put(<span class="pl-s1"><span class="pl-pds">"</span>country<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>Belarus<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>put(<span class="pl-s1"><span class="pl-pds">"</span>format<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>json<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>build(),
+   <span class="pl-stj">String</span><span class="pl-k">.</span>class);
 
-<span class="cm">/* Waits for result and prints it once received */</span>
-<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">airports</span><span class="o">.</span><span class="na">obtain</span><span class="o">());</span>
-</pre></div>
+<span class="pl-c">/* Waits for result and prints it once received */</span>
+<span class="pl-stj">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(airports<span class="pl-k">.</span>obtain());</pre></div>
 
 <h3>
-<a name="creating" class="anchor" href="#creating"><span class="octicon octicon-link"></span></a>Creating</h3>
+<a id="creating" class="anchor" href="#creating" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating</h3>
 
 <h4>
-<a name="default-and-simpliest" class="anchor" href="#default-and-simpliest"><span class="octicon octicon-link"></span></a>Default and Simpliest</h4>
+<a id="default-and-simpliest" class="anchor" href="#default-and-simpliest" aria-hidden="true"><span class="octicon octicon-link"></span></a>Default and Simpliest</h4>
 
-<div class="highlight highlight-java"><pre><span class="n">RestEndpoint</span> <span class="n">endpoint</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">createDefault</span><span class="o">(</span><span class="s">"http://airports.pidgets.com/"</span><span class="o">);</span>
-</pre></div>
+<div class="highlight highlight-java"><pre><span class="pl-stj">RestEndpoint</span> endpoint <span class="pl-k">=</span> <span class="pl-stj">RestEndpoints</span><span class="pl-k">.</span>createDefault(<span class="pl-s1"><span class="pl-pds">"</span>http://airports.pidgets.com/<span class="pl-pds">"</span></span>);</pre></div>
 
 <p>Creates RestEndpoint with all available serializers, default http client configuration and built-in error handler. </p>
 
 <h4>
-<a name="using-builder" class="anchor" href="#using-builder"><span class="octicon octicon-link"></span></a>Using Builder</h4>
+<a id="using-builder" class="anchor" href="#using-builder" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using Builder</h4>
 
-<div class="highlight highlight-java"><pre><span class="n">RestEndpoint</span> <span class="n">endpoint</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">create</span><span class="o">()</span>
-   <span class="o">.</span><span class="na">withBaseUrl</span><span class="o">(</span><span class="s">"http://base_url_of_rest_service"</span><span class="o">)</span>
-   <span class="o">.</span><span class="na">withSerializer</span><span class="o">(</span><span class="k">new</span> <span class="nf">GsonSerializer</span><span class="o">())</span>
-   <span class="o">.</span><span class="na">withErrorHandler</span><span class="o">(</span><span class="k">new</span> <span class="nf">YourCustomErrorHandler</span><span class="o">())</span>
-   <span class="o">.</span><span class="na">withBasicAuth</span><span class="o">(</span><span class="s">"login"</span><span class="o">,</span> <span class="s">"password"</span><span class="o">)</span>
-   <span class="o">.</span><span class="na">build</span><span class="o">();</span>
-</pre></div>
+<div class="highlight highlight-java"><pre><span class="pl-stj">RestEndpoint</span> endpoint <span class="pl-k">=</span> <span class="pl-stj">RestEndpoints</span><span class="pl-k">.</span>create()
+   .withBaseUrl(<span class="pl-s1"><span class="pl-pds">"</span>http://base_url_of_rest_service<span class="pl-pds">"</span></span>)
+   .withSerializer(<span class="pl-k">new</span> <span class="pl-stj">GsonSerializer</span>())
+   .withErrorHandler(<span class="pl-k">new</span> <span class="pl-stj">YourCustomErrorHandler</span>())
+   .withBasicAuth(<span class="pl-s1"><span class="pl-pds">"</span>login<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>password<span class="pl-pds">"</span></span>)
+   .build();</pre></div>
 
 <p>Creates RestEndpoint with only JSON serializer based on Google GSON, your custom error handler. Each request to server will contain Basic Authentication headers (preemptive authentication, see more details here: <a href="http://hc.apache.org/httpcomponents-client-ga/tutorial/html/authentication.html">Apache Client Authentication</a>)</p>
 
 <h4>
-<a name="build-httpasyncclient-explicitly" class="anchor" href="#build-httpasyncclient-explicitly"><span class="octicon octicon-link"></span></a>Build HttpAsyncClient explicitly</h4>
+<a id="build-httpasyncclient-explicitly" class="anchor" href="#build-httpasyncclient-explicitly" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build HttpAsyncClient explicitly</h4>
 
 <p>Sometimes you need more deep http client configuration. Here is the example:</p>
 
-<div class="highlight highlight-java"><pre><span class="n">HttpAsyncClientBuilder</span> <span class="n">httpClientBuilder</span> <span class="o">=</span> <span class="n">HttpAsyncClientBuilder</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
-<span class="n">CredentialsProvider</span> <span class="n">credentialsProvider</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">BasicCredentialsProvider</span><span class="o">();</span>
-<span class="n">credentialsProvider</span><span class="o">.</span><span class="na">setCredentials</span><span class="o">(</span><span class="n">AuthScope</span><span class="o">.</span><span class="na">ANY</span><span class="o">,</span> <span class="k">new</span> <span class="nf">UsernamePasswordCredentials</span><span class="o">(</span><span class="s">"user"</span><span class="o">,</span> <span class="s">"password"</span><span class="o">));</span>
-<span class="n">httpClientBuilder</span><span class="o">.</span><span class="na">setDefaultCredentialsProvider</span><span class="o">(</span><span class="n">credentialsProvider</span><span class="o">);</span>
-<span class="n">httpClientBuilder</span><span class="o">.</span><span class="na">setMaxConnTotal</span><span class="o">(</span><span class="mi">20</span><span class="o">);</span>
-<span class="n">httpClientBuilder</span><span class="o">.</span><span class="na">setMaxConnPerRoute</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>
+<div class="highlight highlight-java"><pre><span class="pl-stj">HttpAsyncClientBuilder</span> httpClientBuilder <span class="pl-k">=</span> <span class="pl-stj">HttpAsyncClientBuilder</span><span class="pl-k">.</span>create();
+<span class="pl-stj">CredentialsProvider</span> credentialsProvider <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-stj">BasicCredentialsProvider</span>();
+credentialsProvider<span class="pl-k">.</span>setCredentials(<span class="pl-stj">AuthScope</span><span class="pl-c1"><span class="pl-k">.</span>ANY</span>, <span class="pl-k">new</span> <span class="pl-stj">UsernamePasswordCredentials</span>(<span class="pl-s1"><span class="pl-pds">"</span>user<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>password<span class="pl-pds">"</span></span>));
+httpClientBuilder<span class="pl-k">.</span>setDefaultCredentialsProvider(credentialsProvider);
+httpClientBuilder<span class="pl-k">.</span>setMaxConnTotal(<span class="pl-c1">20</span>);
+httpClientBuilder<span class="pl-k">.</span>setMaxConnPerRoute(<span class="pl-c1">5</span>);
 
-<span class="n">RestEndpoint</span> <span class="n">endpoint</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">create</span><span class="o">().</span><span class="na">withBaseUrl</span><span class="o">(</span><span class="n">HTTP_TEST_URK</span><span class="o">)</span>
-   <span class="o">.</span><span class="na">withSerializer</span><span class="o">(</span><span class="k">new</span> <span class="nf">StringSerializer</span><span class="o">()).</span><span class="na">withHttpClient</span><span class="o">(</span><span class="n">httpClientBuilder</span><span class="o">.</span><span class="na">build</span><span class="o">())</span>
-   <span class="o">.</span><span class="na">build</span><span class="o">();</span>
-</pre></div>
+<span class="pl-stj">RestEndpoint</span> endpoint <span class="pl-k">=</span> <span class="pl-stj">RestEndpoints</span><span class="pl-k">.</span>create()<span class="pl-k">.</span>withBaseUrl(<span class="pl-c1">HTTP_TEST_URK</span>)
+   .withSerializer(<span class="pl-k">new</span> <span class="pl-stj">StringSerializer</span>())<span class="pl-k">.</span>withHttpClient(httpClientBuilder<span class="pl-k">.</span>build())
+   .build();</pre></div>
 
 <p>So, you are able to configure HttpClient explicitly, but in this case builder's methods like #withBasicAuth() <b>will be overwritten</b>.</p>
 
 <h3>
-<a name="sending-requests" class="anchor" href="#sending-requests"><span class="octicon octicon-link"></span></a>Sending Requests</h3>
+<a id="sending-requests" class="anchor" href="#sending-requests" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sending Requests</h3>
 
 <h4>
-<a name="get" class="anchor" href="#get"><span class="octicon octicon-link"></span></a>GET</h4>
+<a id="get" class="anchor" href="#get" aria-hidden="true"><span class="octicon octicon-link"></span></a>GET</h4>
 
-<div class="highlight highlight-java"><pre><span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">responseBody</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/"</span><span class="o">,</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-</pre></div>
-
-<h4>
-<a name="postput" class="anchor" href="#postput"><span class="octicon octicon-link"></span></a>POST/PUT</h4>
-
-<div class="highlight highlight-java"><pre><span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">postResponseBody</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">post</span><span class="o">(</span><span class="s">"/"</span><span class="o">,</span> <span class="s">"this is request body"</span><span class="o">,</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-<span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">putResponseBody</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"/"</span><span class="o">,</span> <span class="s">"this is request body"</span><span class="o">,</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-</pre></div>
+<div class="highlight highlight-java"><pre><span class="pl-st">Will&lt;<span class="pl-stj">String</span>&gt;</span> responseBody <span class="pl-k">=</span> endpoint<span class="pl-k">.</span>get(<span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>, <span class="pl-stj">String</span><span class="pl-k">.</span>class);</pre></div>
 
 <h4>
-<a name="post-multipart" class="anchor" href="#post-multipart"><span class="octicon octicon-link"></span></a>POST Multipart</h4>
+<a id="postput" class="anchor" href="#postput" aria-hidden="true"><span class="octicon octicon-link"></span></a>POST/PUT</h4>
 
-<div class="highlight highlight-java"><pre><span class="n">MultiPartRequest</span> <span class="n">multiPartRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MultiPartRequest</span><span class="o">.</span><span class="na">Builder</span><span class="o">().</span>
-        <span class="n">addBinaryPart</span><span class="o">(</span><span class="s">"part name"</span><span class="o">,</span> <span class="s">"filename.txt"</span><span class="o">,</span>
-        <span class="n">MediaType</span><span class="o">.</span><span class="na">OCTET_STREAM</span><span class="o">.</span><span class="na">toString</span><span class="o">(),</span>
-        <span class="n">ByteSource</span><span class="o">.</span><span class="na">wrap</span><span class="o">(</span><span class="s">"here is body"</span><span class="o">.</span><span class="na">getBytes</span><span class="o">())).</span>
-        <span class="n">addSerializedPart</span><span class="o">(</span><span class="s">"this part will be serialized using serializer"</span><span class="o">,</span> <span class="s">"part body"</span><span class="o">).</span>
-        <span class="n">build</span><span class="o">();</span>
+<div class="highlight highlight-java"><pre><span class="pl-st">Will&lt;<span class="pl-stj">String</span>&gt;</span> postResponseBody <span class="pl-k">=</span> endpoint<span class="pl-k">.</span>post(<span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>this is request body<span class="pl-pds">"</span></span>, <span class="pl-stj">String</span><span class="pl-k">.</span>class);
+<span class="pl-st">Will&lt;<span class="pl-stj">String</span>&gt;</span> putResponseBody <span class="pl-k">=</span> endpoint<span class="pl-k">.</span>put(<span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>this is request body<span class="pl-pds">"</span></span>, <span class="pl-stj">String</span><span class="pl-k">.</span>class);</pre></div>
 
-<span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">post</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">post</span><span class="o">(</span><span class="s">"/"</span><span class="o">,</span> <span class="n">multiPartRequest</span><span class="o">,</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-</pre></div>
+<h4>
+<a id="post-multipart" class="anchor" href="#post-multipart" aria-hidden="true"><span class="octicon octicon-link"></span></a>POST Multipart</h4>
+
+<div class="highlight highlight-java"><pre><span class="pl-stj">MultiPartRequest</span> multiPartRequest <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-stj">MultiPartRequest</span>.<span class="pl-stj">Builder</span>()<span class="pl-c1">.</span>
+        addBinaryPart(<span class="pl-s1"><span class="pl-pds">"</span>part name<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>filename.txt<span class="pl-pds">"</span></span>,
+        <span class="pl-stj">MediaType</span><span class="pl-c1"><span class="pl-k">.</span>OCTET_STREAM</span><span class="pl-k">.</span>toString(),
+        <span class="pl-stj">ByteSource</span><span class="pl-k">.</span>wrap(<span class="pl-s1"><span class="pl-pds">"</span>here is body<span class="pl-pds">"</span></span><span class="pl-k">.</span>getBytes()))<span class="pl-c1">.</span>
+        addSerializedPart(<span class="pl-s1"><span class="pl-pds">"</span>this part will be serialized using serializer<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>part body<span class="pl-pds">"</span></span>)<span class="pl-c1">.</span>
+        build();
+
+<span class="pl-st">Will&lt;<span class="pl-stj">String</span>&gt;</span> post <span class="pl-k">=</span> endpoint<span class="pl-k">.</span>post(<span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>, multiPartRequest, <span class="pl-stj">String</span><span class="pl-k">.</span>class);</pre></div>
 
 <p>Take a look at the request builder. We have possibility to provide some part as is (binary part, as byte array) and also
 we can add part which will be serialized using some serializer. This pretty convenient when you need to send multipart request
 with JSON's, for example</p>
 
 <h4>
-<a name="delete" class="anchor" href="#delete"><span class="octicon octicon-link"></span></a>DELETE</h4>
+<a id="delete" class="anchor" href="#delete" aria-hidden="true"><span class="octicon octicon-link"></span></a>DELETE</h4>
 
-<div class="highlight highlight-java"><pre><span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">deleteResponseBody</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">delete</span><span class="o">(</span><span class="s">"/"</span><span class="o">,</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-</pre></div>
+<div class="highlight highlight-java"><pre><span class="pl-st">Will&lt;<span class="pl-stj">String</span>&gt;</span> deleteResponseBody <span class="pl-k">=</span> endpoint<span class="pl-k">.</span>delete(<span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>, <span class="pl-stj">String</span><span class="pl-k">.</span>class);</pre></div>
 
 <h4>
-<a name="as-command" class="anchor" href="#as-command"><span class="octicon octicon-link"></span></a>AS COMMAND</h4>
+<a id="as-command" class="anchor" href="#as-command" aria-hidden="true"><span class="octicon octicon-link"></span></a>AS COMMAND</h4>
 
-<div class="highlight highlight-java"><pre><span class="n">RestCommand</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">command</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RestCommand</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;(</span><span class="s">"/"</span><span class="o">,</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">POST</span><span class="o">,</span> <span class="s">"request body"</span><span class="o">,</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-<span class="n">Will</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">to</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="na">executeRequest</span><span class="o">(</span><span class="n">command</span><span class="o">);</span>
-</pre></div>
+<div class="highlight highlight-java"><pre><span class="pl-st">RestCommand&lt;<span class="pl-stj">String</span>, <span class="pl-stj">String</span>&gt;</span> command <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-st">RestCommand&lt;<span class="pl-stj">String</span>, <span class="pl-stj">String</span>&gt;</span>(<span class="pl-s1"><span class="pl-pds">"</span>/<span class="pl-pds">"</span></span>, <span class="pl-stj">HttpMethod</span><span class="pl-c1"><span class="pl-k">.</span>POST</span>, <span class="pl-s1"><span class="pl-pds">"</span>request body<span class="pl-pds">"</span></span>, <span class="pl-stj">String</span><span class="pl-k">.</span>class);
+<span class="pl-st">Will&lt;<span class="pl-stj">String</span>&gt;</span> to <span class="pl-k">=</span> endpoint<span class="pl-k">.</span>executeRequest(command);</pre></div>
 
 <h3>
-<a name="serializers" class="anchor" href="#serializers"><span class="octicon octicon-link"></span></a>Serializers</h3>
+<a id="serializers" class="anchor" href="#serializers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Serializers</h3>
 
 <p>To provide a convenient way for working with different data formats, RestEndpoint uses serializers. 
 Serializer is basically abstraction for converting data between java data types and data transmission formats (JSON, XML, String, etc). 
 For example, if content type of your responses is 'application/json' you need to add GsonSerializer, based on Google Gson library (<a href="https://code.google.com/p/google-gson/">https://code.google.com/p/google-gson/</a>)</p>
 
-<div class="highlight highlight-java"><pre><span class="n">RestEndpoint</span> <span class="n">endpoint</span> <span class="o">=</span> <span class="n">RestEndpoints</span><span class="o">.</span><span class="na">create</span><span class="o">()</span>
-   <span class="o">.</span><span class="na">withBaseUrl</span><span class="o">(</span><span class="s">"http://base_url_of_rest_service"</span><span class="o">)</span>
-   <span class="o">.</span><span class="na">withSerializer</span><span class="o">(</span><span class="k">new</span> <span class="nf">GsonSerializer</span><span class="o">()).</span><span class="na">build</span><span class="o">();</span>
-</pre></div>
+<div class="highlight highlight-java"><pre><span class="pl-stj">RestEndpoint</span> endpoint <span class="pl-k">=</span> <span class="pl-stj">RestEndpoints</span><span class="pl-k">.</span>create()
+   .withBaseUrl(<span class="pl-s1"><span class="pl-pds">"</span>http://base_url_of_rest_service<span class="pl-pds">"</span></span>)
+   .withSerializer(<span class="pl-k">new</span> <span class="pl-stj">GsonSerializer</span>())<span class="pl-k">.</span>build();</pre></div>
 
 <p>RestEndpoint reads content type of incoming response and decides which serializer to use (based on response content type). It also adds correct content type to your
 outcoming requests depending on serializer used for body converting.</p>
