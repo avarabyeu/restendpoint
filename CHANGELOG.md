@@ -14,7 +14,7 @@ Bugfixes:
 
   - Add escaping for URL path parameters (proxy interface UrlTemplate)
 
-## 0.0.9 (2014-10-27)
+## 0.0.9 (2015-03-05)
 
 Improvements:
 
