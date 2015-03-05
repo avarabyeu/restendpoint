@@ -27,7 +27,7 @@ Last stable version:
 <dependency>
     <groupId>com.github.avarabyeu</groupId>
     <artifactId>restendpoint</artifactId>
-    <version>0.0.5</version>
+    <version>X.X.X</version>
 </dependency>
 ```
 
