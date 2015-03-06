@@ -20,7 +20,7 @@ package com.github.avarabyeu.restendpoint.http;
 import com.github.avarabyeu.restendpoint.http.proxy.RestEndpointInvocationHandler;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
-import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
+import com.github.avarabyeu.restendpoint.serializer.TextSerializer;
 import com.github.avarabyeu.restendpoint.serializer.json.GsonSerializer;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.Reflection;
@@ -59,7 +59,7 @@ public class RestEndpoints {
     public static RestEndpoint createDefault() {
         return new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),
                 Lists.newArrayList(
-                        new StringSerializer(),
+                        new TextSerializer(),
                         new ByteArraySerializer(), new GsonSerializer()),
                 new DefaultErrorHandler());
     }
@@ -74,7 +74,7 @@ public class RestEndpoints {
     public static RestEndpoint createDefault(String endpointUrl) {
         return new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),
                 Lists.newArrayList(
-                        new StringSerializer(),
+                        new TextSerializer(),
                         new ByteArraySerializer(), new GsonSerializer()),
                 new DefaultErrorHandler(),
                 endpointUrl);

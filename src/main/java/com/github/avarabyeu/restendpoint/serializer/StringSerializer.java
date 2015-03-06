@@ -23,6 +23,13 @@ import com.google.common.reflect.TypeToken;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Type;
 
+/**
+ * Plain String serializer
+ *
+ * @author avarabyeu
+ * @deprecated In favor of {@link com.github.avarabyeu.restendpoint.serializer.TextSerializer}
+ */
+@Deprecated
 public class StringSerializer implements Serializer {
 
     /*

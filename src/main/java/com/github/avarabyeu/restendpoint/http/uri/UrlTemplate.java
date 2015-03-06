@@ -41,8 +41,8 @@ public class UrlTemplate {
     /**
      * Creates new instance of template
      *
-     * @param template
-     * @return
+     * @param template URL Template String
+     * @return URLTemplate instance
      */
     public static UrlTemplate create(String template) {
         return new UrlTemplate(template);
@@ -59,7 +59,7 @@ public class UrlTemplate {
     /**
      * Returns all found path variables
      *
-     * @return
+     * @return all found path variables
      */
     public List<String> getPathVariables() {
         return pathVariables;
@@ -100,6 +100,7 @@ public class UrlTemplate {
                 Object replacement = pathParameters.get(m.group(1));
                 Preconditions.checkState(null != replacement, "Unknown path variable: %s", m.group(1));
 
+                //noinspection ConstantConditions
                 m.appendReplacement(sb, Matcher.quoteReplacement(UrlEscapers.urlPathSegmentEscaper().escape(replacement.toString())));
             }
             m.appendTail(sb);
