@@ -23,3 +23,9 @@ Improvements:
 Bugfixes:
 
   - Add validation for method mapping in proxy-style client
+
+## 0.0.10 (2015-03-09)
+
+Improvements:
+
+  - Add serializer based on Apache BeanUtils converter. Replacement for StringSerializer for text/** content types
