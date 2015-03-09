@@ -24,6 +24,7 @@ import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
 import com.github.avarabyeu.wills.Will;
 import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.AfterClass;
@@ -66,7 +67,7 @@ public class RestEndpointsTest extends BaseRestEndointTest {
         RestEndpoint endpoint = RestEndpoints.createDefault(HTTP_TEST_URK);
         Assert.assertThat(endpoint, notNullValue());
 
-        server.enqueue(prepareResponse(ECHO_STRING));
+        server.enqueue(prepareResponse(ECHO_STRING).setHeader(CONTENT_TYPE_HEADER, MediaType.PLAIN_TEXT_UTF_8));
         Will<String> helloRS = endpoint.post(RESOURCE, ECHO_STRING, String.class);
         Assert.assertThat(helloRS.obtain(), is(ECHO_STRING));
 

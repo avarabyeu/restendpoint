@@ -31,12 +31,13 @@ public class BaseRestEndointTest {
 
     public static final String SERIALIZED_STRING = "{\"intField\":100,\"stringField\":\"test string\"}";
     public static final String SERIALIZED_STRING_PATTERN = "{\"intField\":%d,\"stringField\":\"%s\"}";
+    public static final String CONTENT_TYPE_HEADER = "Content-Type";
 
     protected void validateHeader(RecordedRequest request) {
         Assert.assertTrue(request.getHeaders().contains("Content-Type: text/plain; charset=utf-8"));
     }
 
     protected MockResponse prepareResponse(String body) {
-        return new MockResponse().setBody(body).setHeader("Content-Type", "application/json");
+        return new MockResponse().setBody(body).setHeader(CONTENT_TYPE_HEADER, "application/json");
     }
 }
