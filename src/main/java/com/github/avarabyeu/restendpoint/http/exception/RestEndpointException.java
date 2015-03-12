@@ -73,9 +73,10 @@ public class RestEndpointException extends RuntimeException {
                 .append("Request [").append(requestMethod.toString()).append("] ")
                 .append("to URL: ").append(requestUri).append(" has failed with ")
                 .append("Status code: ")
-                .append(statusCode).append("\n")
+                .append(statusCode).append('\n')
                 .append("Status message: ")
-                .append(statusMessage)
+                .append(statusMessage).append('\n')
+                .append("Content: '").append(new String(content)).append('\'')
                 .toString();
     }
 

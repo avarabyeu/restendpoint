@@ -331,7 +331,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      */
     private URI spliceUrl(String resource) throws RestEndpointIOException {
         try {
-            return new URI(baseUrl.concat(resource));
+            return Strings.isNullOrEmpty(baseUrl) ? new URI(resource) : new URI(baseUrl.concat(resource));
         } catch (URISyntaxException e) {
             throw new RestEndpointIOException("Unable to builder URL with base url '" + baseUrl + "' and resouce '" + resource + "'", e);
         }

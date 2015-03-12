@@ -29,3 +29,13 @@ Bugfixes:
 Improvements:
 
   - Add serializer based on Apache BeanUtils converter. Replacement for StringSerializer for text/** content types
+
+## 0.0.11 (XXXX-XX-XX)
+
+Improvements:
+
+  - Add logging for response body in case of error
+
+Bugfixes:
+
+  - Fix possible NPE when base URL is not provided
