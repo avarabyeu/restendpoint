@@ -15,7 +15,7 @@ import java.util.Map;
  * Text Serializer based on Apache Conversion Utils
  *
  * @author Andrei Varabyeu
- * @see
+ * @see <a href="http://commons.apache.org/proper/commons-beanutils/">Apache BeanUtils</a>
  */
 public class TextSerializer implements Serializer {
 
@@ -43,7 +43,7 @@ public class TextSerializer implements Serializer {
      *                         (N.B. This values is ignored if <code>throwException</code> is <code>true</code>).
      *                         Specifying a value less than zero causes a <code>null</code> value to be used for
      *                         the default.
-     * @see {@link org.apache.commons.beanutils.ConvertUtilsBean#register(boolean, boolean, int)}
+     * @see org.apache.commons.beanutils.ConvertUtilsBean#register(boolean, boolean, int)
      */
     public TextSerializer(boolean throwException, boolean defaultNull, int defaultArraySize) {
         this.converter = new ConvertUtilsBean();

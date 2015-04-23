@@ -31,7 +31,8 @@ public interface Serializer {
     /**
      * Serializes Message into byte array
      *
-     * @param t Object to be serialized
+     * @param t   Object to be serialized
+     * @param <T> Type of object to be serialized
      * @return serialized object as byte array
      * @throws SerializerException In case of some exception
      */
@@ -42,6 +43,7 @@ public interface Serializer {
      *
      * @param content Object to be deserialized
      * @param clazz   Result Type
+     * @param <T>     Type of deserialization result
      * @return Deserialized Object
      * @throws SerializerException In case of some exception
      */
