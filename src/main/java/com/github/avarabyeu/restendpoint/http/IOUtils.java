@@ -38,7 +38,7 @@ public class IOUtils {
     /**
      * Closes Resource without throwing any errors
      *
-     * @param closeable
+     * @param closeable {@link Closeable} to close
      */
     public static void closeQuietly(Closeable closeable) {
         try {
@@ -53,8 +53,8 @@ public class IOUtils {
     /**
      * Check whether provided url string is a valid java {@link java.net.URL}
      *
-     * @param url
-     * @return
+     * @param url URL to be validated
+     * @return TRUE if URL is valid
      */
     public static boolean isValidUrl(String url) {
         try {
@@ -71,9 +71,13 @@ public class IOUtils {
     /**
      * Loads keystore
      *
-     * @param keyStore
-     * @param password
-     * @return
+     * @param keyStore Keystore InputStream
+     * @param password Keystore password
+     * @return Loaded Keystore
+     * @throws CertificateException     In case of Certificate error
+     * @throws NoSuchAlgorithmException If no such algorithm present
+     * @throws IOException              In case if some IO errors
+     * @throws KeyStoreException        If there is some error with KeyStore
      */
     public static KeyStore loadKeyStore(InputStream keyStore, String password) throws CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException {
         try {

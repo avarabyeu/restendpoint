@@ -51,7 +51,7 @@ public class RestEndpoints {
 
 
     /**
-     * Creates default {@link com.github.avarabyeu.restendpoint.http.RestEndpoint} for provided endpoint URL. <\br>
+     * Creates default {@link com.github.avarabyeu.restendpoint.http.RestEndpoint} for provided endpoint URL.
      * Adds {@link com.github.avarabyeu.restendpoint.http.DefaultErrorHandler} and all possible serializers
      *
      * @return created RestEndpoint
@@ -65,7 +65,7 @@ public class RestEndpoints {
     }
 
     /**
-     * Creates default {@link com.github.avarabyeu.restendpoint.http.RestEndpoint} for provided endpoint URL. <\br>
+     * Creates default {@link com.github.avarabyeu.restendpoint.http.RestEndpoint} for provided endpoint URL.
      * Adds {@link com.github.avarabyeu.restendpoint.http.DefaultErrorHandler} and all possible serializers
      *
      * @param endpointUrl Base endpoint URL
@@ -82,7 +82,7 @@ public class RestEndpoints {
 
     /**
      * Creates interface implementation (via proxy) of provided class using RestEndpoint as rest client
-     * <b>Only interfaces are supported!</>
+     * <b>Only interfaces are supported!</b>
      *
      * @param clazz    - interface to be proxied
      * @param endpoint - RestEndpoint to be used as rest client
@@ -165,6 +165,8 @@ public class RestEndpoints {
         /**
          * Adds Preemptive Basic authentication to the client
          *
+         * @param username Username
+         * @param password Password
          * @return this Builder
          */
         public Builder withBasicAuth(String username, String password) {
@@ -199,7 +201,7 @@ public class RestEndpoints {
 
         /**
          * Builds RestEndpoints and created proxy implementation for provided class
-         * <b>Only interfaces are supported!</>
+         * <b>Only interfaces are supported!</b>
          *
          * @param clazz - interface to be proxied
          * @param <T>   - type of interface to be proxied

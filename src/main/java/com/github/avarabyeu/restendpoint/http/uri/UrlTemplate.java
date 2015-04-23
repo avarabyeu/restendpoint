@@ -68,7 +68,7 @@ public class UrlTemplate {
     /**
      * Creates new merger. Leaves template instance immutable
      *
-     * @return
+     * @return New Merger
      */
     public Merger merge() {
         return new Merger(this.template);
@@ -116,7 +116,7 @@ public class UrlTemplate {
 
             /* remove last '/' if exists */
             int lastCharIndex = template.length() - 1;
-            if ('/' == template.charAt(lastCharIndex)){
+            if ('/' == template.charAt(lastCharIndex)) {
                 template.deleteCharAt(lastCharIndex);
             }
 

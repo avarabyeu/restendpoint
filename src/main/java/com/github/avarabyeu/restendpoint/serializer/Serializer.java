@@ -33,7 +33,7 @@ public interface Serializer {
      *
      * @param t Object to be serialized
      * @return serialized object as byte array
-     * @throws SerializerException
+     * @throws SerializerException In case of some exception
      */
     <T> byte[] serialize(T t) throws SerializerException;
 
@@ -43,7 +43,7 @@ public interface Serializer {
      * @param content Object to be deserialized
      * @param clazz   Result Type
      * @return Deserialized Object
-     * @throws SerializerException
+     * @throws SerializerException In case of some exception
      */
     <T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException;
 
@@ -54,8 +54,9 @@ public interface Serializer {
      * @param type    - Representation of type of response. For generic types (e.g.
      *                collections) {@link java.lang.reflect.ParameterizedType} may
      *                be used
+     * @param <T>     Type of result object
      * @return Deserialized Object
-     * @throws SerializerException
+     * @throws SerializerException In case of some exception
      */
     <T> T deserialize(byte[] content, Type type) throws SerializerException;
 

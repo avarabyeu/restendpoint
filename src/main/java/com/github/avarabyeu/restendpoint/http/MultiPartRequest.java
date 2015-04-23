@@ -57,9 +57,9 @@ public class MultiPartRequest {
     /**
      * Part of request to be serialized (will be serialized using  {@link com.github.avarabyeu.restendpoint.serializer.Serializer})
      *
-     * @param <RQ>
+     * @param <RQ> Type of part to be serialized
      * @author Andrei Varabyeu
-     * @see {@link com.github.avarabyeu.restendpoint.serializer.Serializer}
+     * @see com.github.avarabyeu.restendpoint.serializer.Serializer
      */
     public static class MultiPartSerialized<RQ> {
 
@@ -85,7 +85,7 @@ public class MultiPartRequest {
      * Binary part of multipart request (won't be serialized using {@link com.github.avarabyeu.restendpoint.serializer.Serializer})
      *
      * @author Andrei Varabyeu
-     * @see {@link com.github.avarabyeu.restendpoint.serializer.Serializer}
+     * @see com.github.avarabyeu.restendpoint.serializer.Serializer
      */
     public static class MultiPartBinary {
         private String partName;
