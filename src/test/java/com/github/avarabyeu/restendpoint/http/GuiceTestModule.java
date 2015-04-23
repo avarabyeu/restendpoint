@@ -16,11 +16,8 @@
 
 package com.github.avarabyeu.restendpoint.http;
 
-import com.github.avarabyeu.restendpoint.http.mock.RestInterface;
-import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.*;
 import com.google.inject.name.Named;
@@ -30,7 +27,6 @@ import com.squareup.okhttp.mockwebserver.QueueDispatcher;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -43,10 +39,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class GuiceTestModule implements Module {
 
-    /**
-     * Default PORT for Mock Web Server
-     */
-    public static int MOCK_PORT = findFreePort();
 
     @Override
     public void configure(Binder binder) {
@@ -71,17 +63,6 @@ public class GuiceTestModule implements Module {
         return new StringSerializer();
     }
 
-    /**
-     * Default {@link com.github.avarabyeu.restendpoint.http.RestEndpoint} binding
-     *
-     * @return Created RestEndpont
-     */
-    @Provides
-    public RestEndpoint provideRestEndpoint(ErrorHandler<HttpUriRequest, HttpResponse> errorHandler) {
-        return new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),
-                Lists.newArrayList(new StringSerializer(), new ByteArraySerializer()), errorHandler,
-                "http://localhost:" + MOCK_PORT);
-    }
 
     @Provides
     @Named("slow")
@@ -90,21 +71,13 @@ public class GuiceTestModule implements Module {
         mockWebServer.setDispatcher(new QueueDispatcher() {
             @Override
             public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
-                Uninterruptibles.sleepUninterruptibly(5l, TimeUnit.SECONDS);
+                Uninterruptibles.sleepUninterruptibly(3l, TimeUnit.SECONDS);
                 return super.dispatch(request);
             }
         });
         return mockWebServer;
     }
 
-    @Provides
-    public RestInterface provideProxy() {
-        return RestEndpoints.create().withBaseUrl("http://localhost:" + MOCK_PORT)
-                .withSerializer(new StringSerializer())
-                .withSerializer(new ByteArraySerializer())
-                .withErrorHandler(new DefaultErrorHandler())
-                .forInterface(RestInterface.class);
-    }
 
     private static int findFreePort() {
         ServerSocket socket = null;

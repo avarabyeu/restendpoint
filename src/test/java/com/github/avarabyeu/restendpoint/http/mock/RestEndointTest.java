@@ -17,6 +17,8 @@
 package com.github.avarabyeu.restendpoint.http.mock;
 
 import com.github.avarabyeu.restendpoint.http.*;
+import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
+import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 import org.junit.AfterClass;
@@ -33,13 +35,15 @@ import java.io.IOException;
  */
 public class RestEndointTest extends BaseRestEndointTest {
 
-    private RestEndpoint endpoint = Injector.getInstance().getBean(RestEndpoint.class);
+    private static RestEndpoint endpoint;
 
     private static MockWebServer server = Injector.getInstance().getBean(MockWebServer.class);
 
     @BeforeClass
     public static void before() throws IOException {
-        server.play(GuiceTestModule.MOCK_PORT);
+        server.start();
+        endpoint = RestEndpoints.create().withBaseUrl("http://localhost:" + server.getPort())
+                .withSerializer(new StringSerializer()).withSerializer(new ByteArraySerializer()).build();
     }
 
     @AfterClass
@@ -66,7 +70,7 @@ public class RestEndointTest extends BaseRestEndointTest {
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "POST / HTTP/1.1", request.getRequestLine());
         validateHeader(request);
-        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, new String(request.getBody()));
+        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, request.getBody().readUtf8());
 
     }
 
@@ -79,7 +83,7 @@ public class RestEndointTest extends BaseRestEndointTest {
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "PUT / HTTP/1.1", request.getRequestLine());
         validateHeader(request);
-        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, new String(request.getBody()));
+        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, request.getBody().readUtf8());
 
     }
 
@@ -102,7 +106,7 @@ public class RestEndointTest extends BaseRestEndointTest {
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "POST / HTTP/1.1", request.getRequestLine());
         validateHeader(request);
-        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, new String(request.getBody()));
+        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, request.getBody().readUtf8());
 
     }
 

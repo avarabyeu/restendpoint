@@ -17,8 +17,11 @@
 package com.github.avarabyeu.restendpoint.http.mock;
 
 import com.github.avarabyeu.restendpoint.http.BaseRestEndointTest;
-import com.github.avarabyeu.restendpoint.http.GuiceTestModule;
+import com.github.avarabyeu.restendpoint.http.DefaultErrorHandler;
 import com.github.avarabyeu.restendpoint.http.Injector;
+import com.github.avarabyeu.restendpoint.http.RestEndpoints;
+import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
+import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.smarttested.qa.smartassert.junit.SoftAssertVerifier;
@@ -39,13 +42,18 @@ import static org.hamcrest.CoreMatchers.is;
  */
 public class RestEndpointProxyTest extends BaseRestEndointTest {
     private static MockWebServer server = Injector.getInstance().getBean(MockWebServer.class);
-
-    private RestInterface restInterface = Injector.getInstance().getBean(RestInterface.class);
+    private static RestInterface restInterface;
 
 
     @BeforeClass
     public static void before() throws IOException {
-        server.play(GuiceTestModule.MOCK_PORT);
+        server.play();
+
+        restInterface = RestEndpoints.create().withBaseUrl("http://localhost:" + server.getPort())
+                .withSerializer(new StringSerializer())
+                .withSerializer(new ByteArraySerializer())
+                .withErrorHandler(new DefaultErrorHandler())
+                .forInterface(RestInterface.class);
     }
 
     @AfterClass
@@ -76,8 +84,7 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "POST / HTTP/1.1", request.getRequestLine());
         validateHeader(request);
-        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, new String(request.getBody()));
-
+        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, request.getBody().readUtf8());
     }
 
     @Test
@@ -89,7 +96,7 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "POST / HTTP/1.1", request.getRequestLine());
         validateHeader(request);
-        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, new String(request.getBody()));
+        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, request.getBody().readUtf8());
 
     }
 
@@ -102,7 +109,7 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "PUT / HTTP/1.1", request.getRequestLine());
         validateHeader(request);
-        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, new String(request.getBody()));
+        Assert.assertEquals("Incorrect body", SERIALIZED_STRING, request.getBody().readUtf8());
 
     }
 

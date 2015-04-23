@@ -17,7 +17,10 @@
 
 package com.github.avarabyeu.restendpoint.http.mock;
 
-import com.github.avarabyeu.restendpoint.http.*;
+import com.github.avarabyeu.restendpoint.http.BaseRestEndointTest;
+import com.github.avarabyeu.restendpoint.http.Injector;
+import com.github.avarabyeu.restendpoint.http.RestEndpoint;
+import com.github.avarabyeu.restendpoint.http.RestEndpoints;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
@@ -44,7 +47,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
  */
 public class RestEndpointsTest extends BaseRestEndointTest {
 
-    public static final String HTTP_TEST_URK = "http://localhost:" + GuiceTestModule.MOCK_PORT;
+    public static final String HTTP_TEST_URK = "http://localhost:";
     public static final String ECHO_STRING = "Hello world!";
     public static final String RESOURCE = "/";
 
@@ -53,7 +56,7 @@ public class RestEndpointsTest extends BaseRestEndointTest {
 
     @BeforeClass
     public static void before() throws IOException {
-        server.play(GuiceTestModule.MOCK_PORT);
+        server.start();
     }
 
     @AfterClass
@@ -64,7 +67,7 @@ public class RestEndpointsTest extends BaseRestEndointTest {
 
     @Test
     public void testDefault() throws RestEndpointIOException {
-        RestEndpoint endpoint = RestEndpoints.createDefault(HTTP_TEST_URK);
+        RestEndpoint endpoint = RestEndpoints.createDefault(HTTP_TEST_URK + server.getPort());
         Assert.assertThat(endpoint, notNullValue());
 
         server.enqueue(prepareResponse(ECHO_STRING).setHeader(CONTENT_TYPE_HEADER, MediaType.PLAIN_TEXT_UTF_8));
@@ -80,7 +83,7 @@ public class RestEndpointsTest extends BaseRestEndointTest {
      */
     @Test(expected = SerializerException.class)
     public void testNoSerializer() throws RestEndpointIOException {
-        RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK)
+        RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK + server.getPort())
                 .withSerializer(new ByteArraySerializer())
                 .build();
         Assert.assertThat(endpoint, notNullValue());
@@ -92,7 +95,7 @@ public class RestEndpointsTest extends BaseRestEndointTest {
 
     @Test
     public void testBuilderHappy() throws RestEndpointIOException {
-        RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK)
+        RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK + server.getPort())
                 .withSerializer(new StringSerializer())
                 .build();
         Assert.assertThat(endpoint, notNullValue());
@@ -104,7 +107,7 @@ public class RestEndpointsTest extends BaseRestEndointTest {
 
     @Test
     public void testBuilderBasicAuth() throws RestEndpointIOException, InterruptedException {
-        RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK)
+        RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK + server.getPort())
                 .withSerializer(new StringSerializer()).withBasicAuth("login", "password")
                 .build();
         Assert.assertThat(endpoint, notNullValue());

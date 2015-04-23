@@ -17,6 +17,8 @@
 package com.github.avarabyeu.restendpoint.http.mock;
 
 import com.github.avarabyeu.restendpoint.http.*;
+import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
+import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
 import com.github.avarabyeu.wills.Will;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import org.junit.AfterClass;
@@ -33,13 +35,16 @@ import java.io.IOException;
  */
 public class RestEndpointAsyncTest extends BaseRestEndointTest {
 
-    private RestEndpoint endpoint = Injector.getInstance().getBean(RestEndpoint.class);
+    private static RestEndpoint endpoint;
 
     private static MockWebServer server = Injector.getInstance().getBean("slow", MockWebServer.class);
 
     @BeforeClass
     public static void before() throws IOException {
-        server.play(GuiceTestModule.MOCK_PORT);
+        server.start();
+        endpoint = RestEndpoints.create().withBaseUrl("http://localhost:" + server.getPort())
+                .withSerializer(new StringSerializer()).withSerializer(new ByteArraySerializer()).build();
+
     }
 
     @AfterClass
