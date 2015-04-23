@@ -282,8 +282,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      *
      * @param command REST request representation
      * @return Future wrapper of REST response
-     * @throws RestEndpointIOException
-     * @see {@link com.github.avarabyeu.wills.Will}
+     * @throws RestEndpointIOException In case of error
+     * @see com.github.avarabyeu.wills.Will
      */
     @Override
     public <RQ, RS> Will<RS> executeRequest(RestCommand<RQ, RS> command) throws RestEndpointIOException {

@@ -52,7 +52,7 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      * for client exceptions and
      * {@link com.github.avarabyeu.restendpoint.http.exception.RestEndpointServerException}
      * for server exceptions<br>
-     * <p/>
+     * <p>
      * Throwed exceptions may be overridden in handle* methods
      */
     @Override
@@ -88,7 +88,7 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      * @param statusCode    - HTTP status code
      * @param statusMessage - HTTP status message
      * @param errorBody     - HTTP response body
-     * @throws RestEndpointIOException
+     * @throws RestEndpointIOException In case of request error
      */
     protected void handleClientError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage, byte[] errorBody) throws RestEndpointIOException {
         throw new RestEndpointClientException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
@@ -102,7 +102,7 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      * @param statusCode    - HTTP status code
      * @param statusMessage - HTTP status message
      * @param errorBody     - HTTP response body
-     * @throws RestEndpointIOException
+     * @throws RestEndpointIOException In case of request error
      */
     protected void handleServerError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage, byte[] errorBody) throws RestEndpointIOException {
         throw new RestEndpointServerException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
@@ -116,7 +116,7 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      * @param statusCode    - HTTP status code
      * @param statusMessage - HTTP status message
      * @param errorBody     - HTTP response body
-     * @throws RestEndpointIOException
+     * @throws RestEndpointIOException In case of request error
      */
     protected void handleDefaultError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage, byte[] errorBody) throws RestEndpointIOException {
         throw new RestEndpointException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
@@ -127,7 +127,7 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      *
      * @param rs HTTP Response
      * @return Body as byte array
-     * @throws RestEndpointIOException
+     * @throws RestEndpointIOException In case of request error
      */
     private byte[] getErrorBody(HttpResponse rs) throws RestEndpointIOException {
         HttpEntity entity = null;

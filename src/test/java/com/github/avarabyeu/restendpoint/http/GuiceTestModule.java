@@ -40,13 +40,14 @@ import java.util.concurrent.TimeUnit;
 public class GuiceTestModule implements Module {
 
 
+    public static final Key<ErrorHandler<HttpUriRequest, HttpResponse>> ERROR_HANDLER_KEY = new Key<ErrorHandler<HttpUriRequest, HttpResponse>>() {
+    };
+
     @Override
     public void configure(Binder binder) {
 
         /** Error Handler binding */
-        binder.bind(new Key<ErrorHandler<HttpUriRequest, HttpResponse>>() {
-        }).to(DefaultErrorHandler.class).in(Scopes.SINGLETON);
-
+        binder.bind(ERROR_HANDLER_KEY).to(DefaultErrorHandler.class).in(Scopes.SINGLETON);
 
         binder.bind(MockWebServer.class).in(Scopes.NO_SCOPE);
 

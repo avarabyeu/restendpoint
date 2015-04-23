@@ -40,7 +40,7 @@ public interface ErrorHandler<RQ, RS> {
      *
      * @param rq request instance
      * @param rs response instance
-     * @throws com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException
+     * @throws com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException In case of error
      */
     void handle(RQ rq, RS rs) throws RestEndpointIOException;
 }

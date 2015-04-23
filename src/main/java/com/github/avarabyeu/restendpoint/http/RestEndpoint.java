@@ -35,8 +35,10 @@ public interface RestEndpoint {
      * @param resource - REST resource
      * @param rq       - Request body
      * @param clazz    - Type of returned response
+     * @param <RQ>     - Type of Request
+     * @param <RS>     - Type of Response
      * @return - Response body
-     * @throws com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException
+     * @throws RestEndpointIOException In case of error
      */
     <RQ, RS> Will<RS> post(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
 
@@ -46,8 +48,10 @@ public interface RestEndpoint {
      * @param resource - REST resource
      * @param rq       - Request body
      * @param type     - Type of returned response
+     * @param <RQ>     - Type of Request
+     * @param <RS>     - Type of Response
      * @return - Response body
-     * @throws RestEndpointIOException
+     * @throws RestEndpointIOException In case of error
      */
     <RQ, RS> Will<RS> post(String resource, RQ rq, Type type) throws RestEndpointIOException;
 
@@ -57,8 +61,9 @@ public interface RestEndpoint {
      * @param resource - REST resource
      * @param request  - MultiPart request
      * @param clazz    - Type of returned response
+     * @param <RS>     - Type of Response
      * @return - Response Body
-     * @throws RestEndpointIOException
+     * @throws RestEndpointIOException In case of error
      */
     <RS> Will<RS> post(String resource, MultiPartRequest request, Class<RS> clazz) throws RestEndpointIOException;
 
@@ -68,8 +73,10 @@ public interface RestEndpoint {
      * @param resource - REST resource
      * @param rq       - Request body
      * @param clazz    - Type of Response
+     * @param <RQ>     - Type of Request
+     * @param <RS>     - Type of Response
      * @return - Response body
-     * @throws RestEndpointIOException
+     * @throws RestEndpointIOException In case of error
      */
     <RQ, RS> Will<RS> put(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
 
@@ -78,9 +85,11 @@ public interface RestEndpoint {
      *
      * @param resource - REST resource
      * @param rq       - Request body
-     * @param type    - {@link Type} of Response
+     * @param type     - {@link Type} of Response
+     * @param <RQ>     - Type of Request
+     * @param <RS>     - Type of Response
      * @return - Response body
-     * @throws RestEndpointIOException
+     * @throws RestEndpointIOException In case of error
      */
     <RQ, RS> Will<RS> put(String resource, RQ rq, Type type) throws RestEndpointIOException;
 
@@ -89,8 +98,9 @@ public interface RestEndpoint {
      *
      * @param resource - REST Resource
      * @param clazz    - Response Body Type
+     * @param <RS>     - Type of Response
      * @return - Response Body
-     * @throws RestEndpointIOException
+     * @throws RestEndpointIOException In case of error
      */
     <RS> Will<RS> delete(String resource, Class<RS> clazz) throws RestEndpointIOException;
 
@@ -99,8 +109,9 @@ public interface RestEndpoint {
      *
      * @param resource - REST Resource
      * @param clazz    - Response Body Type
+     * @param <RS>     - Type of Response
      * @return - Response Body
-     * @throws RestEndpointIOException
+     * @throws RestEndpointIOException In case of error
      */
     <RS> Will<RS> get(String resource, Class<RS> clazz) throws RestEndpointIOException;
 
@@ -108,9 +119,10 @@ public interface RestEndpoint {
      * HTTP GET
      *
      * @param resource - REST Resource
-     * @param type    - Response Body Type
+     * @param type     - Response Body Type
+     * @param <RS>     - Type of Response
      * @return - Response Body
-     * @throws RestEndpointIOException
+     * @throws RestEndpointIOException In case of error
      */
     <RS> Will<RS> get(String resource, Type type) throws RestEndpointIOException;
 
@@ -120,8 +132,9 @@ public interface RestEndpoint {
      * @param resource   - REST Resource
      * @param parameters - Map of query parameters
      * @param clazz      - Response body type
+     * @param <RS>     - Type of Response
      * @return - Response Body
-     * @throws RestEndpointIOException
+     * @throws RestEndpointIOException In case of error
      */
     <RS> Will<RS> get(String resource, Map<String, String> parameters, Class<RS> clazz) throws RestEndpointIOException;
 
@@ -132,8 +145,9 @@ public interface RestEndpoint {
      * @param parameters - Map of query parameters
      * @param type       - Response body type. For generic types (e.g. collections)
      *                   {@link java.lang.reflect.ParameterizedType} may be used
+     * @param <RS>     - Type of Response
      * @return - Response Body
-     * @throws RestEndpointIOException
+     * @throws RestEndpointIOException In case of error
      */
     <RS> Will<RS> get(String resource, Map<String, String> parameters, Type type) throws RestEndpointIOException;
 
