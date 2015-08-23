@@ -1,5 +1,7 @@
 package com.github.avarabyeu.restendpoint.http.proxy;
 
+import com.github.avarabyeu.restendpoint.http.HttpClientRestEndpoint;
+import com.github.avarabyeu.restendpoint.http.Response;
 import com.github.avarabyeu.restendpoint.http.RestEndpoint;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.wills.Will;
@@ -35,13 +37,17 @@ public class RestEndpointInvocationHandler implements InvocationHandler {
 
     private Object executeRestMethod(Method method, Object[] args) throws RestEndpointIOException {
 
-        Preconditions.checkState(restMethods.containsKey(method), "Method with name [%s] is not mapped", method.getName());
+        Preconditions
+                .checkState(restMethods.containsKey(method), "Method with name [%s] is not mapped", method.getName());
 
         /* find appropriate method information*/
         RestMethodInfo methodInfo = restMethods.get(method);
 
         /* delegate request execution to RestEndpoint */
-        Will result = delegate.executeRequest(methodInfo.createRestCommand(args));
+        Will<Response<Object>> response = delegate.executeRequest(methodInfo.createRestCommand(args));
+
+        Will<?> result = methodInfo.isBodyOnly() ? response.map(new HttpClientRestEndpoint.BodyTransformer<Object>()) : response;
+
         if (methodInfo.isAsynchronous()) {
             return result;
         } else {

@@ -1,6 +1,7 @@
 package com.github.avarabyeu.restendpoint.http.proxy;
 
 import com.github.avarabyeu.restendpoint.http.HttpMethod;
+import com.github.avarabyeu.restendpoint.http.Response;
 import com.github.avarabyeu.restendpoint.http.RestCommand;
 import com.github.avarabyeu.restendpoint.http.annotation.Body;
 import com.github.avarabyeu.restendpoint.http.annotation.Path;
@@ -52,6 +53,9 @@ class RestMethodInfo {
     /* Query parameter index */
     private Optional<Integer> queryParameter = Optional.absent();
 
+    /* Whether method returns body or Response wrapper */
+    private boolean returnBodyOnly;
+
     @Nonnull
     public static Map<Method, RestMethodInfo> mapMethods(@Nonnull Class<?> clazz) {
         Map<Method, RestMethodInfo> restMethods = new LinkedHashMap<Method, RestMethodInfo>();
@@ -71,14 +75,21 @@ class RestMethodInfo {
         return Will.class.equals(method.getReturnType().getRawType());
     }
 
+    static boolean bodyOnly(Invokable<?, ?> method) {
+        return !Response.class.equals(method.getReturnType().getRawType());
+    }
 
     public RestMethodInfo(Method m) {
         parseMethod(Invokable.from(m));
     }
 
-
     public boolean isAsynchronous() {
         return asynchronous;
+    }
+
+
+    public boolean isBodyOnly() {
+        return returnBodyOnly;
     }
 
     private void parseMethod(Invokable<?, ?> method) {
@@ -88,6 +99,7 @@ class RestMethodInfo {
         this.asynchronous = isAsynchronous(method);
         this.method = request.method();
         this.responseType = method.getReturnType();
+        this.returnBodyOnly = bodyOnly(method);
 
         /* walk through method parameters and find marked with internal annotations */
         ImmutableList<Parameter> methodParameters = method.getParameters();
@@ -113,9 +125,12 @@ class RestMethodInfo {
     }
 
     private void validationPathArguments(Invokable<?, ?> method) {
-        Sets.SetView<String> difference = Sets.difference(Sets.newHashSet(urlTemplate.getPathVariables()), Sets.newHashSet(pathArguments.values()));
-        Preconditions.checkState(difference.isEmpty(), "The following path arguments found in URL template, but not found in method signature: [%s]. " +
-                        "Class: [%s]. Method [%s]. Did you forget @Path annotation?", Joiner.on(',').join(difference), method.getDeclaringClass().getSimpleName(),
+        Sets.SetView<String> difference = Sets.difference(Sets.newHashSet(urlTemplate.getPathVariables()),
+                Sets.newHashSet(pathArguments.values()));
+        Preconditions.checkState(difference.isEmpty(),
+                "The following path arguments found in URL template, but not found in method signature: [%s]. " +
+                        "Class: [%s]. Method [%s]. Did you forget @Path annotation?", Joiner.on(',').join(difference),
+                method.getDeclaringClass().getSimpleName(),
                 method.getName());
     }
 
@@ -141,7 +156,7 @@ class RestMethodInfo {
     }
 
     @SuppressWarnings("unchecked")
-    public RestCommand<?, ?> createRestCommand(Object... args) {
+    public <RQ, RS> RestCommand<RQ, RS> createRestCommand(Object... args) {
         return new RestCommand(createUrl(args), this.method, createBody(args), responseType.getType());
     }
 

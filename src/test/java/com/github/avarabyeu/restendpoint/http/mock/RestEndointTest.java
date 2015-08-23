@@ -54,7 +54,7 @@ public class RestEndointTest extends BaseRestEndointTest {
     @Test
     public void testGet() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        String to = endpoint.get("/", String.class).obtain();
+        String to = endpoint.getFor("/", String.class).obtain();
         Assert.assertNotNull("Recieved Object is null", to);
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "GET / HTTP/1.1", request.getRequestLine());
@@ -64,7 +64,7 @@ public class RestEndointTest extends BaseRestEndointTest {
     @Test
     public void testPost() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        String to = endpoint.post("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class).obtain();
+        String to = endpoint.postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class).obtain();
         Assert.assertNotNull("Recieved Object is null", to);
 
         RecordedRequest request = server.takeRequest();
@@ -77,7 +77,7 @@ public class RestEndointTest extends BaseRestEndointTest {
     @Test
     public void testPut() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        String to = endpoint.put("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class).obtain();
+        String to = endpoint.putFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class).obtain();
         Assert.assertNotNull("Recieved Object is null", to);
 
         RecordedRequest request = server.takeRequest();
@@ -90,7 +90,7 @@ public class RestEndointTest extends BaseRestEndointTest {
     @Test
     public void testDelete() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        String to = endpoint.delete("/", String.class).obtain();
+        String to = endpoint.deleteFor("/", String.class).obtain();
         Assert.assertNotNull("Recieved Object is null", to);
 
         RecordedRequest request = server.takeRequest();
@@ -116,9 +116,9 @@ public class RestEndointTest extends BaseRestEndointTest {
 
         RestCommand<String, String> command = new RestCommand<String, String>("/", HttpMethod.POST, SERIALIZED_STRING, String.class);
 
-        String to = endpoint.executeRequest(command).obtain();
+        Response<String> to = endpoint.executeRequest(command).obtain();
 
-        Assert.assertNotNull("Recieved Object is null", to);
+        Assert.assertNotNull("Recieved Object is null", to.getBody());
 
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "POST / HTTP/1.1", request.getRequestLine());

@@ -22,14 +22,23 @@ import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.github.avarabyeu.restendpoint.serializer.VoidSerializer;
 import com.github.avarabyeu.wills.Will;
 import com.github.avarabyeu.wills.Wills;
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.SettableFuture;
+import org.apache.http.Header;
+import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.ByteArrayEntity;
@@ -41,6 +50,7 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.nio.entity.NByteArrayEntity;
 import org.apache.http.util.EntityUtils;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
@@ -89,7 +99,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @param serializers  Serializer for converting HTTP messages. Shouldn't be null
      * @param errorHandler Error handler for HTTP messages
      */
-    public HttpClientRestEndpoint(CloseableHttpAsyncClient httpClient, List<Serializer> serializers, ErrorHandler<HttpUriRequest, HttpResponse> errorHandler) {
+    public HttpClientRestEndpoint(CloseableHttpAsyncClient httpClient, List<Serializer> serializers,
+            ErrorHandler<HttpUriRequest, HttpResponse> errorHandler) {
         this(httpClient, serializers, errorHandler, null);
     }
 
@@ -101,10 +112,12 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @param errorHandler Error handler for HTTP messages
      * @param baseUrl      REST WebService Base URL
      */
-    public HttpClientRestEndpoint(CloseableHttpAsyncClient httpClient, List<Serializer> serializers, ErrorHandler<HttpUriRequest, HttpResponse> errorHandler,
-                                  String baseUrl) {
+    public HttpClientRestEndpoint(CloseableHttpAsyncClient httpClient, List<Serializer> serializers,
+            ErrorHandler<HttpUriRequest, HttpResponse> errorHandler,
+            String baseUrl) {
 
-        Preconditions.checkArgument(null != serializers && !serializers.isEmpty(), "There is no any serializer provided");
+        Preconditions
+                .checkArgument(null != serializers && !serializers.isEmpty(), "There is no any serializer provided");
         //noinspection ConstantConditions
         this.serializers = ImmutableList.<Serializer>builder().addAll(serializers).add(new VoidSerializer()).build();
 
@@ -128,13 +141,17 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Object, java.lang.Class)
      */
     @Override
-    public <RQ, RS> Will<RS> post(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException {
+    public <RQ, RS> Will<Response<RS>> post(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException {
         HttpPost post = new HttpPost(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
-        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq), ContentType.create(serializer.getMimeType()));
+        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq),
+                ContentType.create(serializer.getMimeType()));
         post.setEntity(httpEntity);
         return executeInternal(post, new ClassConverterCallback<RS>(serializers, clazz));
+    }
 
+    public <RQ, RS> Will<RS> postFor(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException {
+        return post(resource, rq, clazz).map(new BodyTransformer<RS>());
     }
 
     /*
@@ -144,13 +161,19 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Object, java.lang.reflect.Type)
      */
     @Override
-    public <RQ, RS> Will<RS> post(String resource, RQ rq, Type type) throws RestEndpointIOException {
+    public <RQ, RS> Will<Response<RS>> post(String resource, RQ rq, Type type) throws RestEndpointIOException {
         HttpPost post = new HttpPost(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
-        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq), ContentType.create(serializer.getMimeType()));
+        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq),
+                ContentType.create(serializer.getMimeType()));
         post.setEntity(httpEntity);
         return executeInternal(post, new TypeConverterCallback<RS>(serializers, type));
+    }
 
+    @Override
+    public <RQ, RS> Will<RS> postFor(String resource, RQ rq, Type type) throws RestEndpointIOException {
+        Will<Response<RS>> post = post(resource, rq, type);
+        return post.map(new BodyTransformer<RS>());
     }
 
     /*
@@ -160,7 +183,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * MultiPartRequest, java.lang.Class)
      */
     @Override
-    public <RS> Will<RS> post(String resource, MultiPartRequest request, Class<RS> clazz) throws RestEndpointIOException {
+    public <RS> Will<Response<RS>> post(String resource, MultiPartRequest request, Class<RS> clazz)
+            throws RestEndpointIOException {
         HttpPost post = new HttpPost(spliceUrl(resource));
 
         try {
@@ -168,15 +192,17 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             for (MultiPartRequest.MultiPartSerialized<?> serializedPart : request.getSerializedRQs()) {
                 Serializer serializer = getSupportedSerializer(serializedPart);
-                builder.addPart(serializedPart.getPartName(), new StringBody(new String(serializer.serialize(serializedPart.getRequest())),
-                        ContentType.parse(serializer.getMimeType())));
+                builder.addPart(serializedPart.getPartName(),
+                        new StringBody(new String(serializer.serialize(serializedPart.getRequest())),
+                                ContentType.parse(serializer.getMimeType())));
             }
 
             for (MultiPartRequest.MultiPartBinary partBinaty : request.getBinaryRQs()) {
                 builder.addPart(
                         partBinaty.getPartName(),
-                        new ByteArrayBody(partBinaty.getData().read(), ContentType.parse(partBinaty.getContentType()), partBinaty
-                                .getFilename())
+                        new ByteArrayBody(partBinaty.getData().read(), ContentType.parse(partBinaty.getContentType()),
+                                partBinaty
+                                        .getFilename())
                 );
             }
 
@@ -205,6 +231,11 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         return executeInternal(post, new ClassConverterCallback<RS>(serializers, clazz));
     }
 
+    public <RS> Will<RS> postFor(String resource, MultiPartRequest request, Class<RS> clazz)
+            throws RestEndpointIOException {
+        return post(resource, request, clazz).map(new BodyTransformer<RS>());
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -212,12 +243,17 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Object, java.lang.Class)
      */
     @Override
-    public <RQ, RS> Will<RS> put(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException {
+    public <RQ, RS> Will<Response<RS>> put(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException {
         HttpPut put = new HttpPut(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
-        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq), ContentType.create(serializer.getMimeType()));
+        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq),
+                ContentType.create(serializer.getMimeType()));
         put.setEntity(httpEntity);
         return executeInternal(put, new ClassConverterCallback<RS>(serializers, clazz));
+    }
+
+    public <RQ, RS> Will<RS> putFor(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException {
+        return put(resource, rq, clazz).map(new BodyTransformer<RS>());
     }
 
     /*
@@ -227,12 +263,18 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Object, java.lang.reflect.Type)
      */
     @Override
-    public <RQ, RS> Will<RS> put(String resource, RQ rq, Type type) throws RestEndpointIOException {
+    public <RQ, RS> Will<Response<RS>> put(String resource, RQ rq, Type type) throws RestEndpointIOException {
         HttpPut put = new HttpPut(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
-        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq), ContentType.create(serializer.getMimeType()));
+        ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq),
+                ContentType.create(serializer.getMimeType()));
         put.setEntity(httpEntity);
         return executeInternal(put, new TypeConverterCallback<RS>(serializers, type));
+    }
+
+    public <RQ, RS> Will<RS> putFor(String resource, RQ rq, Type type) throws RestEndpointIOException {
+        Will<Response<RS>> rs = put(resource, rq, type);
+        return rs.map(new BodyTransformer<RS>());
     }
 
     /*
@@ -242,9 +284,14 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * lang.String, java.lang.Class)
      */
     @Override
-    public <RS> Will<RS> delete(String resource, Class<RS> clazz) throws RestEndpointIOException {
+    public <RS> Will<Response<RS>> delete(String resource, Class<RS> clazz) throws RestEndpointIOException {
         HttpDelete delete = new HttpDelete(spliceUrl(resource));
         return executeInternal(delete, new ClassConverterCallback<RS>(serializers, clazz));
+    }
+
+    @Override
+    public <RS> Will<RS> deleteFor(String resource, Class<RS> clazz) throws RestEndpointIOException {
+        return delete(resource, clazz).map(new BodyTransformer<RS>());
     }
 
     /*
@@ -254,27 +301,53 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Class)
      */
     @Override
-    public <RS> Will<RS> get(String resource, Class<RS> clazz) throws RestEndpointIOException {
+    public <RS> Will<Response<RS>> get(String resource, Class<RS> clazz) throws RestEndpointIOException {
         HttpGet get = new HttpGet(spliceUrl(resource));
         return executeInternal(get, new ClassConverterCallback<RS>(serializers, clazz));
     }
 
     @Override
-    public <RS> Will<RS> get(String resource, Type type) throws RestEndpointIOException {
+    public <RS> Will<RS> getFor(String resource, Class<RS> clazz) throws RestEndpointIOException {
+        return get(resource, clazz).map(new BodyTransformer<RS>());
+    }
+
+    @Override
+    public <RS> Will<Response<RS>> get(String resource, Type type) throws RestEndpointIOException {
         HttpGet get = new HttpGet(spliceUrl(resource));
         return executeInternal(get, new TypeConverterCallback<RS>(serializers, type));
     }
 
     @Override
-    public <RS> Will<RS> get(String resource, Map<String, String> parameters, Class<RS> clazz) throws RestEndpointIOException {
+    public <RS> Will<RS> getFor(String resource, Type type) throws RestEndpointIOException {
+        Will<Response<RS>> rs = get(resource, type);
+        return rs.map(new BodyTransformer<RS>());
+    }
+
+    @Override
+    public <RS> Will<Response<RS>> get(String resource, Map<String, String> parameters, Class<RS> clazz)
+            throws RestEndpointIOException {
         HttpGet get = new HttpGet(spliceUrl(resource, parameters));
         return executeInternal(get, new ClassConverterCallback<RS>(serializers, clazz));
     }
 
     @Override
-    public <RS> Will<RS> get(String resource, Map<String, String> parameters, Type type) throws RestEndpointIOException {
+    public <RS> Will<RS> getFor(String resource, Map<String, String> parameters, Class<RS> clazz)
+            throws RestEndpointIOException {
+        return get(resource, parameters, clazz).map(new BodyTransformer<RS>());
+    }
+
+    @Override
+    public <RS> Will<Response<RS>> get(String resource, Map<String, String> parameters, Type type)
+            throws RestEndpointIOException {
         HttpGet get = new HttpGet(spliceUrl(resource, parameters));
         return executeInternal(get, new TypeConverterCallback<RS>(serializers, type));
+    }
+
+    @Override
+    public <RS> Will<RS> getFor(String resource, Map<String, String> parameters, Type type)
+            throws RestEndpointIOException {
+        Will<Response<RS>> rs = get(resource, parameters, type);
+        return rs.map(new BodyTransformer<RS>());
     }
 
     /**
@@ -286,37 +359,39 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @see com.github.avarabyeu.wills.Will
      */
     @Override
-    public <RQ, RS> Will<RS> executeRequest(RestCommand<RQ, RS> command) throws RestEndpointIOException {
+    public <RQ, RS> Will<Response<RS>> executeRequest(RestCommand<RQ, RS> command) throws RestEndpointIOException {
         URI uri = spliceUrl(command.getUri());
         HttpUriRequest rq;
         Serializer serializer;
         switch (command.getHttpMethod()) {
-            case GET:
-                rq = new HttpGet(uri);
-                break;
-            case POST:
-                serializer = getSupportedSerializer(command.getRequest());
-                rq = new HttpPost(uri);
-                ((HttpPost) rq).setEntity(new ByteArrayEntity(serializer.serialize(command.getRequest()), ContentType.create(
-                        serializer.getMimeType())));
-                break;
-            case PUT:
-                serializer = getSupportedSerializer(command.getRequest());
-                rq = new HttpPut(uri);
-                ((HttpPut) rq).setEntity(new ByteArrayEntity(serializer.serialize(command.getRequest()), ContentType.create(
-                        serializer.getMimeType())));
-                break;
-            case DELETE:
-                rq = new HttpDelete(uri);
-                break;
-            case PATCH:
-                serializer = getSupportedSerializer(command.getRequest());
-                rq = new HttpPatch(uri);
-                ((HttpPatch) rq).setEntity(new ByteArrayEntity(serializer.serialize(command.getRequest()), ContentType.create(
-                        serializer.getMimeType())));
-                break;
-            default:
-                throw new IllegalArgumentException("Method '" + command.getHttpMethod() + "' is unsupported");
+        case GET:
+            rq = new HttpGet(uri);
+            break;
+        case POST:
+            serializer = getSupportedSerializer(command.getRequest());
+            rq = new HttpPost(uri);
+            ((HttpPost) rq)
+                    .setEntity(new ByteArrayEntity(serializer.serialize(command.getRequest()), ContentType.create(
+                            serializer.getMimeType())));
+            break;
+        case PUT:
+            serializer = getSupportedSerializer(command.getRequest());
+            rq = new HttpPut(uri);
+            ((HttpPut) rq).setEntity(new ByteArrayEntity(serializer.serialize(command.getRequest()), ContentType.create(
+                    serializer.getMimeType())));
+            break;
+        case DELETE:
+            rq = new HttpDelete(uri);
+            break;
+        case PATCH:
+            serializer = getSupportedSerializer(command.getRequest());
+            rq = new HttpPatch(uri);
+            ((HttpPatch) rq)
+                    .setEntity(new ByteArrayEntity(serializer.serialize(command.getRequest()), ContentType.create(
+                            serializer.getMimeType())));
+            break;
+        default:
+            throw new IllegalArgumentException("Method '" + command.getHttpMethod() + "' is unsupported");
         }
 
         return executeInternal(rq, new TypeConverterCallback<RS>(serializers, command.getResponseType()));
@@ -333,7 +408,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         try {
             return Strings.isNullOrEmpty(baseUrl) ? new URI(resource) : new URI(baseUrl.concat(resource));
         } catch (URISyntaxException e) {
-            throw new RestEndpointIOException("Unable to builder URL with base url '" + baseUrl + "' and resouce '" + resource + "'", e);
+            throw new RestEndpointIOException(
+                    "Unable to builder URL with base url '" + baseUrl + "' and resouce '" + resource + "'", e);
         }
     }
 
@@ -359,7 +435,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
             }
             return builder.build();
         } catch (URISyntaxException e) {
-            throw new RestEndpointIOException("Unable to builder URL with base url '" + baseUrl + "' and resouce '" + resource + "'", e);
+            throw new RestEndpointIOException(
+                    "Unable to builder URL with base url '" + baseUrl + "' and resouce '" + resource + "'", e);
         }
     }
 
@@ -380,9 +457,10 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @return - Serialized Response Body
      * @throws RestEndpointIOException
      */
-    private <RS> Will<RS> executeInternal(final HttpUriRequest rq, final HttpEntityCallback<RS> callback) throws RestEndpointIOException {
+    private <RS> Will<Response<RS>> executeInternal(final HttpUriRequest rq, final HttpEntityCallback<RS> callback)
+            throws RestEndpointIOException {
 
-        final SettableFuture<RS> future = SettableFuture.create();
+        final SettableFuture<Response<RS>> future = SettableFuture.create();
         httpClient.execute(rq, new FutureCallback<org.apache.http.HttpResponse>() {
 
                     @Override
@@ -391,8 +469,24 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                             if (errorHandler.hasError(response)) {
                                 errorHandler.handle(rq, response);
                             }
+
                             HttpEntity entity = response.getEntity();
-                            future.set(callback.callback(entity));
+                            Header[] allHeaders = response.getAllHeaders();
+                            ImmutableMultimap.Builder<String, String> headersBuilder = ImmutableMultimap.builder();
+                            for (Header header : allHeaders) {
+                                for (HeaderElement element : header.getElements()) {
+                                    headersBuilder.put(header.getName(),
+                                            null == element.getValue() ? "" : element.getValue());
+                                }
+                            }
+
+                            Response<RS> rs = new Response<RS>(rq.getURI().toASCIIString(),
+                                    response.getStatusLine().getStatusCode(),
+                                    response.getStatusLine().getReasonPhrase(),
+                                    headersBuilder.build(),
+                                    callback.callback(entity));
+
+                            future.set(rs);
                         } catch (SerializerException e) {
                             future.setException(e);
                         } catch (IOException e) {
@@ -417,7 +511,6 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                 }
         );
         return Wills.forListenableFuture(future);
-
 
     }
 
@@ -449,7 +542,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         @Override
         public RS callback(HttpEntity entity) throws IOException {
             return getSupported(null == entity.getContentType() ? MediaType.ANY_TYPE :
-                    MediaType.parse(entity.getContentType().getValue()), type).deserialize(EntityUtils.toByteArray(entity), type);
+                    MediaType.parse(entity.getContentType().getValue()), type)
+                    .deserialize(EntityUtils.toByteArray(entity), type);
         }
 
         protected Serializer getSupported(MediaType contentType, Type resultType) throws SerializerException {
@@ -458,7 +552,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                     return s;
                 }
             }
-            throw new SerializerException("Conversion media type '" + contentType + "' to type '" + resultType + "' is not supported");
+            throw new SerializerException(
+                    "Conversion media type '" + contentType + "' to type '" + resultType + "' is not supported");
         }
 
     }
@@ -475,7 +570,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         @Override
         public RS callback(HttpEntity entity) throws IOException {
             return getSupported(null == entity.getContentType() ? MediaType.ANY_TYPE :
-                    MediaType.parse(entity.getContentType().getValue()), clazz).deserialize(EntityUtils.toByteArray(entity), clazz);
+                    MediaType.parse(entity.getContentType().getValue()), clazz)
+                    .deserialize(EntityUtils.toByteArray(entity), clazz);
         }
 
         private Serializer getSupported(MediaType contentType, Class<?> resultType) throws SerializerException {
@@ -484,8 +580,23 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                     return s;
                 }
             }
-            throw new SerializerException("Conversion media type '" + contentType + "' to type '" + resultType + "' is not supported");
+            throw new SerializerException(
+                    "Conversion media type '" + contentType + "' to type '" + resultType + "' is not supported");
         }
 
+    }
+
+    /**
+     * Transforms response object to Body
+     *
+     * @param <T> Type of body
+     */
+    public static final class BodyTransformer<T> implements Function<Response<T>, T> {
+
+        @Nonnull
+        @Override
+        public T apply(@Nonnull Response<T> input) {
+            return input.getBody();
+        }
     }
 }

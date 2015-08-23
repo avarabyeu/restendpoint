@@ -55,28 +55,28 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testGet() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Will<String> to = endpoint.get("/", String.class);
+        Will<String> to = endpoint.getFor("/", String.class);
         Assert.assertTrue(!to.isDone());
     }
 
     @Test
     public void testPost() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Will<String> to = endpoint.post("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
+        Will<String> to = endpoint.postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
         Assert.assertTrue(!to.isDone());
     }
 
     @Test
     public void testPut() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Will<String> to = endpoint.put("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
+        Will<String> to = endpoint.putFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
         Assert.assertTrue(!to.isDone());
     }
 
     @Test
     public void testDelete() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Will<String> to = endpoint.delete("/", String.class);
+        Will<String> to = endpoint.deleteFor("/", String.class);
         Assert.assertTrue(!to.isDone());
     }
 
@@ -84,7 +84,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     public void testCommand() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
         RestCommand<String, String> command = new RestCommand<String, String>("/", HttpMethod.POST, SERIALIZED_STRING, String.class);
-        Will<String> to = endpoint.executeRequest(command);
+        Will<Response<String>> to = endpoint.executeRequest(command);
         Assert.assertTrue(!to.isDone());
 
     }
@@ -92,7 +92,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testVoid() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(""));
-        Will<Void> to = endpoint.post("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), Void.class);
+        Will<Void> to = endpoint.postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), Void.class);
         Assert.assertTrue(!to.isDone());
 
     }

@@ -37,10 +37,25 @@ public interface RestEndpoint {
      * @param clazz    - Type of returned response
      * @param <RQ>     - Type of Request
      * @param <RS>     - Type of Response
+     * @return - Response
+     * @throws RestEndpointIOException In case of error
+     */
+    <RQ, RS> Will<Response<RS>> post(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
+
+    /**
+     * HTTP POST method
+     *
+     * @param resource - REST resource
+     * @param rq       - Request body
+     * @param clazz    - Type of returned response
+     * @param <RQ>     - Type of Request
+     * @param <RS>     - Type of Response
      * @return - Response body
      * @throws RestEndpointIOException In case of error
      */
-    <RQ, RS> Will<RS> post(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
+    <RQ, RS> Will<RS> postFor(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
+
+    <RQ, RS> Will<Response<RS>> post(String resource, RQ rq, Type type) throws RestEndpointIOException;
 
     /**
      * HTTP POST method
@@ -53,7 +68,10 @@ public interface RestEndpoint {
      * @return - Response body
      * @throws RestEndpointIOException In case of error
      */
-    <RQ, RS> Will<RS> post(String resource, RQ rq, Type type) throws RestEndpointIOException;
+    <RQ, RS> Will<RS> postFor(String resource, RQ rq, Type type) throws RestEndpointIOException;
+
+    <RS> Will<Response<RS>> post(String resource, MultiPartRequest request, Class<RS> clazz)
+            throws RestEndpointIOException;
 
     /**
      * HTTP MultiPart POST. May contain whether serialized and binary parts
@@ -65,7 +83,7 @@ public interface RestEndpoint {
      * @return - Response Body
      * @throws RestEndpointIOException In case of error
      */
-    <RS> Will<RS> post(String resource, MultiPartRequest request, Class<RS> clazz) throws RestEndpointIOException;
+    <RS> Will<RS> postFor(String resource, MultiPartRequest request, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP PUT
@@ -78,7 +96,9 @@ public interface RestEndpoint {
      * @return - Response body
      * @throws RestEndpointIOException In case of error
      */
-    <RQ, RS> Will<RS> put(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
+    <RQ, RS> Will<Response<RS>> put(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
+
+    <RQ, RS> Will<RS> putFor(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP PUT
@@ -91,7 +111,9 @@ public interface RestEndpoint {
      * @return - Response body
      * @throws RestEndpointIOException In case of error
      */
-    <RQ, RS> Will<RS> put(String resource, RQ rq, Type type) throws RestEndpointIOException;
+    <RQ, RS> Will<Response<RS>> put(String resource, RQ rq, Type type) throws RestEndpointIOException;
+
+    <RQ, RS> Will<RS> putFor(String resource, RQ rq, Type type) throws RestEndpointIOException;
 
     /**
      * HTTP DELETE
@@ -102,7 +124,9 @@ public interface RestEndpoint {
      * @return - Response Body
      * @throws RestEndpointIOException In case of error
      */
-    <RS> Will<RS> delete(String resource, Class<RS> clazz) throws RestEndpointIOException;
+    <RS> Will<Response<RS>> delete(String resource, Class<RS> clazz) throws RestEndpointIOException;
+
+    <RS> Will<RS> deleteFor(String resource, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP GET
@@ -113,7 +137,9 @@ public interface RestEndpoint {
      * @return - Response Body
      * @throws RestEndpointIOException In case of error
      */
-    <RS> Will<RS> get(String resource, Class<RS> clazz) throws RestEndpointIOException;
+    <RS> Will<Response<RS>> get(String resource, Class<RS> clazz) throws RestEndpointIOException;
+
+    <RS> Will<RS> getFor(String resource, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP GET
@@ -124,7 +150,9 @@ public interface RestEndpoint {
      * @return - Response Body
      * @throws RestEndpointIOException In case of error
      */
-    <RS> Will<RS> get(String resource, Type type) throws RestEndpointIOException;
+    <RS> Will<Response<RS>> get(String resource, Type type) throws RestEndpointIOException;
+
+    <RS> Will<RS> getFor(String resource, Type type) throws RestEndpointIOException;
 
     /**
      * HTTP GET with parameters
@@ -132,11 +160,15 @@ public interface RestEndpoint {
      * @param resource   - REST Resource
      * @param parameters - Map of query parameters
      * @param clazz      - Response body type
-     * @param <RS>     - Type of Response
+     * @param <RS>       - Type of Response
      * @return - Response Body
      * @throws RestEndpointIOException In case of error
      */
-    <RS> Will<RS> get(String resource, Map<String, String> parameters, Class<RS> clazz) throws RestEndpointIOException;
+    <RS> Will<Response<RS>> get(String resource, Map<String, String> parameters, Class<RS> clazz)
+            throws RestEndpointIOException;
+
+    <RS> Will<RS> getFor(String resource, Map<String, String> parameters, Class<RS> clazz)
+            throws RestEndpointIOException;
 
     /**
      * HTTP GET with parameters
@@ -145,11 +177,23 @@ public interface RestEndpoint {
      * @param parameters - Map of query parameters
      * @param type       - Response body type. For generic types (e.g. collections)
      *                   {@link java.lang.reflect.ParameterizedType} may be used
-     * @param <RS>     - Type of Response
+     * @param <RS>       - Type of Response
      * @return - Response Body
      * @throws RestEndpointIOException In case of error
      */
-    <RS> Will<RS> get(String resource, Map<String, String> parameters, Type type) throws RestEndpointIOException;
+    <RS> Will<Response<RS>> get(String resource, Map<String, String> parameters, Type type)
+            throws RestEndpointIOException;
 
-    <RQ, RS> Will<RS> executeRequest(RestCommand<RQ, RS> command) throws RestEndpointIOException;
+    <RS> Will<RS> getFor(String resource, Map<String, String> parameters, Type type) throws RestEndpointIOException;
+
+    /**
+     * General method for executing HTTP requests
+     *
+     * @param command
+     * @param <RQ>
+     * @param <RS>
+     * @return
+     * @throws RestEndpointIOException
+     */
+    <RQ, RS> Will<Response<RS>> executeRequest(RestCommand<RQ, RS> command) throws RestEndpointIOException;
 }
