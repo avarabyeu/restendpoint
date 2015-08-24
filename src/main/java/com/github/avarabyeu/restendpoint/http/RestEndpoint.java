@@ -37,13 +37,13 @@ public interface RestEndpoint {
      * @param clazz    - Type of returned response
      * @param <RQ>     - Type of Request
      * @param <RS>     - Type of Response
-     * @return - Response
+     * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
     <RQ, RS> Will<Response<RS>> post(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
-     * HTTP POST method
+     * HTTP POST method. Returns body only
      *
      * @param resource - REST resource
      * @param rq       - Request body
@@ -55,10 +55,21 @@ public interface RestEndpoint {
      */
     <RQ, RS> Will<RS> postFor(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
 
+    /**
+     * HTTP POST method
+     *
+     * @param resource - REST resource
+     * @param rq       - Request body
+     * @param type     - Type of returned response
+     * @param <RQ>     - Type of Request
+     * @param <RS>     - Type of Response
+     * @return - Wrapped Response
+     * @throws RestEndpointIOException In case of error
+     */
     <RQ, RS> Will<Response<RS>> post(String resource, RQ rq, Type type) throws RestEndpointIOException;
 
     /**
-     * HTTP POST method
+     * HTTP POST method. Returns body only
      *
      * @param resource - REST resource
      * @param rq       - Request body
@@ -70,11 +81,21 @@ public interface RestEndpoint {
      */
     <RQ, RS> Will<RS> postFor(String resource, RQ rq, Type type) throws RestEndpointIOException;
 
+    /**
+     * HTTP MultiPart POST. May contain whether serialized and binary parts
+     *
+     * @param resource - REST resource
+     * @param request  - MultiPart request
+     * @param clazz    - Type of returned response
+     * @param <RS>     - Type of Response
+     * @return - Wrapped Response
+     * @throws RestEndpointIOException In case of error
+     */
     <RS> Will<Response<RS>> post(String resource, MultiPartRequest request, Class<RS> clazz)
             throws RestEndpointIOException;
 
     /**
-     * HTTP MultiPart POST. May contain whether serialized and binary parts
+     * HTTP MultiPart POST. May contain whether serialized and binary parts. Returns body only
      *
      * @param resource - REST resource
      * @param request  - MultiPart request
@@ -93,11 +114,22 @@ public interface RestEndpoint {
      * @param clazz    - Type of Response
      * @param <RQ>     - Type of Request
      * @param <RS>     - Type of Response
-     * @return - Response body
+     * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
     <RQ, RS> Will<Response<RS>> put(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
 
+    /**
+     * HTTP PUT. Returns body only
+     *
+     * @param resource - REST resource
+     * @param rq       - Request body
+     * @param clazz    - Type of Response
+     * @param <RQ>     - Type of Request
+     * @param <RS>     - Type of Response
+     * @return - Response body
+     * @throws RestEndpointIOException In case of error
+     */
     <RQ, RS> Will<RS> putFor(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
@@ -108,11 +140,22 @@ public interface RestEndpoint {
      * @param type     - {@link Type} of Response
      * @param <RQ>     - Type of Request
      * @param <RS>     - Type of Response
-     * @return - Response body
+     * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
     <RQ, RS> Will<Response<RS>> put(String resource, RQ rq, Type type) throws RestEndpointIOException;
 
+    /**
+     * HTTP PUT. Returns body only
+     *
+     * @param resource - REST resource
+     * @param rq       - Request body
+     * @param type     - {@link Type} of Response
+     * @param <RQ>     - Type of Request
+     * @param <RS>     - Type of Response
+     * @return - Response body
+     * @throws RestEndpointIOException In case of error
+     */
     <RQ, RS> Will<RS> putFor(String resource, RQ rq, Type type) throws RestEndpointIOException;
 
     /**
@@ -121,11 +164,20 @@ public interface RestEndpoint {
      * @param resource - REST Resource
      * @param clazz    - Response Body Type
      * @param <RS>     - Type of Response
-     * @return - Response Body
+     * @return Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
     <RS> Will<Response<RS>> delete(String resource, Class<RS> clazz) throws RestEndpointIOException;
 
+    /**
+     * HTTP DELETE. Returns body only
+     *
+     * @param resource - REST Resource
+     * @param clazz    - Response Body Type
+     * @param <RS>     - Type of Response
+     * @return - Response Body
+     * @throws RestEndpointIOException In case of error
+     */
     <RS> Will<RS> deleteFor(String resource, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
@@ -134,11 +186,20 @@ public interface RestEndpoint {
      * @param resource - REST Resource
      * @param clazz    - Response Body Type
      * @param <RS>     - Type of Response
-     * @return - Response Body
+     * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
     <RS> Will<Response<RS>> get(String resource, Class<RS> clazz) throws RestEndpointIOException;
 
+    /**
+     * HTTP GET. Returns body only
+     *
+     * @param resource - REST Resource
+     * @param clazz    - Response Body Type
+     * @param <RS>     - Type of Response
+     * @return - Response Body
+     * @throws RestEndpointIOException In case of error
+     */
     <RS> Will<RS> getFor(String resource, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
@@ -147,11 +208,20 @@ public interface RestEndpoint {
      * @param resource - REST Resource
      * @param type     - Response Body Type
      * @param <RS>     - Type of Response
-     * @return - Response Body
+     * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
     <RS> Will<Response<RS>> get(String resource, Type type) throws RestEndpointIOException;
 
+    /**
+     * HTTP GET. Returns body only
+     *
+     * @param resource - REST Resource
+     * @param type     - Response Body Type
+     * @param <RS>     - Type of Response
+     * @return - Response Body
+     * @throws RestEndpointIOException In case of error
+     */
     <RS> Will<RS> getFor(String resource, Type type) throws RestEndpointIOException;
 
     /**
@@ -161,12 +231,22 @@ public interface RestEndpoint {
      * @param parameters - Map of query parameters
      * @param clazz      - Response body type
      * @param <RS>       - Type of Response
-     * @return - Response Body
+     * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
     <RS> Will<Response<RS>> get(String resource, Map<String, String> parameters, Class<RS> clazz)
             throws RestEndpointIOException;
 
+    /**
+     * HTTP GET with parameters. Returns body only
+     *
+     * @param resource   - REST Resource
+     * @param parameters - Map of query parameters
+     * @param clazz      - Response body type
+     * @param <RS>       - Type of Response
+     * @return - Response Body
+     * @throws RestEndpointIOException In case of error
+     */
     <RS> Will<RS> getFor(String resource, Map<String, String> parameters, Class<RS> clazz)
             throws RestEndpointIOException;
 
@@ -178,22 +258,33 @@ public interface RestEndpoint {
      * @param type       - Response body type. For generic types (e.g. collections)
      *                   {@link java.lang.reflect.ParameterizedType} may be used
      * @param <RS>       - Type of Response
-     * @return - Response Body
+     * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
     <RS> Will<Response<RS>> get(String resource, Map<String, String> parameters, Type type)
             throws RestEndpointIOException;
 
+    /**
+     * HTTP GET with parameters. Returns body only
+     *
+     * @param resource   - REST Resource
+     * @param parameters - Map of query parameters
+     * @param type       - Response body type. For generic types (e.g. collections)
+     *                   {@link java.lang.reflect.ParameterizedType} may be used
+     * @param <RS>       - Type of Response
+     * @return - Response Body
+     * @throws RestEndpointIOException In case of error
+     */
     <RS> Will<RS> getFor(String resource, Map<String, String> parameters, Type type) throws RestEndpointIOException;
 
     /**
      * General method for executing HTTP requests
      *
-     * @param command
-     * @param <RQ>
-     * @param <RS>
-     * @return
-     * @throws RestEndpointIOException
+     * @param command HTTP request representation
+     * @param <RQ>    Type of Request Body
+     * @param <RS>    Type of Response Body
+     * @return Response object
+     * @throws RestEndpointIOException In case of error
      */
     <RQ, RS> Will<Response<RS>> executeRequest(RestCommand<RQ, RS> command) throws RestEndpointIOException;
 }

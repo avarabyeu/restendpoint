@@ -121,12 +121,20 @@ public final class RestEndpoints {
 
         private String endpointUrl;
 
+        /**
+         * Default RestEndpoints builder
+         */
         Builder() {
             this.serializers = Lists.newArrayList();
             this.httpClientBuilder = HttpAsyncClientBuilder.create();
         }
 
-        public RestEndpoint build() {
+        /**
+         * Build {@link RestEndpoint}
+         *
+         * @return Built RestEndpoint
+         */
+        public final RestEndpoint build() {
             CloseableHttpAsyncClient closeableHttpAsyncClient;
             if (null == httpClient) {
                 closeableHttpAsyncClient = httpClientBuilder.build();
@@ -140,17 +148,17 @@ public final class RestEndpoints {
                     endpointUrl);
         }
 
-        public Builder withBaseUrl(String url) {
+        public final Builder withBaseUrl(String url) {
             this.endpointUrl = url;
             return this;
         }
 
-        public Builder withErrorHandler(ErrorHandler<HttpUriRequest, HttpResponse> errorHandler) {
+        public final Builder withErrorHandler(ErrorHandler<HttpUriRequest, HttpResponse> errorHandler) {
             this.errorHandler = errorHandler;
             return this;
         }
 
-        public Builder withSerializer(Serializer serializer) {
+        public final Builder withSerializer(Serializer serializer) {
             this.serializers.add(serializer);
             return this;
         }
@@ -159,9 +167,10 @@ public final class RestEndpoints {
          * Uses provided {@link org.apache.http.impl.nio.client.CloseableHttpAsyncClient}
          * <b>May override some configuration methods like {@link #withBasicAuth(String, String)}</b>
          *
+         * @param httpClient Apache HTTP client
          * @return this Builder
          */
-        public Builder withHttpClient(CloseableHttpAsyncClient httpClient) {
+        public final Builder withHttpClient(CloseableHttpAsyncClient httpClient) {
             this.httpClient = httpClient;
             return this;
         }
@@ -173,7 +182,7 @@ public final class RestEndpoints {
          * @param password Password
          * @return this Builder
          */
-        public Builder withBasicAuth(String username, String password) {
+        public final Builder withBasicAuth(String username, String password) {
             CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
             httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
@@ -181,7 +190,14 @@ public final class RestEndpoints {
             return this;
         }
 
-        public Builder withSsl(InputStream keyStore, String keyStorePass) {
+        /**
+         * Adds Keystore for SSL
+         *
+         * @param keyStore     KeyStore input stream
+         * @param keyStorePass KeyStore password
+         * @return This builder
+         */
+        public final Builder withSsl(InputStream keyStore, String keyStorePass) {
             SSLContext sslcontext;
             try {
                 sslcontext = SSLContexts.custom().loadTrustMaterial(IOUtils.loadKeyStore(keyStore, keyStorePass))
@@ -212,7 +228,7 @@ public final class RestEndpoints {
          * @param <T>   - type of interface to be proxied
          * @return - interface implementation based on proxy
          */
-        public <T> T forInterface(@Nonnull Class<T> clazz) {
+        public final <T> T forInterface(@Nonnull Class<T> clazz) {
             return RestEndpoints.forInterface(clazz, build());
         }
 

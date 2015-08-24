@@ -42,7 +42,7 @@ public class PreemptiveAuthInterceptor implements HttpRequestInterceptor {
      * auth schemes
      */
     @Override
-    public void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
+    public final void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
 
         AuthState authState = (AuthState) context.getAttribute(HttpClientContext.TARGET_AUTH_STATE);
         if (authState.getAuthScheme() == null) {

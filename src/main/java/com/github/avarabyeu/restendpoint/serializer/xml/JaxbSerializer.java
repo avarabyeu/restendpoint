@@ -35,7 +35,8 @@ import java.lang.reflect.Type;
 
 /**
  * XML serializer using JAXB. Creates new JAXBContext with each new serializer instances.
- * You should not create several serializer instances for one jaxb context (or take care about JAXBContext caching), because this implementation
+ * You should not create several serializer instances for one jaxb context
+ * (or take care about JAXBContext caching), because this implementation
  * is thread-safe and doesn't have any internal caches.
  *
  * @author Andrey Vorobyov

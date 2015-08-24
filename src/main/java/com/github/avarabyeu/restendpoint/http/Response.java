@@ -31,23 +31,23 @@ public class Response<T> {
         this.body = body;
     }
 
-    public String getUrl() {
+    public final String getUrl() {
         return url;
     }
 
-    public int getStatus() {
+    public final int getStatus() {
         return status;
     }
 
-    public String getReason() {
+    public final String getReason() {
         return reason;
     }
 
-    public Multimap<String, String> getHeaders() {
+    public final Multimap<String, String> getHeaders() {
         return headers;
     }
 
-    public T getBody() {
+    public final T getBody() {
         return body;
     }
 }

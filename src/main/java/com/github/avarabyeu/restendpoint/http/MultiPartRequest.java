@@ -55,7 +55,8 @@ public class MultiPartRequest {
     }
 
     /**
-     * Part of request to be serialized (will be serialized using  {@link com.github.avarabyeu.restendpoint.serializer.Serializer})
+     * Part of request to be serialized (will be serialized using
+     * {@link com.github.avarabyeu.restendpoint.serializer.Serializer})
      *
      * @param <RQ> Type of part to be serialized
      * @author Andrei Varabyeu
