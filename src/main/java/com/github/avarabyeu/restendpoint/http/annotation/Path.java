@@ -36,7 +36,6 @@ public @interface Path {
     /**
      * Name of path variable from {@link Request#url()}
      *
-     * @return Name of path variable
      */
     String value();
 }

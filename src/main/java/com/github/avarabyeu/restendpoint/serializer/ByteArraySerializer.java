@@ -37,7 +37,7 @@ public class ByteArraySerializer implements Serializer {
      * Serializer#serialize(java.lang.Object)
      */
     @Override
-    public <T> byte[] serialize(T t) throws SerializerException {
+    public final <T> byte[] serialize(T t) throws SerializerException {
         return (byte[]) t;
     }
 
@@ -49,7 +49,7 @@ public class ByteArraySerializer implements Serializer {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException {
+    public final <T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException {
         if (byte[].class.equals(clazz)) {
             return (T) content;
         }
@@ -64,7 +64,7 @@ public class ByteArraySerializer implements Serializer {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T deserialize(byte[] content, Type type) throws SerializerException {
+    public final <T> T deserialize(byte[] content, Type type) throws SerializerException {
         if (byte[].class.equals(type)) {
             return (T) content;
         }
@@ -77,7 +77,7 @@ public class ByteArraySerializer implements Serializer {
      * @see Serializer#getMimeType()
      */
     @Override
-    public String getMimeType() {
+    public final String getMimeType() {
         return MediaType.OCTET_STREAM.toString();
     }
 
@@ -87,12 +87,12 @@ public class ByteArraySerializer implements Serializer {
      * @see Serializer#canRead(java.lang.String)
      */
     @Override
-    public boolean canRead(MediaType mimeType, Class<?> resultType) {
+    public final boolean canRead(MediaType mimeType, Class<?> resultType) {
         return mimeType.is(MediaType.ANY_TYPE) && byte[].class.equals(resultType);
     }
 
     @Override
-    public boolean canRead(MediaType mimeType, Type resultType) {
+    public final boolean canRead(MediaType mimeType, Type resultType) {
         return canRead(mimeType, TypeToken.of(resultType).getRawType());
     }
 
@@ -103,7 +103,7 @@ public class ByteArraySerializer implements Serializer {
      * Serializer#canWrite(java.lang.Object)
      */
     @Override
-    public boolean canWrite(Object o) {
+    public final boolean canWrite(Object o) {
         //noinspection EqualsBetweenInconvertibleTypes
         return byte[].class.equals(o.getClass());
     }

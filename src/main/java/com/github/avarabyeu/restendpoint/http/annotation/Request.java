@@ -37,16 +37,12 @@ public @interface Request {
 
     /**
      * HTTP method type
-     *
-     * @return HTTP Method
      */
     HttpMethod method();
 
     /**
      * URL template. Usage example: "/api/resource/{id}".
      * So, placeholders in form '{}' are acceptable
-     *
-     * @return URL template
      */
     String url();
 }

@@ -46,11 +46,11 @@ public class MultiPartRequest {
         this.binaryRQs = binaryRQs;
     }
 
-    public List<MultiPartBinary> getBinaryRQs() {
+    public final List<MultiPartBinary> getBinaryRQs() {
         return binaryRQs;
     }
 
-    public List<MultiPartSerialized<?>> getSerializedRQs() {
+    public final List<MultiPartSerialized<?>> getSerializedRQs() {
         return serializedRQs;
     }
 
@@ -72,17 +72,18 @@ public class MultiPartRequest {
             this.request = request;
         }
 
-        public String getPartName() {
+        public final String getPartName() {
             return partName;
         }
 
-        public RQ getRequest() {
+        public final RQ getRequest() {
             return request;
         }
     }
 
     /**
-     * Binary part of multipart request (won't be serialized using {@link com.github.avarabyeu.restendpoint.serializer.Serializer})
+     * Binary part of multipart request
+     * (won't be serialized using {@link com.github.avarabyeu.restendpoint.serializer.Serializer})
      *
      * @author Andrei Varabyeu
      * @see com.github.avarabyeu.restendpoint.serializer.Serializer
@@ -100,19 +101,19 @@ public class MultiPartRequest {
             this.contentType = contentType;
         }
 
-        public ByteSource getData() {
+        public final ByteSource getData() {
             return data;
         }
 
-        public String getFilename() {
+        public final String getFilename() {
             return filename;
         }
 
-        public String getPartName() {
+        public final String getPartName() {
             return partName;
         }
 
-        public String getContentType() {
+        public final String getContentType() {
             return contentType;
         }
 

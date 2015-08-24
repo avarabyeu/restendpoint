@@ -33,7 +33,13 @@ import java.security.cert.CertificateException;
  *
  * @author Andrei Varabyeu
  */
-public class IOUtils {
+public final class IOUtils {
+
+    /**
+     * Do not need to create instance
+     */
+    private IOUtils() {
+    }
 
     /**
      * Closes Resource without throwing any errors
@@ -79,7 +85,8 @@ public class IOUtils {
      * @throws IOException              In case if some IO errors
      * @throws KeyStoreException        If there is some error with KeyStore
      */
-    public static KeyStore loadKeyStore(InputStream keyStore, String password) throws CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException {
+    public static KeyStore loadKeyStore(InputStream keyStore, String password)
+            throws CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException {
         try {
             KeyStore trustStore = KeyStore.getInstance("JKS");
             trustStore.load(keyStore, password.toCharArray());

@@ -35,14 +35,21 @@ public class GsonSerializer extends AbstractJsonSerializer {
 
     private Gson gson;
 
+    /**
+     * Creates serializer with provided GSON
+     *
+     * @param gson Gson object
+     */
     public GsonSerializer(Gson gson) {
         this.gson = gson;
     }
 
+    /**
+     * Creates serializer with default GSON
+     */
     public GsonSerializer() {
         this(new Gson());
     }
-
 
     @Override
     public <T> byte[] serialize(T t) throws SerializerException {
@@ -72,6 +79,5 @@ public class GsonSerializer extends AbstractJsonSerializer {
             throw new SerializerException("Unable to serialize content", e);
         }
     }
-
 
 }

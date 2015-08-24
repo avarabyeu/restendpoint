@@ -31,7 +31,7 @@ public class RestEndpointInvocationHandler implements InvocationHandler {
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public final Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         return executeRestMethod(method, args);
     }
 

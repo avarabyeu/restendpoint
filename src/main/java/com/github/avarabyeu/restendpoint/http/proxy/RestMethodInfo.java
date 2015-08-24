@@ -87,7 +87,6 @@ class RestMethodInfo {
         return asynchronous;
     }
 
-
     public boolean isBodyOnly() {
         return returnBodyOnly;
     }
@@ -128,8 +127,8 @@ class RestMethodInfo {
         Sets.SetView<String> difference = Sets.difference(Sets.newHashSet(urlTemplate.getPathVariables()),
                 Sets.newHashSet(pathArguments.values()));
         Preconditions.checkState(difference.isEmpty(),
-                "The following path arguments found in URL template, but not found in method signature: [%s]. " +
-                        "Class: [%s]. Method [%s]. Did you forget @Path annotation?", Joiner.on(',').join(difference),
+                "The following path arguments found in URL template, but not found in method signature: [%s]. "
+                        + "Class: [%s]. Method [%s]. Did you forget @Path annotation?", Joiner.on(',').join(difference),
                 method.getDeclaringClass().getSimpleName(),
                 method.getName());
     }

@@ -54,7 +54,8 @@ public class RestEndpointException extends RuntimeException {
      */
     protected byte[] content;
 
-    public RestEndpointException(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage, byte[] content) {
+    public RestEndpointException(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
+            byte[] content) {
         this.requestUri = requestUri;
         this.requestMethod = requestMethod;
         this.statusCode = statusCode;

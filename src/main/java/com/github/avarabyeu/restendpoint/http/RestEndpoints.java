@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package com.github.avarabyeu.restendpoint.http;
 
 import com.github.avarabyeu.restendpoint.http.proxy.RestEndpointInvocationHandler;
@@ -47,8 +46,13 @@ import java.util.List;
  *
  * @author avarabyeu
  */
-public class RestEndpoints {
+public final class RestEndpoints {
 
+    /**
+     * No need to create instance
+     */
+    private RestEndpoints() {
+    }
 
     /**
      * Creates default {@link com.github.avarabyeu.restendpoint.http.RestEndpoint} for provided endpoint URL.
@@ -180,7 +184,8 @@ public class RestEndpoints {
         public Builder withSsl(InputStream keyStore, String keyStorePass) {
             SSLContext sslcontext;
             try {
-                sslcontext = SSLContexts.custom().loadTrustMaterial(IOUtils.loadKeyStore(keyStore, keyStorePass)).build();
+                sslcontext = SSLContexts.custom().loadTrustMaterial(IOUtils.loadKeyStore(keyStore, keyStorePass))
+                        .build();
             } catch (Exception e) {
                 throw new IllegalArgumentException("Unable to load trust store", e);
             }

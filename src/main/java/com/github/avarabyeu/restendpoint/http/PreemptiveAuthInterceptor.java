@@ -30,9 +30,9 @@ import org.apache.http.protocol.HttpCoreContext;
 
 import java.io.IOException;
 
-
 /**
- * Adds {@link org.apache.http.auth.AuthScheme} to all requests as {@link org.apache.http.client.AuthCache} object. This way
+ * Adds {@link org.apache.http.auth.AuthScheme} to all requests as
+ * {@link org.apache.http.client.AuthCache} object. This way
  * we are able to force {@link org.apache.http.client.HttpClient} to use auth preemptively
  */
 public class PreemptiveAuthInterceptor implements HttpRequestInterceptor {

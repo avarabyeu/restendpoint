@@ -29,7 +29,8 @@ public class RestEndpointServerException extends RestEndpointException {
 
     private static final long serialVersionUID = -7422405783931746961L;
 
-    public RestEndpointServerException(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage, byte[] content) {
+    public RestEndpointServerException(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
+            byte[] content) {
         super(requestUri, requestMethod, statusCode, statusMessage, content);
     }
 

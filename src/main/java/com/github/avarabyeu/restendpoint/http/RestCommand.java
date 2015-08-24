@@ -37,12 +37,13 @@ public class RestCommand<RQ, RS> {
     private String uri;
     private Type responseType;
 
-
-    public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request, @Nonnull Class<RS> responseClass) {
+    public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request,
+            @Nonnull Class<RS> responseClass) {
         this(uri, method, request, TypeToken.of(responseClass).getType());
     }
 
-    public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request, @Nonnull Type responseType) {
+    public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request,
+            @Nonnull Type responseType) {
         this.httpMethod = method;
         this.request = request;
         this.uri = uri;
@@ -51,19 +52,19 @@ public class RestCommand<RQ, RS> {
         validate();
     }
 
-    public HttpMethod getHttpMethod() {
+    public final HttpMethod getHttpMethod() {
         return httpMethod;
     }
 
-    public RQ getRequest() {
+    public final RQ getRequest() {
         return request;
     }
 
-    public String getUri() {
+    public final String getUri() {
         return uri;
     }
 
-    public Type getResponseType() {
+    public final Type getResponseType() {
         return responseType;
     }
 
