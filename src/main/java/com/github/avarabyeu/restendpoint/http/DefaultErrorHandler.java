@@ -87,10 +87,9 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      * @param statusCode    - HTTP status code
      * @param statusMessage - HTTP status message
      * @param errorBody     - HTTP response body
-     * @throws RestEndpointIOException In case of request error
      */
     protected void handleClientError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
-                                     byte[] errorBody) throws RestEndpointIOException {
+                                     byte[] errorBody) {
         throw new RestEndpointClientException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
     }
 
@@ -102,10 +101,9 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      * @param statusCode    - HTTP status code
      * @param statusMessage - HTTP status message
      * @param errorBody     - HTTP response body
-     * @throws RestEndpointIOException In case of request error
      */
     protected void handleServerError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
-                                     byte[] errorBody) throws RestEndpointIOException {
+                                     byte[] errorBody) {
         throw new RestEndpointServerException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
     }
 
@@ -117,10 +115,9 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      * @param statusCode    - HTTP status code
      * @param statusMessage - HTTP status message
      * @param errorBody     - HTTP response body
-     * @throws RestEndpointIOException In case of request error
      */
     protected void handleDefaultError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
-                                      byte[] errorBody) throws RestEndpointIOException {
+                                      byte[] errorBody) {
         throw new RestEndpointException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
     }
 

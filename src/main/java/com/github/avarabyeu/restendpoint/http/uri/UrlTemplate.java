@@ -1,6 +1,5 @@
 package com.github.avarabyeu.restendpoint.http.uri;
 
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.net.UrlEscapers;
@@ -9,7 +8,6 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,13 +20,13 @@ import java.util.regex.Pattern;
 public class UrlTemplate {
 
     /* Path variable Regular Expression */
-    private static Pattern PATH_VARIABLE_PATTERN = Pattern.compile("\\{(.*?)\\}");
+    private final static Pattern PATH_VARIABLE_PATTERN = Pattern.compile("\\{(.*?)\\}");
 
     /* URL template */
-    private String template;
+    private final String template;
 
     /* List of names of found path variables */
-    private List<String> pathVariables;
+    private final List<String> pathVariables;
 
     private UrlTemplate(String template) {
 
@@ -102,7 +100,8 @@ public class UrlTemplate {
                 Preconditions.checkState(null != replacement, "Unknown path variable: %s", m.group(1));
 
                 //noinspection ConstantConditions
-                m.appendReplacement(sb, Matcher.quoteReplacement(UrlEscapers.urlPathSegmentEscaper().escape(replacement.toString())));
+                m.appendReplacement(sb,
+                        Matcher.quoteReplacement(UrlEscapers.urlPathSegmentEscaper().escape(replacement.toString())));
             }
             m.appendTail(sb);
 
@@ -133,6 +132,5 @@ public class UrlTemplate {
             return this.template.toString();
         }
     }
-
 
 }

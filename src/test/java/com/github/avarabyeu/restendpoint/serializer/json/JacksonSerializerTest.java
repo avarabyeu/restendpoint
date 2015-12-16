@@ -16,7 +16,7 @@ public class JacksonSerializerTest {
     private static final String TEST_STRING = "{\"someField\":\"someValue\"}";
     private static final DemoBean TEST_BEAN = new DemoBean("someValue");
 
-    private JacksonSerializer serializer = new JacksonSerializer();
+    private final JacksonSerializer serializer = new JacksonSerializer();
 
     @Test
     public void testSerialize() throws SerializerException {

@@ -33,7 +33,7 @@ import java.lang.reflect.Type;
  */
 public class GsonSerializer extends AbstractJsonSerializer {
 
-    private Gson gson;
+    private final Gson gson;
 
     /**
      * Creates serializer with provided GSON

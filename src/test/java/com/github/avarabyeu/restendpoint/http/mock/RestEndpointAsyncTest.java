@@ -83,7 +83,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testCommand() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        RestCommand<String, String> command = new RestCommand<String, String>("/", HttpMethod.POST, SERIALIZED_STRING, String.class);
+        RestCommand<String, String> command = new RestCommand<>("/", HttpMethod.POST, SERIALIZED_STRING, String.class);
         CompletableFuture<Response<String>> to = endpoint.executeRequest(command);
         Assert.assertTrue(!to.isDone());
 

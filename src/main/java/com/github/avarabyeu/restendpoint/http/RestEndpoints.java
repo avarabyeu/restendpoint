@@ -111,11 +111,11 @@ public final class RestEndpoints {
      */
     public static class Builder {
 
-        private List<Serializer> serializers;
+        private final List<Serializer> serializers;
+
+        private final HttpAsyncClientBuilder httpClientBuilder;
 
         private CloseableHttpAsyncClient httpClient;
-
-        private HttpAsyncClientBuilder httpClientBuilder;
 
         private ErrorHandler<HttpUriRequest, HttpResponse> errorHandler;
 

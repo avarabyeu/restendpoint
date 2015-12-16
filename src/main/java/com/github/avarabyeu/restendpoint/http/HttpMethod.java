@@ -28,7 +28,7 @@ public enum HttpMethod {
     PATCH(true),
     DELETE(false);
 
-    private boolean hasBody;
+    private final boolean hasBody;
 
     /**
      * @param hasBody Whether method contains body

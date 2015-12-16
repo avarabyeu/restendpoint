@@ -29,7 +29,7 @@ import org.junit.Test;
 public class ByteArraySerializerTest {
 
     private static final String TEST_STRING = "test";
-    private ByteArraySerializer serializer = new ByteArraySerializer();
+    private static final ByteArraySerializer serializer = new ByteArraySerializer();
 
     @Test
     public void testSerialize() throws SerializerException {

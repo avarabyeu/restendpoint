@@ -17,6 +17,7 @@
 package com.github.avarabyeu.restendpoint.serializer;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Objects;
 
 /**
  * Bean for unit tests
@@ -45,18 +46,16 @@ public class DemoBean {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         DemoBean demoBean = (DemoBean) o;
-
-        if (!someField.equals(demoBean.someField)) return false;
-
-        return true;
+        return Objects.equals(someField, demoBean.someField);
     }
 
     @Override
     public int hashCode() {
-        return someField.hashCode();
+        return Objects.hash(someField);
     }
 }

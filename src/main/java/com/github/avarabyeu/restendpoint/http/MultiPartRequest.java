@@ -34,12 +34,12 @@ public class MultiPartRequest {
     /**
      * Set of Serialized Parts
      */
-    private List<MultiPartSerialized<?>> serializedRQs;
+    private final List<MultiPartSerialized<?>> serializedRQs;
 
     /**
      * Set of binary parts
      */
-    private List<MultiPartBinary> binaryRQs;
+    private final List<MultiPartBinary> binaryRQs;
 
     public MultiPartRequest(List<MultiPartSerialized<?>> serializedRQs, List<MultiPartBinary> binaryRQs) {
         this.serializedRQs = serializedRQs;
@@ -64,9 +64,9 @@ public class MultiPartRequest {
      */
     public static class MultiPartSerialized<RQ> {
 
-        private String partName;
+        private final String partName;
 
-        private RQ request;
+        private final RQ request;
 
         public MultiPartSerialized(String partName, RQ request) {
             this.partName = partName;
@@ -90,10 +90,10 @@ public class MultiPartRequest {
      * @see com.github.avarabyeu.restendpoint.serializer.Serializer
      */
     public static class MultiPartBinary {
-        private String partName;
-        private String filename;
-        private String contentType;
-        private ByteSource data;
+        private final String partName;
+        private final String filename;
+        private final String contentType;
+        private final ByteSource data;
 
         public MultiPartBinary(String partName, String filename, String contentType, ByteSource data) {
             this.partName = partName;
@@ -126,9 +126,9 @@ public class MultiPartRequest {
      * @author Andrei Varabyeu
      */
     public static class Builder {
-        private List<MultiPartSerialized<?>> serializedRQs;
+        private final List<MultiPartSerialized<?>> serializedRQs;
 
-        private List<MultiPartBinary> binaryRQs;
+        private final List<MultiPartBinary> binaryRQs;
 
         public Builder() {
             serializedRQs = new ArrayList<>();

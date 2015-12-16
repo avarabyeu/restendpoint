@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 class RestMethodInfo {
 
     /* map: method argument index -> path variable */
-    private Map<Integer, String> pathArguments = new LinkedHashMap<>();
+    private final Map<Integer, String> pathArguments = new LinkedHashMap<>();
 
     /* HTTP method */
     private HttpMethod method;

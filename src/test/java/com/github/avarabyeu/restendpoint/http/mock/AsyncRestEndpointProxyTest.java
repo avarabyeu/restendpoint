@@ -40,7 +40,7 @@ public class AsyncRestEndpointProxyTest extends BaseRestEndointTest {
 
     private static RestInterface restInterface;
 
-    private static MockWebServer serverSlow = Injector.getInstance().getBean("slow", MockWebServer.class);
+    private static final MockWebServer serverSlow = Injector.getInstance().getBean("slow", MockWebServer.class);
 
 
     @BeforeClass

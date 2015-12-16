@@ -31,7 +31,7 @@ public class GsonSerializerTest {
     private static final String TEST_STRING = "{\"someField\":\"someValue\"}";
     private static final DemoBean TEST_BEAN = new DemoBean("someValue");
 
-    private GsonSerializer serializer = new GsonSerializer();
+    private static final GsonSerializer serializer = new GsonSerializer();
 
     @Test
     public void testSerialize() throws SerializerException {

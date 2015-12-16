@@ -29,13 +29,13 @@ public class RestCommandTest {
 
     @Test
     public void testGenericTypes() {
-        RestCommand<String, String> command = new RestCommand<String, String>("", HttpMethod.POST, "hello", String.class);
+        RestCommand<String, String> command = new RestCommand<>("", HttpMethod.POST, "hello", String.class);
         SmartAssert.assertHard(command.getResponseType(), is(TypeToken.of(String.class).getType()), "Incorrect class type resolver");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testGetWithBody() {
-        new RestCommand<String, String>("", HttpMethod.GET, "hello", String.class);
+        new RestCommand<>("", HttpMethod.GET, "hello", String.class);
     }
 
 

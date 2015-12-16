@@ -51,7 +51,7 @@ public enum StatusType {
      */
     private final int value;
 
-    private StatusType(int value) {
+    StatusType(int value) {
         this.value = value;
     }
 

@@ -73,22 +73,22 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     /**
      * Serializer for converting HTTP messages
      */
-    private List<Serializer> serializers;
+    private final List<Serializer> serializers;
 
     /**
      * Base Endpoint URL
      */
-    private String baseUrl;
+    private final String baseUrl;
 
     /**
      * Error Handler for HttpResponses
      */
-    private ErrorHandler<HttpUriRequest, HttpResponse> errorHandler;
+    private final ErrorHandler<HttpUriRequest, HttpResponse> errorHandler;
 
     /**
      * HTTP Client
      */
-    private CloseableHttpAsyncClient httpClient;
+    private final CloseableHttpAsyncClient httpClient;
 
     /**
      * Default constructor.
@@ -156,7 +156,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Object, java.lang.Class)
      */
     @Override
-    public final <RQ, RS> CompletableFuture<RS> postFor(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException {
+    public final <RQ, RS> CompletableFuture<RS> postFor(String resource, RQ rq, Class<RS> clazz)
+            throws RestEndpointIOException {
         return post(resource, rq, clazz).thenApply(new BodyTransformer<>());
     }
 
@@ -167,7 +168,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Object, java.lang.reflect.Type)
      */
     @Override
-    public final <RQ, RS> CompletableFuture<Response<RS>> post(String resource, RQ rq, Type type) throws RestEndpointIOException {
+    public final <RQ, RS> CompletableFuture<Response<RS>> post(String resource, RQ rq, Type type)
+            throws RestEndpointIOException {
         HttpPost post = new HttpPost(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
         ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq),
@@ -177,7 +179,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     }
 
     @Override
-    public final <RQ, RS> CompletableFuture<RS> postFor(String resource, RQ rq, Type type) throws RestEndpointIOException {
+    public final <RQ, RS> CompletableFuture<RS> postFor(String resource, RQ rq, Type type)
+            throws RestEndpointIOException {
         CompletableFuture<Response<RS>> post = post(resource, rq, type);
         return post.thenApply(new BodyTransformer<>());
     }
@@ -238,13 +241,13 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         } catch (Exception e) {
             throw new RestEndpointIOException("Unable to build post multipart request", e);
         }
-        return executeInternal(post, new ClassConverterCallback<RS>(serializers, clazz));
+        return executeInternal(post, new ClassConverterCallback<>(serializers, clazz));
     }
 
     @Override
     public final <RS> CompletableFuture<RS> postFor(String resource, MultiPartRequest request, Class<RS> clazz)
             throws RestEndpointIOException {
-        return post(resource, request, clazz).thenApply(new BodyTransformer<RS>());
+        return post(resource, request, clazz).thenApply(new BodyTransformer<>());
     }
 
     /*
@@ -261,12 +264,13 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq),
                 ContentType.create(serializer.getMimeType()));
         put.setEntity(httpEntity);
-        return executeInternal(put, new ClassConverterCallback<RS>(serializers, clazz));
+        return executeInternal(put, new ClassConverterCallback<>(serializers, clazz));
     }
 
     @Override
-    public final <RQ, RS> CompletableFuture<RS> putFor(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException {
-        return put(resource, rq, clazz).thenApply(new BodyTransformer<RS>());
+    public final <RQ, RS> CompletableFuture<RS> putFor(String resource, RQ rq, Class<RS> clazz)
+            throws RestEndpointIOException {
+        return put(resource, rq, clazz).thenApply(new BodyTransformer<>());
     }
 
     /*
@@ -276,19 +280,21 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Object, java.lang.reflect.Type)
      */
     @Override
-    public final <RQ, RS> CompletableFuture<Response<RS>> put(String resource, RQ rq, Type type) throws RestEndpointIOException {
+    public final <RQ, RS> CompletableFuture<Response<RS>> put(String resource, RQ rq, Type type)
+            throws RestEndpointIOException {
         HttpPut put = new HttpPut(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
         ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq),
                 ContentType.create(serializer.getMimeType()));
         put.setEntity(httpEntity);
-        return executeInternal(put, new TypeConverterCallback<RS>(serializers, type));
+        return executeInternal(put, new TypeConverterCallback<>(serializers, type));
     }
 
     @Override
-    public final <RQ, RS> CompletableFuture<RS> putFor(String resource, RQ rq, Type type) throws RestEndpointIOException {
+    public final <RQ, RS> CompletableFuture<RS> putFor(String resource, RQ rq, Type type)
+            throws RestEndpointIOException {
         CompletableFuture<Response<RS>> rs = put(resource, rq, type);
-        return rs.thenApply(new BodyTransformer<RS>());
+        return rs.thenApply(new BodyTransformer<>());
     }
 
     /*
@@ -298,14 +304,15 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * lang.String, java.lang.Class)
      */
     @Override
-    public final <RS> CompletableFuture<Response<RS>> delete(String resource, Class<RS> clazz) throws RestEndpointIOException {
+    public final <RS> CompletableFuture<Response<RS>> delete(String resource, Class<RS> clazz)
+            throws RestEndpointIOException {
         HttpDelete delete = new HttpDelete(spliceUrl(resource));
-        return executeInternal(delete, new ClassConverterCallback<RS>(serializers, clazz));
+        return executeInternal(delete, new ClassConverterCallback<>(serializers, clazz));
     }
 
     @Override
     public final <RS> CompletableFuture<RS> deleteFor(String resource, Class<RS> clazz) throws RestEndpointIOException {
-        return delete(resource, clazz).thenApply(new BodyTransformer<RS>());
+        return delete(resource, clazz).thenApply(new BodyTransformer<>());
     }
 
     /*
@@ -315,14 +322,15 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Class)
      */
     @Override
-    public final <RS> CompletableFuture<Response<RS>> get(String resource, Class<RS> clazz) throws RestEndpointIOException {
+    public final <RS> CompletableFuture<Response<RS>> get(String resource, Class<RS> clazz)
+            throws RestEndpointIOException {
         HttpGet get = new HttpGet(spliceUrl(resource));
-        return executeInternal(get, new ClassConverterCallback<RS>(serializers, clazz));
+        return executeInternal(get, new ClassConverterCallback<>(serializers, clazz));
     }
 
     @Override
     public final <RS> CompletableFuture<RS> getFor(String resource, Class<RS> clazz) throws RestEndpointIOException {
-        return get(resource, clazz).thenApply(new BodyTransformer<RS>());
+        return get(resource, clazz).thenApply(new BodyTransformer<>());
     }
 
     @Override
@@ -338,7 +346,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     }
 
     @Override
-    public final <RS> CompletableFuture<Response<RS>> get(String resource, Map<String, String> parameters, Class<RS> clazz)
+    public final <RS> CompletableFuture<Response<RS>> get(String resource, Map<String, String> parameters,
+            Class<RS> clazz)
             throws RestEndpointIOException {
         HttpGet get = new HttpGet(spliceUrl(resource, parameters));
         return executeInternal(get, new ClassConverterCallback<>(serializers, clazz));
@@ -354,7 +363,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     public final <RS> CompletableFuture<Response<RS>> get(String resource, Map<String, String> parameters, Type type)
             throws RestEndpointIOException {
         HttpGet get = new HttpGet(spliceUrl(resource, parameters));
-        return executeInternal(get, new TypeConverterCallback<RS>(serializers, type));
+        return executeInternal(get, new TypeConverterCallback<>(serializers, type));
     }
 
     @Override
@@ -409,7 +418,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
             throw new IllegalArgumentException("Method '" + command.getHttpMethod() + "' is unsupported");
         }
 
-        return executeInternal(rq, new TypeConverterCallback<RS>(serializers, command.getResponseType()));
+        return executeInternal(rq, new TypeConverterCallback<>(serializers, command.getResponseType()));
     }
 
     /**
@@ -478,12 +487,11 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @param callback - Callback to be applied on response
      * @param <RS>     type of response
      * @return - Serialized Response Body
-     * @throws RestEndpointIOException IO exception
      */
-    private <RS> CompletableFuture<Response<RS>> executeInternal(final HttpUriRequest rq, final HttpEntityCallback<RS> callback)
-            throws RestEndpointIOException {
+    private <RS> CompletableFuture<Response<RS>> executeInternal(final HttpUriRequest rq,
+            final HttpEntityCallback<RS> callback) {
 
-        final CompletableFuture<Response<RS>> future = new CompletableFuture<Response<RS>>();
+        final CompletableFuture<Response<RS>> future = new CompletableFuture<>();
         httpClient.execute(rq, new FutureCallback<org.apache.http.HttpResponse>() {
 
                     @Override
@@ -503,7 +511,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                                 }
                             }
 
-                            Response<RS> rs = new Response<RS>(rq.getURI().toASCIIString(),
+                            Response<RS> rs = new Response<>(rq.getURI().toASCIIString(),
                                     response.getStatusLine().getStatusCode(),
                                     response.getStatusLine().getReasonPhrase(),
                                     headersBuilder.build(),
@@ -544,7 +552,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
     private static abstract class HttpEntityCallback<RS> {
 
-        protected List<Serializer> serializers;
+        protected final List<Serializer> serializers;
 
         /**
          * Response callback
@@ -567,7 +575,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
     private static class TypeConverterCallback<RS> extends HttpEntityCallback<RS> {
 
-        private Type type;
+        private final Type type;
 
         /**
          * Callback based on Type
@@ -609,7 +617,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
     private static class ClassConverterCallback<RS> extends HttpEntityCallback<RS> {
 
-        private Class<RS> clazz;
+        private final Class<RS> clazz;
 
         /**
          * Callback based on Type

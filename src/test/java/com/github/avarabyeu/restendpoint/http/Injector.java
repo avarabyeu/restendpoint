@@ -30,7 +30,7 @@ import com.google.inject.name.Names;
 public class Injector {
 
 	/** Guice Injector */
-	private com.google.inject.Injector injector;
+	private final com.google.inject.Injector injector;
 
 	private static Injector instance;
 

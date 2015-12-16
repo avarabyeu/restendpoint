@@ -72,7 +72,7 @@ public class GuiceTestModule implements Module {
         mockWebServer.setDispatcher(new QueueDispatcher() {
             @Override
             public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
-                Uninterruptibles.sleepUninterruptibly(3l, TimeUnit.SECONDS);
+                Uninterruptibles.sleepUninterruptibly(3L, TimeUnit.SECONDS);
                 return super.dispatch(request);
             }
         });

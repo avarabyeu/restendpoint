@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
  */
 public class JacksonSerializer extends AbstractJsonSerializer {
 
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     public JacksonSerializer(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;

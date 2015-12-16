@@ -21,9 +21,9 @@ import java.util.concurrent.ExecutionException;
  */
 public class RestEndpointInvocationHandler implements InvocationHandler {
 
-    private Map<Method, RestMethodInfo> restMethods;
+    private final Map<Method, RestMethodInfo> restMethods;
 
-    private RestEndpoint delegate;
+    private final RestEndpoint delegate;
 
     public RestEndpointInvocationHandler(Class<?> clazz, RestEndpoint restEndpoint) {
         this.delegate = restEndpoint;

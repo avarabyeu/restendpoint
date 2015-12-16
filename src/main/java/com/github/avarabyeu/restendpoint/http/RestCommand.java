@@ -32,10 +32,10 @@ import java.lang.reflect.Type;
  */
 public class RestCommand<RQ, RS> {
 
-    private HttpMethod httpMethod;
-    private RQ request;
-    private String uri;
-    private Type responseType;
+    private final HttpMethod httpMethod;
+    private final RQ request;
+    private final String uri;
+    private final Type responseType;
 
     public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request,
             @Nonnull Class<RS> responseClass) {

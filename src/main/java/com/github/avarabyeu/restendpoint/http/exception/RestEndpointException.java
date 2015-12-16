@@ -32,27 +32,27 @@ public class RestEndpointException extends RuntimeException {
     /**
      * Request URI
      */
-    private URI requestUri;
+    private final URI requestUri;
 
     /**
      * Request Method
      */
-    private HttpMethod requestMethod;
+    private final HttpMethod requestMethod;
 
     /**
      * HTTP Status Code
      */
-    protected int statusCode;
+    protected final int statusCode;
 
     /**
      * HTTP Status Message
      */
-    protected String statusMessage;
+    protected final String statusMessage;
 
     /**
      * HTTP Response Body
      */
-    protected byte[] content;
+    protected final byte[] content;
 
     public RestEndpointException(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
             byte[] content) {

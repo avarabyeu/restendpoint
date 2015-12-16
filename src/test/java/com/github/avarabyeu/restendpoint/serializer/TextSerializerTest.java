@@ -52,7 +52,7 @@ public class TextSerializerTest {
         SmartAssert.assertSoft(serializer.canWrite("some string"),
                 CoreMatchers.is(true), "Wrong content type handling. Cannot write string");
 
-        SmartAssert.assertSoft(serializer.canWrite(new Long(100)),
+        SmartAssert.assertSoft(serializer.canWrite(100L),
                 CoreMatchers.is(true), "Wrong content type handling. Cannot write Long");
 
         SmartAssert.assertSoft(serializer.canWrite(Calendar.getInstance().getTime()),
