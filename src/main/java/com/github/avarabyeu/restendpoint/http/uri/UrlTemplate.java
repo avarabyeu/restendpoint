@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,7 @@ public class UrlTemplate {
 
     private UrlTemplate(String template) {
 
-        this.pathVariables = new LinkedList<String>();
+        this.pathVariables = new LinkedList<>();
         this.template = template;
 
         parsePathVariables();

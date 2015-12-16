@@ -25,7 +25,6 @@ import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
-import com.github.avarabyeu.wills.Will;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
@@ -36,6 +35,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -66,13 +67,13 @@ public class RestEndpointsTest extends BaseRestEndointTest {
 
 
     @Test
-    public void testDefault() throws RestEndpointIOException {
+    public void testDefault() throws RestEndpointIOException, ExecutionException, InterruptedException {
         RestEndpoint endpoint = RestEndpoints.createDefault(HTTP_TEST_URK + server.getPort());
         Assert.assertThat(endpoint, notNullValue());
 
         server.enqueue(prepareResponse(ECHO_STRING).setHeader(CONTENT_TYPE_HEADER, MediaType.PLAIN_TEXT_UTF_8));
-        Will<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
-        Assert.assertThat(helloRS.obtain(), is(ECHO_STRING));
+        CompletableFuture<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
+        Assert.assertThat(helloRS.get(), is(ECHO_STRING));
 
     }
 
@@ -82,38 +83,38 @@ public class RestEndpointsTest extends BaseRestEndointTest {
      * @throws RestEndpointIOException
      */
     @Test(expected = SerializerException.class)
-    public void testNoSerializer() throws RestEndpointIOException {
+    public void testNoSerializer() throws RestEndpointIOException, ExecutionException, InterruptedException {
         RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK + server.getPort())
                 .withSerializer(new ByteArraySerializer())
                 .build();
         Assert.assertThat(endpoint, notNullValue());
 
         server.enqueue(prepareResponse(ECHO_STRING));
-        Will<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
-        Assert.assertThat(helloRS.obtain(), is(ECHO_STRING));
+        CompletableFuture<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
+        Assert.assertThat(helloRS.get(), is(ECHO_STRING));
     }
 
     @Test
-    public void testBuilderHappy() throws RestEndpointIOException {
+    public void testBuilderHappy() throws RestEndpointIOException, ExecutionException, InterruptedException {
         RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK + server.getPort())
                 .withSerializer(new StringSerializer())
                 .build();
         Assert.assertThat(endpoint, notNullValue());
 
         server.enqueue(prepareResponse(ECHO_STRING));
-        Will<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
-        Assert.assertThat(helloRS.obtain(), is(ECHO_STRING));
+        CompletableFuture<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
+        Assert.assertThat(helloRS.get(), is(ECHO_STRING));
     }
 
     @Test
-    public void testBuilderBasicAuth() throws RestEndpointIOException, InterruptedException {
+    public void testBuilderBasicAuth() throws RestEndpointIOException, InterruptedException, ExecutionException {
         RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK + server.getPort())
                 .withSerializer(new StringSerializer()).withBasicAuth("login", "password")
                 .build();
         Assert.assertThat(endpoint, notNullValue());
 
         server.enqueue(prepareResponse(ECHO_STRING));
-        endpoint.post(RESOURCE, ECHO_STRING, String.class).obtain();
+        endpoint.post(RESOURCE, ECHO_STRING, String.class).get();
 
         String basicAuthHeader = server.takeRequest().getHeader(HttpHeaders.AUTHORIZATION);
         Assert.assertThat(basicAuthHeader, is("Basic " + Base64.encodeBase64String("login:password".getBytes())));

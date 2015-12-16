@@ -16,10 +16,12 @@
 
 package com.github.avarabyeu.restendpoint.http.mock;
 
-import com.github.avarabyeu.restendpoint.http.*;
+import com.github.avarabyeu.restendpoint.http.BaseRestEndointTest;
+import com.github.avarabyeu.restendpoint.http.DefaultErrorHandler;
+import com.github.avarabyeu.restendpoint.http.Injector;
+import com.github.avarabyeu.restendpoint.http.RestEndpoints;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
-import com.github.avarabyeu.wills.Will;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -27,6 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Tests for asynchronous client methods
@@ -58,28 +61,28 @@ public class AsyncRestEndpointProxyTest extends BaseRestEndointTest {
     @Test
     public void testGetAsync() throws IOException, InterruptedException {
         serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        Will<String> to = restInterface.getAsync();
+        CompletableFuture<String> to = restInterface.getAsync();
         Assert.assertTrue(!to.isDone());
     }
 
     @Test
     public void testPostAsync() throws IOException, InterruptedException {
         serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        Will<String> to = restInterface.postAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
+        CompletableFuture<String> to = restInterface.postAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
         Assert.assertTrue(!to.isDone());
     }
 
     @Test
     public void testPutAsync() throws IOException, InterruptedException {
         serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        Will<String> to = restInterface.putAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
+        CompletableFuture<String> to = restInterface.putAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
         Assert.assertTrue(!to.isDone());
     }
 
     @Test
     public void testDeleteAsync() throws IOException, InterruptedException {
         serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        Will<String> to = restInterface.deleteAsync();
+        CompletableFuture<String> to = restInterface.deleteAsync();
         Assert.assertTrue(!to.isDone());
     }
 

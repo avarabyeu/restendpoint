@@ -21,9 +21,9 @@ import com.github.avarabyeu.restendpoint.http.annotation.Body;
 import com.github.avarabyeu.restendpoint.http.annotation.Path;
 import com.github.avarabyeu.restendpoint.http.annotation.Query;
 import com.github.avarabyeu.restendpoint.http.annotation.Request;
-import com.github.avarabyeu.wills.Will;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Andrey Vorobyov
@@ -52,14 +52,14 @@ public interface RestInterface {
     String delete();
 
     @Request(method = HttpMethod.GET, url = "/")
-    Will<String> getAsync();
+    CompletableFuture<String> getAsync();
 
     @Request(method = HttpMethod.POST, url = "/")
-    Will<String> postAsync(@Body String body);
+    CompletableFuture<String> postAsync(@Body String body);
 
     @Request(method = HttpMethod.PUT, url = "/")
-    Will<String> putAsync(@Body String body);
+    CompletableFuture<String> putAsync(@Body String body);
 
     @Request(method = HttpMethod.DELETE, url = "/")
-    Will<String> deleteAsync();
+    CompletableFuture<String> deleteAsync();
 }

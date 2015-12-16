@@ -131,8 +131,8 @@ public class MultiPartRequest {
         private List<MultiPartBinary> binaryRQs;
 
         public Builder() {
-            serializedRQs = new ArrayList<MultiPartRequest.MultiPartSerialized<?>>();
-            binaryRQs = new ArrayList<MultiPartRequest.MultiPartBinary>();
+            serializedRQs = new ArrayList<>();
+            binaryRQs = new ArrayList<>();
         }
 
         /**
@@ -144,7 +144,7 @@ public class MultiPartRequest {
          * @return This instance
          */
         public <RQ> Builder addSerializedPart(String partName, RQ body) {
-            serializedRQs.add(new MultiPartSerialized<RQ>(partName, body));
+            serializedRQs.add(new MultiPartSerialized<>(partName, body));
             return this;
         }
 

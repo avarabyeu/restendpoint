@@ -15,12 +15,13 @@
  */
 package com.github.avarabyeu.restendpoint.http.proxy;
 
-import com.github.avarabyeu.wills.Will;
 import com.google.common.reflect.Invokable;
 import com.smarttested.qa.smartassert.SmartAssert;
 import com.smarttested.qa.smartassert.junit.SoftAssertVerifier;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.util.concurrent.CompletableFuture;
 
 import static com.github.avarabyeu.restendpoint.http.proxy.RestMethodInfo.isAsynchronous;
 import static org.hamcrest.CoreMatchers.is;
@@ -51,7 +52,7 @@ public class RestMethodInfoTest {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    Will<String> testAsyncronousMethod() {
+    CompletableFuture<String> testAsyncronousMethod() {
         return null;
     }
 

@@ -28,13 +28,13 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
-import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy;
+import org.apache.http.ssl.SSLContexts;
 
 import javax.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
@@ -200,7 +200,7 @@ public final class RestEndpoints {
         public final Builder withSsl(InputStream keyStore, String keyStorePass) {
             SSLContext sslcontext;
             try {
-                sslcontext = SSLContexts.custom().loadTrustMaterial(IOUtils.loadKeyStore(keyStore, keyStorePass))
+                sslcontext = SSLContexts.custom().loadTrustMaterial(IOUtils.loadKeyStore(keyStore, keyStorePass), null)
                         .build();
             } catch (Exception e) {
                 throw new IllegalArgumentException("Unable to load trust store", e);
@@ -214,7 +214,7 @@ public final class RestEndpoints {
 			 */
             SSLIOSessionStrategy sslSessionStrategy = new SSLIOSessionStrategy(
                     sslcontext,
-                    new BrowserCompatHostnameVerifier());
+                    new DefaultHostnameVerifier());
             httpClientBuilder.setSSLStrategy(sslSessionStrategy);
 
             return this;

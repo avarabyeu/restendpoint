@@ -19,7 +19,6 @@ package com.github.avarabyeu.restendpoint.http.mock;
 import com.github.avarabyeu.restendpoint.http.*;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
-import com.github.avarabyeu.wills.Will;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -27,6 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Tests for asynchronous client methods
@@ -55,28 +55,28 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testGet() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Will<String> to = endpoint.getFor("/", String.class);
+        CompletableFuture<String> to = endpoint.getFor("/", String.class);
         Assert.assertTrue(!to.isDone());
     }
 
     @Test
     public void testPost() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Will<String> to = endpoint.postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
+        CompletableFuture<String> to = endpoint.postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
         Assert.assertTrue(!to.isDone());
     }
 
     @Test
     public void testPut() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Will<String> to = endpoint.putFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
+        CompletableFuture<String> to = endpoint.putFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
         Assert.assertTrue(!to.isDone());
     }
 
     @Test
     public void testDelete() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Will<String> to = endpoint.deleteFor("/", String.class);
+        CompletableFuture<String> to = endpoint.deleteFor("/", String.class);
         Assert.assertTrue(!to.isDone());
     }
 
@@ -84,7 +84,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     public void testCommand() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
         RestCommand<String, String> command = new RestCommand<String, String>("/", HttpMethod.POST, SERIALIZED_STRING, String.class);
-        Will<Response<String>> to = endpoint.executeRequest(command);
+        CompletableFuture<Response<String>> to = endpoint.executeRequest(command);
         Assert.assertTrue(!to.isDone());
 
     }
@@ -92,7 +92,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testVoid() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(""));
-        Will<Void> to = endpoint.postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), Void.class);
+        CompletableFuture<Void> to = endpoint.postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), Void.class);
         Assert.assertTrue(!to.isDone());
 
     }

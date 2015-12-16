@@ -8,9 +8,6 @@ import com.github.avarabyeu.restendpoint.http.annotation.Path;
 import com.github.avarabyeu.restendpoint.http.annotation.Query;
 import com.github.avarabyeu.restendpoint.http.annotation.Request;
 import com.github.avarabyeu.restendpoint.http.uri.UrlTemplate;
-import com.github.avarabyeu.wills.Will;
-import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
@@ -24,6 +21,9 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * REST interface methods parser.
@@ -34,7 +34,7 @@ import java.util.Map;
 class RestMethodInfo {
 
     /* map: method argument index -> path variable */
-    private Map<Integer, String> pathArguments = new LinkedHashMap<Integer, String>();
+    private Map<Integer, String> pathArguments = new LinkedHashMap<>();
 
     /* HTTP method */
     private HttpMethod method;
@@ -48,17 +48,17 @@ class RestMethodInfo {
     private UrlTemplate urlTemplate;
 
     /* body is absent by default */
-    private Optional<Integer> bodyArgument = Optional.absent();
+    private Optional<Integer> bodyArgument = Optional.empty();
 
     /* Query parameter index */
-    private Optional<Integer> queryParameter = Optional.absent();
+    private Optional<Integer> queryParameter = Optional.empty();
 
     /* Whether method returns body or Response wrapper */
     private boolean returnBodyOnly;
 
     @Nonnull
     public static Map<Method, RestMethodInfo> mapMethods(@Nonnull Class<?> clazz) {
-        Map<Method, RestMethodInfo> restMethods = new LinkedHashMap<Method, RestMethodInfo>();
+        Map<Method, RestMethodInfo> restMethods = new LinkedHashMap<>();
         for (Method m : clazz.getDeclaredMethods()) {
             if (isRestMethodDefinition(m)) {
                 restMethods.put(m, new RestMethodInfo(m));
@@ -72,7 +72,7 @@ class RestMethodInfo {
     }
 
     static boolean isAsynchronous(Invokable<?, ?> method) {
-        return Will.class.equals(method.getReturnType().getRawType());
+        return CompletableFuture.class.equals(method.getReturnType().getRawType());
     }
 
     static boolean bodyOnly(Invokable<?, ?> method) {
@@ -114,7 +114,7 @@ class RestMethodInfo {
             } else if (parameter.isAnnotationPresent(Body.class)) {
                 this.bodyArgument = Optional.of(i);
             } else if (parameter.isAnnotationPresent(Query.class)) {
-                Preconditions.checkArgument(TypeToken.of(Map.class).isAssignableFrom(parameter.getType()),
+                Preconditions.checkArgument(TypeToken.of(Map.class).isSupertypeOf(parameter.getType()),
                         "@Query parameters are expected to be maps. '%s' is not a Map", parameter.getType());
                 this.queryParameter = Optional.of(i);
             }
@@ -128,7 +128,7 @@ class RestMethodInfo {
                 Sets.newHashSet(pathArguments.values()));
         Preconditions.checkState(difference.isEmpty(),
                 "The following path arguments found in URL template, but not found in method signature: [%s]. "
-                        + "Class: [%s]. Method [%s]. Did you forget @Path annotation?", Joiner.on(',').join(difference),
+                        + "Class: [%s]. Method [%s]. Did you forget @Path annotation?", difference.stream().collect(Collectors.joining(",")),
                 method.getDeclaringClass().getSimpleName(),
                 method.getName());
     }
@@ -137,7 +137,7 @@ class RestMethodInfo {
     private String createUrl(Object... args) {
 
         /* re-map method arguments. We have argIndex -> argName map, we need to build argName -> argValue map */
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         for (Map.Entry<Integer, String> pathVariables : pathArguments.entrySet()) {
             parameters.put(pathVariables.getValue(), args[pathVariables.getKey()]);
         }

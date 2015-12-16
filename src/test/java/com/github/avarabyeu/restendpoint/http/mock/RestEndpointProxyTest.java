@@ -47,7 +47,7 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
 
     @BeforeClass
     public static void before() throws IOException {
-        server.play();
+        server.start();
 
         restInterface = RestEndpoints.create().withBaseUrl("http://localhost:" + server.getPort())
                 .withSerializer(new StringSerializer())

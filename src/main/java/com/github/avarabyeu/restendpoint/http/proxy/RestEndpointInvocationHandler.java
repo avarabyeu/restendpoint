@@ -3,13 +3,13 @@ package com.github.avarabyeu.restendpoint.http.proxy;
 import com.github.avarabyeu.restendpoint.http.HttpClientRestEndpoint;
 import com.github.avarabyeu.restendpoint.http.Response;
 import com.github.avarabyeu.restendpoint.http.RestEndpoint;
-import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
-import com.github.avarabyeu.wills.Will;
 import com.google.common.base.Preconditions;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Proxy invocation handler for REST interfaces
@@ -35,7 +35,7 @@ public class RestEndpointInvocationHandler implements InvocationHandler {
         return executeRestMethod(method, args);
     }
 
-    private Object executeRestMethod(Method method, Object[] args) throws RestEndpointIOException {
+    private Object executeRestMethod(Method method, Object[] args) throws Throwable {
 
         Preconditions
                 .checkState(restMethods.containsKey(method), "Method with name [%s] is not mapped", method.getName());
@@ -44,14 +44,18 @@ public class RestEndpointInvocationHandler implements InvocationHandler {
         RestMethodInfo methodInfo = restMethods.get(method);
 
         /* delegate request execution to RestEndpoint */
-        Will<Response<Object>> response = delegate.executeRequest(methodInfo.createRestCommand(args));
+        CompletableFuture<Response<Object>> response = delegate.executeRequest(methodInfo.createRestCommand(args));
 
-        Will<?> result = methodInfo.isBodyOnly() ? response.map(new HttpClientRestEndpoint.BodyTransformer<Object>()) : response;
+        CompletableFuture<?> result = methodInfo.isBodyOnly() ? response.thenApply(new HttpClientRestEndpoint.BodyTransformer<>()) : response;
 
         if (methodInfo.isAsynchronous()) {
             return result;
         } else {
-            return result.obtain();
+            try {
+                return result.get();
+            } catch (ExecutionException e) {
+                throw e.getCause();
+            }
         }
     }
 

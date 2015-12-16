@@ -70,12 +70,12 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
         byte[] errorBody = getErrorBody(rs);
 
         switch (statusType) {
-        case CLIENT_ERROR:
-            handleClientError(requestUri, httpMethod, statusCode, statusMessage, errorBody);
-        case SERVER_ERROR:
-            handleServerError(requestUri, httpMethod, statusCode, statusMessage, errorBody);
-        default:
-            handleDefaultError(requestUri, httpMethod, statusCode, statusMessage, errorBody);
+            case CLIENT_ERROR:
+                handleClientError(requestUri, httpMethod, statusCode, statusMessage, errorBody);
+            case SERVER_ERROR:
+                handleServerError(requestUri, httpMethod, statusCode, statusMessage, errorBody);
+            default:
+                handleDefaultError(requestUri, httpMethod, statusCode, statusMessage, errorBody);
         }
     }
 
@@ -90,7 +90,7 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      * @throws RestEndpointIOException In case of request error
      */
     protected void handleClientError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
-            byte[] errorBody) throws RestEndpointIOException {
+                                     byte[] errorBody) throws RestEndpointIOException {
         throw new RestEndpointClientException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
     }
 
@@ -105,7 +105,7 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      * @throws RestEndpointIOException In case of request error
      */
     protected void handleServerError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
-            byte[] errorBody) throws RestEndpointIOException {
+                                     byte[] errorBody) throws RestEndpointIOException {
         throw new RestEndpointServerException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
     }
 
@@ -120,7 +120,7 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      * @throws RestEndpointIOException In case of request error
      */
     protected void handleDefaultError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
-            byte[] errorBody) throws RestEndpointIOException {
+                                      byte[] errorBody) throws RestEndpointIOException {
         throw new RestEndpointException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
     }
 
