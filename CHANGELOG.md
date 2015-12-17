@@ -39,3 +39,10 @@ Improvements:
 Bugfixes:
 
   - Fix possible NPE when base URL is not provided
+
+## 0.1.0 (XXXX-XX-XX). Major release.
+
+Improvements:
+
+  - Migration to JDK8
+  - Wills replaced with JDK's completable future
