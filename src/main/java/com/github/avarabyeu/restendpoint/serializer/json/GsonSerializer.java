@@ -21,6 +21,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.gson.Gson;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
@@ -62,8 +63,8 @@ public class GsonSerializer extends AbstractJsonSerializer {
 
     @Override
     public <T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException {
-        try {
-            return gson.fromJson(ByteSource.wrap(content).asCharSource(Charsets.UTF_8).openBufferedStream(), clazz);
+        try (BufferedReader is = ByteSource.wrap(content).asCharSource(Charsets.UTF_8).openBufferedStream()) {
+            return gson.fromJson(is, clazz);
         } catch (IOException e) {
             throw new SerializerException("Unable to serialize content", e);
         }

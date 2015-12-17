@@ -18,10 +18,7 @@ import com.google.common.reflect.TypeToken;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -58,13 +55,9 @@ class RestMethodInfo {
 
     @Nonnull
     public static Map<Method, RestMethodInfo> mapMethods(@Nonnull Class<?> clazz) {
-        Map<Method, RestMethodInfo> restMethods = new LinkedHashMap<>();
-        for (Method m : clazz.getDeclaredMethods()) {
-            if (isRestMethodDefinition(m)) {
-                restMethods.put(m, new RestMethodInfo(m));
-            }
-        }
-        return restMethods;
+        return Arrays.stream(clazz.getDeclaredMethods())
+                .filter(RestMethodInfo::isRestMethodDefinition)
+                .collect(Collectors.toMap(method -> method, RestMethodInfo::new));
     }
 
     static boolean isRestMethodDefinition(Method m) {
@@ -128,7 +121,8 @@ class RestMethodInfo {
                 Sets.newHashSet(pathArguments.values()));
         Preconditions.checkState(difference.isEmpty(),
                 "The following path arguments found in URL template, but not found in method signature: [%s]. "
-                        + "Class: [%s]. Method [%s]. Did you forget @Path annotation?", difference.stream().collect(Collectors.joining(",")),
+                        + "Class: [%s]. Method [%s]. Did you forget @Path annotation?",
+                difference.stream().collect(Collectors.joining(",")),
                 method.getDeclaringClass().getSimpleName(),
                 method.getName());
     }
@@ -137,10 +131,9 @@ class RestMethodInfo {
     private String createUrl(Object... args) {
 
         /* re-map method arguments. We have argIndex -> argName map, we need to build argName -> argValue map */
-        Map<String, Object> parameters = new HashMap<>();
-        for (Map.Entry<Integer, String> pathVariables : pathArguments.entrySet()) {
-            parameters.put(pathVariables.getValue(), args[pathVariables.getKey()]);
-        }
+        Map<String, Object> parameters = pathArguments.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getValue, entry -> args[entry.getKey()]));
+
         UrlTemplate.Merger template = urlTemplate.merge().expand(parameters);
         if (queryParameter.isPresent()) {
             /* class is possible here, because we already verified arguments types before  */
