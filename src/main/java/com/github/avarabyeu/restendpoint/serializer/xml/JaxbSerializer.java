@@ -43,7 +43,7 @@ import java.lang.reflect.Type;
  */
 public class JaxbSerializer implements Serializer {
 
-    private JAXBContext jaxbContext;
+    private final JAXBContext jaxbContext;
 
     public JaxbSerializer(JAXBContext jaxbContext) {
         this.jaxbContext = jaxbContext;
