@@ -45,12 +45,14 @@ public class RestEndpointInvocationHandler implements InvocationHandler {
         /* delegate request execution to RestEndpoint */
         Observable<Response<Object>> response = delegate.executeRequest(methodInfo.createRestCommand(args));
 
-        Observable<?> result = methodInfo.isBodyOnly() ? response.map(new HttpClientRestEndpoint.BodyTransformer<>()) : response;
+        Observable<?> result = methodInfo.isBodyOnly() ?
+                response.flatMap(new HttpClientRestEndpoint.BodyTransformer<>()) :
+                response;
 
         if (methodInfo.isAsynchronous()) {
             return result;
         } else {
-            return result.blockingSingle();
+            return result.isEmpty().blockingSingle() ? null : result.blockingSingle();
         }
     }
 

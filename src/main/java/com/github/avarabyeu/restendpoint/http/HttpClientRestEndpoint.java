@@ -160,7 +160,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     @Override
     public final <RQ, RS> Observable<RS> postFor(String resource, RQ rq, Class<RS> clazz)
             throws RestEndpointIOException {
-        return post(resource, rq, clazz).map(new BodyTransformer<RS>());
+        return post(resource, rq, clazz).flatMap(new BodyTransformer<RS>());
     }
 
     /*
@@ -184,7 +184,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     public final <RQ, RS> Observable<RS> postFor(String resource, RQ rq, Type type)
             throws RestEndpointIOException {
         Observable<Response<RS>> post = post(resource, rq, type);
-        return post.map(new BodyTransformer<RS>());
+        return post.flatMap(new BodyTransformer<RS>());
     }
 
     /*
@@ -249,7 +249,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     @Override
     public final <RS> Observable<RS> postFor(String resource, MultiPartRequest request, Class<RS> clazz)
             throws RestEndpointIOException {
-        return post(resource, request, clazz).map(new BodyTransformer<RS>());
+        return post(resource, request, clazz).flatMap(new BodyTransformer<RS>());
     }
 
     /*
@@ -272,7 +272,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     @Override
     public final <RQ, RS> Observable<RS> putFor(String resource, RQ rq, Class<RS> clazz)
             throws RestEndpointIOException {
-        return put(resource, rq, clazz).map(new BodyTransformer<RS>());
+        return put(resource, rq, clazz).flatMap(new BodyTransformer<RS>());
     }
 
     /*
@@ -296,7 +296,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     public final <RQ, RS> Observable<RS> putFor(String resource, RQ rq, Type type)
             throws RestEndpointIOException {
         Observable<Response<RS>> rs = put(resource, rq, type);
-        return rs.map(new BodyTransformer<RS>());
+        return rs.flatMap(new BodyTransformer<RS>());
     }
 
     /*
@@ -314,7 +314,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
     @Override
     public final <RS> Observable<RS> deleteFor(String resource, Class<RS> clazz) throws RestEndpointIOException {
-        return delete(resource, clazz).map(new BodyTransformer<RS>());
+        return delete(resource, clazz).flatMap(new BodyTransformer<RS>());
     }
 
     /*
@@ -332,7 +332,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
     @Override
     public final <RS> Observable<RS> getFor(String resource, Class<RS> clazz) throws RestEndpointIOException {
-        return get(resource, clazz).map(new BodyTransformer<RS>());
+        return get(resource, clazz).flatMap(new BodyTransformer<RS>());
     }
 
     @Override
@@ -344,7 +344,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     @Override
     public final <RS> Observable<RS> getFor(String resource, Type type) throws RestEndpointIOException {
         Observable<Response<RS>> rs = get(resource, type);
-        return rs.map(new BodyTransformer<RS>());
+        return rs.flatMap(new BodyTransformer<RS>());
     }
 
     @Override
@@ -358,7 +358,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     @Override
     public final <RS> Observable<RS> getFor(String resource, Map<String, String> parameters, Class<RS> clazz)
             throws RestEndpointIOException {
-        return get(resource, parameters, clazz).map(new BodyTransformer<RS>());
+        return get(resource, parameters, clazz).flatMap(new BodyTransformer<RS>());
     }
 
     @Override
@@ -372,7 +372,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     public final <RS> Observable<RS> getFor(String resource, Map<String, String> parameters, Type type)
             throws RestEndpointIOException {
         Observable<Response<RS>> rs = get(resource, parameters, type);
-        return rs.map(new BodyTransformer<RS>());
+        return rs.flatMap(new BodyTransformer<RS>());
     }
 
     /**
@@ -520,9 +520,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                                     headersBuilder.build(),
                                     callback.callback(entity));
 
-                            if (null != rs.getBody()) {
-                                emitter.onNext(rs);
-                            }
+                            emitter.onNext(rs);
                             emitter.onComplete();
                         } catch (SerializerException e) {
                             emitter.onError(e);
@@ -546,7 +544,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                     }
                 });
             }
-        });
+        }).cache();
     }
 
     @Override
@@ -666,12 +664,12 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      *
      * @param <T> Type of body
      */
-    public static final class BodyTransformer<T> implements Function<Response<T>, T> {
+    public static final class BodyTransformer<T> implements Function<Response<T>, Observable<T>> {
 
         @Nonnull
         @Override
-        public T apply(@Nonnull Response<T> input) {
-            return input.getBody();
+        public Observable<T> apply(@Nonnull Response<T> input) {
+            return null != input.getBody() ? Observable.just(input.getBody()) : Observable.<T>empty();
         }
     }
 }
