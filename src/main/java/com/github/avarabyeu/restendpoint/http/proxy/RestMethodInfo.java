@@ -8,6 +8,8 @@ import com.github.avarabyeu.restendpoint.http.annotation.Path;
 import com.github.avarabyeu.restendpoint.http.annotation.Query;
 import com.github.avarabyeu.restendpoint.http.annotation.Request;
 import com.github.avarabyeu.restendpoint.http.uri.UrlTemplate;
+import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
@@ -19,11 +21,14 @@ import io.reactivex.Observable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * REST interface methods parser.
@@ -40,7 +45,7 @@ class RestMethodInfo {
     private HttpMethod method;
 
     /* method return type is actually type of HTTP response */
-    private TypeToken<?> responseType;
+    private Type responseType;
 
     /* whether REST method asynchronous */
     private boolean asynchronous;
@@ -48,19 +53,24 @@ class RestMethodInfo {
     private UrlTemplate urlTemplate;
 
     /* body is absent by default */
-    private Optional<Integer> bodyArgument = Optional.empty();
+    private Optional<Integer> bodyArgument = Optional.absent();
 
     /* Query parameter index */
-    private Optional<Integer> queryParameter = Optional.empty();
+    private Optional<Integer> queryParameter = Optional.absent();
 
     /* Whether method returns body or Response wrapper */
     private boolean returnBodyOnly;
 
     @Nonnull
     public static Map<Method, RestMethodInfo> mapMethods(@Nonnull Class<?> clazz) {
-        return Arrays.stream(clazz.getDeclaredMethods())
-                .filter(RestMethodInfo::isRestMethodDefinition)
-                .collect(Collectors.toMap(method -> method, RestMethodInfo::new));
+        Map<Method, RestMethodInfo> methodInfos = new HashMap<>();
+        for (Method method : clazz.getDeclaredMethods()){
+            if (RestMethodInfo.isRestMethodDefinition(method)){
+                methodInfos.put(method, new RestMethodInfo(method));
+            }
+        }
+        return methodInfos;
+
     }
 
     static boolean isRestMethodDefinition(Method m) {
@@ -93,7 +103,9 @@ class RestMethodInfo {
         this.urlTemplate = UrlTemplate.create(request.url());
         this.asynchronous = isAsynchronous(method);
         this.method = request.method();
-        this.responseType = method.getReturnType();
+
+        /* If instance wrapped with Observable, we should extract generic type parameter */
+        this.responseType = asynchronous ? getGenericSubtype(method.getReturnType()) : method.getReturnType().getType();
         this.returnBodyOnly = bodyOnly(method);
 
         /* walk through method parameters and find marked with internal annotations */
@@ -125,7 +137,7 @@ class RestMethodInfo {
         Preconditions.checkState(difference.isEmpty(),
                 "The following path arguments found in URL template, but not found in method signature: [%s]. "
                         + "Class: [%s]. Method [%s]. Did you forget @Path annotation?",
-                difference.stream().collect(Collectors.joining(",")),
+                Joiner.on(',').join(difference),
                 method.getDeclaringClass().getSimpleName(),
                 method.getName());
     }
@@ -134,8 +146,10 @@ class RestMethodInfo {
     private String createUrl(Object... args) {
 
         /* re-map method arguments. We have argIndex -> argName map, we need to build argName -> argValue map */
-        Map<String, Object> parameters = pathArguments.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getValue, entry -> args[entry.getKey()]));
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        for (Map.Entry<Integer, String> pathVariables : pathArguments.entrySet()) {
+            parameters.put(pathVariables.getValue(), args[pathVariables.getKey()]);
+        }
 
         UrlTemplate.Merger template = urlTemplate.merge().expand(parameters);
         if (queryParameter.isPresent()) {
@@ -152,7 +166,14 @@ class RestMethodInfo {
 
     @SuppressWarnings("unchecked")
     public <RQ, RS> RestCommand<RQ, RS> createRestCommand(Object... args) {
-        return new RestCommand(createUrl(args), this.method, createBody(args), responseType.getType());
+        return new RestCommand(createUrl(args), this.method, createBody(args), responseType);
+    }
+
+    private Type getGenericSubtype(TypeToken<?> typeToken) {
+        Type rawType = typeToken.getType();
+        Preconditions.checkArgument(rawType instanceof ParameterizedType,
+                "Incorrect configuration. {} should be parameterized", rawType);
+        return ((ParameterizedType) rawType).getActualTypeArguments()[0];
     }
 
 }

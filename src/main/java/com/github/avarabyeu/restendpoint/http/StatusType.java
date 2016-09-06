@@ -68,9 +68,12 @@ public enum StatusType {
      */
     public static StatusType valueOf(int status) {
         int seriesCode = status / 100;
-        return Arrays.stream(values())
-                .filter(series -> series.value == seriesCode)
-                .findAny().orElseThrow(() -> new IllegalArgumentException("No matching constant for [" + status + "]"));
+        for (StatusType series : values()) {
+            if (series.value == seriesCode) {
+                return series;
+            }
+        }
+        throw new IllegalArgumentException("No matching constant for [" + status + "]");
     }
 
 }

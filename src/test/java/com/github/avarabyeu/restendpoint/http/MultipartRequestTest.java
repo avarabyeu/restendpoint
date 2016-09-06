@@ -60,7 +60,7 @@ public class MultipartRequestTest {
         MultiPartRequest.MultiPartSerialized<?> serializedPart = multiPartRequest.getSerializedRQs().get(0);
         assertSoft(serializedPart.getPartName(), is("serialized part"), "Serialized part name is incorrect");
         assertSoft(serializedPart.getRequest(), instanceOf(String.class), "Incorrect serialized part body type");
-        assertSoft(serializedPart.getRequest(), is("this part will be serialized using serializer"), "Incorrect serialized part body ");
+        assertSoft((String) serializedPart.getRequest(), is("this part will be serialized using serializer"), "Incorrect serialized part body ");
     }
 
 }

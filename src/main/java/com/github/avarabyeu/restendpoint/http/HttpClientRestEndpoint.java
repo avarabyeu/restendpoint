@@ -26,6 +26,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.net.MediaType;
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.functions.Function;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -158,7 +160,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     @Override
     public final <RQ, RS> Observable<RS> postFor(String resource, RQ rq, Class<RS> clazz)
             throws RestEndpointIOException {
-        return post(resource, rq, clazz).map(new BodyTransformer<>());
+        return post(resource, rq, clazz).map(new BodyTransformer<RS>());
     }
 
     /*
@@ -175,14 +177,14 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq),
                 ContentType.create(serializer.getMimeType()));
         post.setEntity(httpEntity);
-        return executeInternal(post, new TypeConverterCallback<>(serializers, type));
+        return executeInternal(post, new TypeConverterCallback<RS>(serializers, type));
     }
 
     @Override
     public final <RQ, RS> Observable<RS> postFor(String resource, RQ rq, Type type)
             throws RestEndpointIOException {
         Observable<Response<RS>> post = post(resource, rq, type);
-        return post.map(new BodyTransformer<>());
+        return post.map(new BodyTransformer<RS>());
     }
 
     /*
@@ -247,7 +249,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     @Override
     public final <RS> Observable<RS> postFor(String resource, MultiPartRequest request, Class<RS> clazz)
             throws RestEndpointIOException {
-        return post(resource, request, clazz).map(new BodyTransformer<>());
+        return post(resource, request, clazz).map(new BodyTransformer<RS>());
     }
 
     /*
@@ -270,7 +272,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     @Override
     public final <RQ, RS> Observable<RS> putFor(String resource, RQ rq, Class<RS> clazz)
             throws RestEndpointIOException {
-        return put(resource, rq, clazz).map(new BodyTransformer<>());
+        return put(resource, rq, clazz).map(new BodyTransformer<RS>());
     }
 
     /*
@@ -287,14 +289,14 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         ByteArrayEntity httpEntity = new ByteArrayEntity(serializer.serialize(rq),
                 ContentType.create(serializer.getMimeType()));
         put.setEntity(httpEntity);
-        return executeInternal(put, new TypeConverterCallback<>(serializers, type));
+        return executeInternal(put, new TypeConverterCallback<RS>(serializers, type));
     }
 
     @Override
     public final <RQ, RS> Observable<RS> putFor(String resource, RQ rq, Type type)
             throws RestEndpointIOException {
         Observable<Response<RS>> rs = put(resource, rq, type);
-        return rs.map(new BodyTransformer<>());
+        return rs.map(new BodyTransformer<RS>());
     }
 
     /*
@@ -312,7 +314,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
     @Override
     public final <RS> Observable<RS> deleteFor(String resource, Class<RS> clazz) throws RestEndpointIOException {
-        return delete(resource, clazz).map(new BodyTransformer<>());
+        return delete(resource, clazz).map(new BodyTransformer<RS>());
     }
 
     /*
@@ -330,19 +332,19 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
     @Override
     public final <RS> Observable<RS> getFor(String resource, Class<RS> clazz) throws RestEndpointIOException {
-        return get(resource, clazz).map(new BodyTransformer<>());
+        return get(resource, clazz).map(new BodyTransformer<RS>());
     }
 
     @Override
     public final <RS> Observable<Response<RS>> get(String resource, Type type) throws RestEndpointIOException {
         HttpGet get = new HttpGet(spliceUrl(resource));
-        return executeInternal(get, new TypeConverterCallback<>(serializers, type));
+        return executeInternal(get, new TypeConverterCallback<RS>(serializers, type));
     }
 
     @Override
     public final <RS> Observable<RS> getFor(String resource, Type type) throws RestEndpointIOException {
         Observable<Response<RS>> rs = get(resource, type);
-        return rs.map(new BodyTransformer<>());
+        return rs.map(new BodyTransformer<RS>());
     }
 
     @Override
@@ -356,21 +358,21 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     @Override
     public final <RS> Observable<RS> getFor(String resource, Map<String, String> parameters, Class<RS> clazz)
             throws RestEndpointIOException {
-        return get(resource, parameters, clazz).map(new BodyTransformer<>());
+        return get(resource, parameters, clazz).map(new BodyTransformer<RS>());
     }
 
     @Override
     public final <RS> Observable<Response<RS>> get(String resource, Map<String, String> parameters, Type type)
             throws RestEndpointIOException {
         HttpGet get = new HttpGet(spliceUrl(resource, parameters));
-        return executeInternal(get, new TypeConverterCallback<>(serializers, type));
+        return executeInternal(get, new TypeConverterCallback<RS>(serializers, type));
     }
 
     @Override
     public final <RS> Observable<RS> getFor(String resource, Map<String, String> parameters, Type type)
             throws RestEndpointIOException {
         Observable<Response<RS>> rs = get(resource, parameters, type);
-        return rs.map(new BodyTransformer<>());
+        return rs.map(new BodyTransformer<RS>());
     }
 
     /**
@@ -418,7 +420,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
             throw new IllegalArgumentException("Method '" + command.getHttpMethod() + "' is unsupported");
         }
 
-        return executeInternal(rq, new TypeConverterCallback<>(serializers, command.getResponseType()));
+        return executeInternal(rq, new TypeConverterCallback<RS>(serializers, command.getResponseType()));
     }
 
     /**
@@ -491,7 +493,9 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     private <RS> Observable<Response<RS>> executeInternal(final HttpUriRequest rq,
             final HttpEntityCallback<RS> callback) {
 
-        return Observable.create(observableEmitter ->
+        return Observable.create(new ObservableOnSubscribe<Response<RS>>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Response<RS>> emitter) throws Exception {
                 httpClient.execute(rq, new FutureCallback<HttpResponse>() {
                     @Override
                     public void completed(final HttpResponse response) {
@@ -516,32 +520,33 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                                     headersBuilder.build(),
                                     callback.callback(entity));
 
-                            if (null != rs.getBody()){
-                                observableEmitter.onNext(rs);
+                            if (null != rs.getBody()) {
+                                emitter.onNext(rs);
                             }
-                            observableEmitter.onComplete();
+                            emitter.onComplete();
                         } catch (SerializerException e) {
-                            observableEmitter.onError(e);
+                            emitter.onError(e);
                         } catch (IOException e) {
-                            observableEmitter.onError(new RestEndpointIOException("Unable to execute request", e));
+                            emitter.onError(new RestEndpointIOException("Unable to execute request", e));
                         } catch (Exception e) {
-                            observableEmitter.onError(e);
+                            emitter.onError(e);
                         }
 
                     }
 
                     @Override
                     public void failed(final Exception ex) {
-                        observableEmitter.onError(new RestEndpointIOException("Unable to execute request", ex));
+                        emitter.onError(new RestEndpointIOException("Unable to execute request", ex));
                     }
 
                     @Override
                     public void cancelled() {
                         final TimeoutException timeoutException = new TimeoutException();
-                        observableEmitter.onError(timeoutException);
+                        emitter.onError(timeoutException);
                     }
-                }));
-
+                });
+            }
+        });
     }
 
     @Override
@@ -551,14 +556,14 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
     private static abstract class HttpEntityCallback<RS> {
 
-        protected final List<Serializer> serializers;
+        final List<Serializer> serializers;
 
         /**
          * Response callback
          *
          * @param serializers Serializers list
          */
-        public HttpEntityCallback(List<Serializer> serializers) {
+        HttpEntityCallback(List<Serializer> serializers) {
             this.serializers = serializers;
         }
 
@@ -582,7 +587,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
          * @param serializers List of serializers
          * @param type        Type of object
          */
-        public TypeConverterCallback(List<Serializer> serializers, Type type) {
+        TypeConverterCallback(List<Serializer> serializers, Type type) {
             super(serializers);
             this.type = type;
         }
@@ -602,7 +607,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
          * @return Found Serializer
          * @throws SerializerException If not serializer found
          */
-        protected Serializer getSupported(MediaType contentType, Type resultType) throws SerializerException {
+        Serializer getSupported(MediaType contentType, Type resultType) throws SerializerException {
             for (Serializer s : serializers) {
                 if (s.canRead(contentType, resultType)) {
                     return s;
@@ -624,7 +629,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
          * @param serializers List of serializers
          * @param clazz       Type of object
          */
-        public ClassConverterCallback(List<Serializer> serializers, Class<RS> clazz) {
+        ClassConverterCallback(List<Serializer> serializers, Class<RS> clazz) {
             super(serializers);
             this.clazz = clazz;
         }
