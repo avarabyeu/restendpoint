@@ -4,12 +4,11 @@ import com.github.avarabyeu.restendpoint.http.HttpClientRestEndpoint;
 import com.github.avarabyeu.restendpoint.http.Response;
 import com.github.avarabyeu.restendpoint.http.RestEndpoint;
 import com.google.common.base.Preconditions;
+import io.reactivex.Observable;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Proxy invocation handler for REST interfaces
@@ -44,18 +43,14 @@ public class RestEndpointInvocationHandler implements InvocationHandler {
         RestMethodInfo methodInfo = restMethods.get(method);
 
         /* delegate request execution to RestEndpoint */
-        CompletableFuture<Response<Object>> response = delegate.executeRequest(methodInfo.createRestCommand(args));
+        Observable<Response<Object>> response = delegate.executeRequest(methodInfo.createRestCommand(args));
 
-        CompletableFuture<?> result = methodInfo.isBodyOnly() ? response.thenApply(new HttpClientRestEndpoint.BodyTransformer<>()) : response;
+        Observable<?> result = methodInfo.isBodyOnly() ? response.map(new HttpClientRestEndpoint.BodyTransformer<>()) : response;
 
         if (methodInfo.isAsynchronous()) {
             return result;
         } else {
-            try {
-                return result.get();
-            } catch (ExecutionException e) {
-                throw e.getCause();
-            }
+            return result.blockingSingle();
         }
     }
 

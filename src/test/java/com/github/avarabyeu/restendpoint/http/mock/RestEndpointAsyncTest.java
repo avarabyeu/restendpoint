@@ -16,17 +16,23 @@
 
 package com.github.avarabyeu.restendpoint.http.mock;
 
-import com.github.avarabyeu.restendpoint.http.*;
+import com.github.avarabyeu.restendpoint.http.BaseRestEndointTest;
+import com.github.avarabyeu.restendpoint.http.HttpMethod;
+import com.github.avarabyeu.restendpoint.http.Injector;
+import com.github.avarabyeu.restendpoint.http.Response;
+import com.github.avarabyeu.restendpoint.http.RestCommand;
+import com.github.avarabyeu.restendpoint.http.RestEndpoint;
+import com.github.avarabyeu.restendpoint.http.RestEndpoints;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
+import io.reactivex.Observable;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Tests for asynchronous client methods
@@ -55,45 +61,52 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testGet() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        CompletableFuture<String> to = endpoint.getFor("/", String.class);
-        Assert.assertTrue(!to.isDone());
+        Observable<String> to = endpoint.getFor("/", String.class);
+        Assert.assertTrue(isScheduled(to));
     }
 
     @Test
     public void testPost() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        CompletableFuture<String> to = endpoint.postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
-        Assert.assertTrue(!to.isDone());
+        Observable<String> to = endpoint
+                .postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
+        Assert.assertTrue(isScheduled(to));
     }
 
     @Test
     public void testPut() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        CompletableFuture<String> to = endpoint.putFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
-        Assert.assertTrue(!to.isDone());
+        Observable<String> to = endpoint
+                .putFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
+        Assert.assertTrue(isScheduled(to));
     }
 
     @Test
     public void testDelete() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        CompletableFuture<String> to = endpoint.deleteFor("/", String.class);
-        Assert.assertTrue(!to.isDone());
+        Observable<String> to = endpoint.deleteFor("/", String.class);
+        Assert.assertTrue(isScheduled(to));
     }
 
     @Test
     public void testCommand() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
         RestCommand<String, String> command = new RestCommand<>("/", HttpMethod.POST, SERIALIZED_STRING, String.class);
-        CompletableFuture<Response<String>> to = endpoint.executeRequest(command);
-        Assert.assertTrue(!to.isDone());
+        Observable<Response<String>> to = endpoint.executeRequest(command);
+        Assert.assertTrue(isScheduled(to));
 
     }
 
     @Test
     public void testVoid() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(""));
-        CompletableFuture<Void> to = endpoint.postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), Void.class);
-        Assert.assertTrue(!to.isDone());
+        Observable<Void> to = endpoint
+                .postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), Void.class);
+        Assert.assertTrue(0 == to.count().blockingSingle());
 
+    }
+
+    private boolean isScheduled(Observable<?> observable) {
+        return 1 == observable.count().blockingSingle();
     }
 }

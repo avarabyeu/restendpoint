@@ -23,13 +23,13 @@ import com.github.avarabyeu.restendpoint.http.RestEndpoints;
 import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
+import io.reactivex.Observable;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Tests for asynchronous client methods
@@ -61,29 +61,33 @@ public class AsyncRestEndpointProxyTest extends BaseRestEndointTest {
     @Test
     public void testGetAsync() throws IOException, InterruptedException {
         serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        CompletableFuture<String> to = restInterface.getAsync();
-        Assert.assertTrue(!to.isDone());
+        Observable<String> to = restInterface.getAsync();
+        Assert.assertTrue(isScheduled(to));
     }
 
     @Test
     public void testPostAsync() throws IOException, InterruptedException {
         serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        CompletableFuture<String> to = restInterface.postAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
-        Assert.assertTrue(!to.isDone());
+        Observable<String> to = restInterface.postAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
+        Assert.assertTrue(isScheduled(to));
     }
 
     @Test
     public void testPutAsync() throws IOException, InterruptedException {
         serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        CompletableFuture<String> to = restInterface.putAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
-        Assert.assertTrue(!to.isDone());
+        Observable<String> to = restInterface.putAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
+        Assert.assertTrue(isScheduled(to));
     }
 
     @Test
     public void testDeleteAsync() throws IOException, InterruptedException {
         serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        CompletableFuture<String> to = restInterface.deleteAsync();
-        Assert.assertTrue(!to.isDone());
+        Observable<String> to = restInterface.deleteAsync();
+        Assert.assertTrue(isScheduled(to));
+    }
+
+    private boolean isScheduled(Observable<?> observable) {
+        return 1 == observable.count().blockingSingle();
     }
 
 
