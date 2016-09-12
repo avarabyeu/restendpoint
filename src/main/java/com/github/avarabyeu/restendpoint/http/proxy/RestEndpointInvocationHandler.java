@@ -5,6 +5,8 @@ import com.github.avarabyeu.restendpoint.http.Response;
 import com.github.avarabyeu.restendpoint.http.RestEndpoint;
 import com.google.common.base.Preconditions;
 import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.internal.functions.Functions;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -43,16 +45,16 @@ public class RestEndpointInvocationHandler implements InvocationHandler {
         RestMethodInfo methodInfo = restMethods.get(method);
 
         /* delegate request execution to RestEndpoint */
-        Observable<Response<Object>> response = delegate.executeRequest(methodInfo.createRestCommand(args));
+        Single<Response<Object>> response = delegate.executeRequest(methodInfo.createRestCommand(args));
 
-        Observable<?> result = methodInfo.isBodyOnly() ?
+        Single<?> result = methodInfo.isBodyOnly() ?
                 response.flatMap(new HttpClientRestEndpoint.BodyTransformer<>()) :
                 response;
 
         if (methodInfo.isAsynchronous()) {
             return result;
         } else {
-            return result.isEmpty().blockingSingle() ? null : result.blockingSingle();
+            return result.toObservable().isEmpty().blockingSingle() ? null : result.toObservable().blockingSingle();
         }
     }
 

@@ -27,6 +27,7 @@ import com.github.avarabyeu.restendpoint.serializer.ByteArraySerializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -61,14 +62,14 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testGet() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Observable<String> to = endpoint.getFor("/", String.class);
+        Single<String> to = endpoint.getFor("/", String.class);
         Assert.assertTrue(isScheduled(to));
     }
 
     @Test
     public void testPost() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Observable<String> to = endpoint
+        Single<String> to = endpoint
                 .postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
         Assert.assertTrue(isScheduled(to));
     }
@@ -76,7 +77,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testPut() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Observable<String> to = endpoint
+        Single<String> to = endpoint
                 .putFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
         Assert.assertTrue(isScheduled(to));
     }
@@ -84,7 +85,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testDelete() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Observable<String> to = endpoint.deleteFor("/", String.class);
+        Single<String> to = endpoint.deleteFor("/", String.class);
         Assert.assertTrue(isScheduled(to));
     }
 
@@ -92,7 +93,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     public void testCommand() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
         RestCommand<String, String> command = new RestCommand<>("/", HttpMethod.POST, SERIALIZED_STRING, String.class);
-        Observable<Response<String>> to = endpoint.executeRequest(command);
+        Single<Response<String>> to = endpoint.executeRequest(command);
         Assert.assertTrue(isScheduled(to));
 
     }
@@ -100,13 +101,13 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testVoid() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(""));
-        Observable<Void> to = endpoint
+        Single<Void> to = endpoint
                 .postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), Void.class);
-        Assert.assertTrue(0 == to.count().blockingSingle());
+        Assert.assertTrue(0 == to.toObservable().count().blockingSingle());
 
     }
 
-    private boolean isScheduled(Observable<?> observable) {
-        return 1 == observable.count().blockingSingle();
+    private boolean isScheduled(Single<?> observable) {
+        return 1 == observable.toObservable().count().blockingSingle();
     }
 }

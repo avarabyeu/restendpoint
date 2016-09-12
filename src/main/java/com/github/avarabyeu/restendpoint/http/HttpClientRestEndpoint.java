@@ -26,8 +26,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.net.MediaType;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
 import io.reactivex.functions.Function;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -141,7 +142,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Object, java.lang.Class)
      */
     @Override
-    public final <RQ, RS> Observable<Response<RS>> post(String resource, RQ rq, Class<RS> clazz)
+    public final <RQ, RS> Single<Response<RS>> post(String resource, RQ rq, Class<RS> clazz)
             throws RestEndpointIOException {
         HttpPost post = new HttpPost(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
@@ -158,7 +159,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Object, java.lang.Class)
      */
     @Override
-    public final <RQ, RS> Observable<RS> postFor(String resource, RQ rq, Class<RS> clazz)
+    public final <RQ, RS> Single<RS> postFor(String resource, RQ rq, Class<RS> clazz)
             throws RestEndpointIOException {
         return post(resource, rq, clazz).flatMap(new BodyTransformer<RS>());
     }
@@ -170,7 +171,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Object, java.lang.reflect.Type)
      */
     @Override
-    public final <RQ, RS> Observable<Response<RS>> post(String resource, RQ rq, Type type)
+    public final <RQ, RS> Single<Response<RS>> post(String resource, RQ rq, Type type)
             throws RestEndpointIOException {
         HttpPost post = new HttpPost(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
@@ -181,9 +182,9 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     }
 
     @Override
-    public final <RQ, RS> Observable<RS> postFor(String resource, RQ rq, Type type)
+    public final <RQ, RS> Single<RS> postFor(String resource, RQ rq, Type type)
             throws RestEndpointIOException {
-        Observable<Response<RS>> post = post(resource, rq, type);
+        Single<Response<RS>> post = post(resource, rq, type);
         return post.flatMap(new BodyTransformer<RS>());
     }
 
@@ -194,7 +195,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * MultiPartRequest, java.lang.Class)
      */
     @Override
-    public final <RS> Observable<Response<RS>> post(String resource, MultiPartRequest request, Class<RS> clazz)
+    public final <RS> Single<Response<RS>> post(String resource, MultiPartRequest request, Class<RS> clazz)
             throws RestEndpointIOException {
         HttpPost post = new HttpPost(spliceUrl(resource));
 
@@ -247,7 +248,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     }
 
     @Override
-    public final <RS> Observable<RS> postFor(String resource, MultiPartRequest request, Class<RS> clazz)
+    public final <RS> Single<RS> postFor(String resource, MultiPartRequest request, Class<RS> clazz)
             throws RestEndpointIOException {
         return post(resource, request, clazz).flatMap(new BodyTransformer<RS>());
     }
@@ -259,7 +260,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Object, java.lang.Class)
      */
     @Override
-    public final <RQ, RS> Observable<Response<RS>> put(String resource, RQ rq, Class<RS> clazz)
+    public final <RQ, RS> Single<Response<RS>> put(String resource, RQ rq, Class<RS> clazz)
             throws RestEndpointIOException {
         HttpPut put = new HttpPut(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
@@ -270,7 +271,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     }
 
     @Override
-    public final <RQ, RS> Observable<RS> putFor(String resource, RQ rq, Class<RS> clazz)
+    public final <RQ, RS> Single<RS> putFor(String resource, RQ rq, Class<RS> clazz)
             throws RestEndpointIOException {
         return put(resource, rq, clazz).flatMap(new BodyTransformer<RS>());
     }
@@ -282,7 +283,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Object, java.lang.reflect.Type)
      */
     @Override
-    public final <RQ, RS> Observable<Response<RS>> put(String resource, RQ rq, Type type)
+    public final <RQ, RS> Single<Response<RS>> put(String resource, RQ rq, Type type)
             throws RestEndpointIOException {
         HttpPut put = new HttpPut(spliceUrl(resource));
         Serializer serializer = getSupportedSerializer(rq);
@@ -293,9 +294,9 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     }
 
     @Override
-    public final <RQ, RS> Observable<RS> putFor(String resource, RQ rq, Type type)
+    public final <RQ, RS> Single<RS> putFor(String resource, RQ rq, Type type)
             throws RestEndpointIOException {
-        Observable<Response<RS>> rs = put(resource, rq, type);
+        Single<Response<RS>> rs = put(resource, rq, type);
         return rs.flatMap(new BodyTransformer<RS>());
     }
 
@@ -306,14 +307,14 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * lang.String, java.lang.Class)
      */
     @Override
-    public final <RS> Observable<Response<RS>> delete(String resource, Class<RS> clazz)
+    public final <RS> Single<Response<RS>> delete(String resource, Class<RS> clazz)
             throws RestEndpointIOException {
         HttpDelete delete = new HttpDelete(spliceUrl(resource));
         return executeInternal(delete, new ClassConverterCallback<>(serializers, clazz));
     }
 
     @Override
-    public final <RS> Observable<RS> deleteFor(String resource, Class<RS> clazz) throws RestEndpointIOException {
+    public final <RS> Single<RS> deleteFor(String resource, Class<RS> clazz) throws RestEndpointIOException {
         return delete(resource, clazz).flatMap(new BodyTransformer<RS>());
     }
 
@@ -324,31 +325,31 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * java.lang.Class)
      */
     @Override
-    public final <RS> Observable<Response<RS>> get(String resource, Class<RS> clazz)
+    public final <RS> Single<Response<RS>> get(String resource, Class<RS> clazz)
             throws RestEndpointIOException {
         HttpGet get = new HttpGet(spliceUrl(resource));
         return executeInternal(get, new ClassConverterCallback<>(serializers, clazz));
     }
 
     @Override
-    public final <RS> Observable<RS> getFor(String resource, Class<RS> clazz) throws RestEndpointIOException {
+    public final <RS> Single<RS> getFor(String resource, Class<RS> clazz) throws RestEndpointIOException {
         return get(resource, clazz).flatMap(new BodyTransformer<RS>());
     }
 
     @Override
-    public final <RS> Observable<Response<RS>> get(String resource, Type type) throws RestEndpointIOException {
+    public final <RS> Single<Response<RS>> get(String resource, Type type) throws RestEndpointIOException {
         HttpGet get = new HttpGet(spliceUrl(resource));
         return executeInternal(get, new TypeConverterCallback<RS>(serializers, type));
     }
 
     @Override
-    public final <RS> Observable<RS> getFor(String resource, Type type) throws RestEndpointIOException {
-        Observable<Response<RS>> rs = get(resource, type);
+    public final <RS> Single<RS> getFor(String resource, Type type) throws RestEndpointIOException {
+        Single<Response<RS>> rs = get(resource, type);
         return rs.flatMap(new BodyTransformer<RS>());
     }
 
     @Override
-    public final <RS> Observable<Response<RS>> get(String resource, Map<String, String> parameters,
+    public final <RS> Single<Response<RS>> get(String resource, Map<String, String> parameters,
             Class<RS> clazz)
             throws RestEndpointIOException {
         HttpGet get = new HttpGet(spliceUrl(resource, parameters));
@@ -356,22 +357,22 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     }
 
     @Override
-    public final <RS> Observable<RS> getFor(String resource, Map<String, String> parameters, Class<RS> clazz)
+    public final <RS> Single<RS> getFor(String resource, Map<String, String> parameters, Class<RS> clazz)
             throws RestEndpointIOException {
         return get(resource, parameters, clazz).flatMap(new BodyTransformer<RS>());
     }
 
     @Override
-    public final <RS> Observable<Response<RS>> get(String resource, Map<String, String> parameters, Type type)
+    public final <RS> Single<Response<RS>> get(String resource, Map<String, String> parameters, Type type)
             throws RestEndpointIOException {
         HttpGet get = new HttpGet(spliceUrl(resource, parameters));
         return executeInternal(get, new TypeConverterCallback<RS>(serializers, type));
     }
 
     @Override
-    public final <RS> Observable<RS> getFor(String resource, Map<String, String> parameters, Type type)
+    public final <RS> Single<RS> getFor(String resource, Map<String, String> parameters, Type type)
             throws RestEndpointIOException {
-        Observable<Response<RS>> rs = get(resource, parameters, type);
+        Single<Response<RS>> rs = get(resource, parameters, type);
         return rs.flatMap(new BodyTransformer<RS>());
     }
 
@@ -384,7 +385,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @see Observable
      */
     @Override
-    public final <RQ, RS> Observable<Response<RS>> executeRequest(RestCommand<RQ, RS> command)
+    public final <RQ, RS> Single<Response<RS>> executeRequest(RestCommand<RQ, RS> command)
             throws RestEndpointIOException {
         URI uri = spliceUrl(command.getUri());
         HttpUriRequest rq;
@@ -490,12 +491,12 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * @param <RS>     type of response
      * @return - Serialized Response Body
      */
-    private <RS> Observable<Response<RS>> executeInternal(final HttpUriRequest rq,
+    private <RS> Single<Response<RS>> executeInternal(final HttpUriRequest rq,
             final HttpEntityCallback<RS> callback) {
 
-        return Observable.create(new ObservableOnSubscribe<Response<RS>>() {
+        return Single.create(new SingleOnSubscribe<Response<RS>>() {
             @Override
-            public void subscribe(final ObservableEmitter<Response<RS>> emitter) throws Exception {
+            public void subscribe(final SingleEmitter<Response<RS>> emitter) throws Exception {
                 httpClient.execute(rq, new FutureCallback<HttpResponse>() {
                     @Override
                     public void completed(final HttpResponse response) {
@@ -520,8 +521,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                                     headersBuilder.build(),
                                     callback.callback(entity));
 
-                            emitter.onNext(rs);
-                            emitter.onComplete();
+                            emitter.onSuccess(rs);
                         } catch (SerializerException e) {
                             emitter.onError(e);
                         } catch (IOException e) {
@@ -664,12 +664,12 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      *
      * @param <T> Type of body
      */
-    public static final class BodyTransformer<T> implements Function<Response<T>, Observable<T>> {
+    public static final class BodyTransformer<T> implements Function<Response<T>, Single<T>> {
 
         @Nonnull
         @Override
-        public Observable<T> apply(@Nonnull Response<T> input) {
-            return null != input.getBody() ? Observable.just(input.getBody()) : Observable.<T>empty();
+        public Single<T> apply(@Nonnull Response<T> input) {
+            return null != input.getBody() ? Single.just(input.getBody()) : Single.<T>never();
         }
     }
 }
