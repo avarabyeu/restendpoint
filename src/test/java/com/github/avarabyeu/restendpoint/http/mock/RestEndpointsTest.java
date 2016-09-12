@@ -28,13 +28,12 @@ import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
-import io.reactivex.Observable;
-import io.reactivex.Single;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -73,8 +72,8 @@ public class RestEndpointsTest extends BaseRestEndointTest {
         Assert.assertThat(endpoint, notNullValue());
 
         server.enqueue(prepareResponse(ECHO_STRING).setHeader(CONTENT_TYPE_HEADER, MediaType.PLAIN_TEXT_UTF_8));
-        Single<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
-        Assert.assertThat(helloRS.blockingGet(), is(ECHO_STRING));
+        Mono<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
+        Assert.assertThat(helloRS.block(), is(ECHO_STRING));
 
     }
 
@@ -91,8 +90,8 @@ public class RestEndpointsTest extends BaseRestEndointTest {
         Assert.assertThat(endpoint, notNullValue());
 
         server.enqueue(prepareResponse(ECHO_STRING));
-        Single<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
-        Assert.assertThat(helloRS.blockingGet(), is(ECHO_STRING));
+        Mono<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
+        Assert.assertThat(helloRS.block(), is(ECHO_STRING));
     }
 
     @Test
@@ -103,8 +102,8 @@ public class RestEndpointsTest extends BaseRestEndointTest {
         Assert.assertThat(endpoint, notNullValue());
 
         server.enqueue(prepareResponse(ECHO_STRING));
-        Single<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
-        Assert.assertThat(helloRS.blockingGet(), is(ECHO_STRING));
+        Mono<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
+        Assert.assertThat(helloRS.block(), is(ECHO_STRING));
     }
 
     @Test
@@ -115,7 +114,7 @@ public class RestEndpointsTest extends BaseRestEndointTest {
         Assert.assertThat(endpoint, notNullValue());
 
         server.enqueue(prepareResponse(ECHO_STRING));
-        endpoint.post(RESOURCE, ECHO_STRING, String.class).blockingGet();
+        endpoint.post(RESOURCE, ECHO_STRING, String.class).block();
 
         String basicAuthHeader = server.takeRequest().getHeader(HttpHeaders.AUTHORIZATION);
         Assert.assertThat(basicAuthHeader, is("Basic " + Base64.encodeBase64String("login:password".getBytes())));

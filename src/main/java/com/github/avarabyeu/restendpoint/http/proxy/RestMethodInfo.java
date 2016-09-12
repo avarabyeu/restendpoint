@@ -16,18 +16,15 @@ import com.google.common.collect.Sets;
 import com.google.common.reflect.Invokable;
 import com.google.common.reflect.Parameter;
 import com.google.common.reflect.TypeToken;
-import io.reactivex.Observable;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -78,7 +75,7 @@ class RestMethodInfo {
     }
 
     static boolean isAsynchronous(Invokable<?, ?> method) {
-        return Observable.class.equals(method.getReturnType().getRawType());
+        return Mono.class.equals(method.getReturnType().getRawType());
     }
 
     static boolean bodyOnly(Invokable<?, ?> method) {

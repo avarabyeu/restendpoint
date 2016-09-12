@@ -91,7 +91,7 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
     public void testPostVoid() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(""));
         restInterface.postVoid(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
-        //Assert.assertNotNull("Recieved Object is null", to);
+//        Assert.assertNotNull("Recieved Object is null", to);
 
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "POST / HTTP/1.1", request.getRequestLine());

@@ -21,7 +21,7 @@ import com.github.avarabyeu.restendpoint.http.annotation.Body;
 import com.github.avarabyeu.restendpoint.http.annotation.Path;
 import com.github.avarabyeu.restendpoint.http.annotation.Query;
 import com.github.avarabyeu.restendpoint.http.annotation.Request;
-import io.reactivex.Observable;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
@@ -52,14 +52,14 @@ public interface RestInterface {
     String delete();
 
     @Request(method = HttpMethod.GET, url = "/")
-    Observable<String> getAsync();
+    Mono<String> getAsync();
 
     @Request(method = HttpMethod.POST, url = "/")
-    Observable<String> postAsync(@Body String body);
+    Mono<String> postAsync(@Body String body);
 
     @Request(method = HttpMethod.PUT, url = "/")
-    Observable<String> putAsync(@Body String body);
+    Mono<String> putAsync(@Body String body);
 
     @Request(method = HttpMethod.DELETE, url = "/")
-    Observable<String> deleteAsync();
+    Mono<String> deleteAsync();
 }

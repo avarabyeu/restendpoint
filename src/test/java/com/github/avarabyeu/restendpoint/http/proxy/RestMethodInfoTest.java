@@ -18,10 +18,9 @@ package com.github.avarabyeu.restendpoint.http.proxy;
 import com.google.common.reflect.Invokable;
 import com.smarttested.qa.smartassert.SmartAssert;
 import com.smarttested.qa.smartassert.junit.SoftAssertVerifier;
-import io.reactivex.Observable;
 import org.junit.Rule;
 import org.junit.Test;
-
+import reactor.core.publisher.Mono;
 
 import static com.github.avarabyeu.restendpoint.http.proxy.RestMethodInfo.isAsynchronous;
 import static org.hamcrest.CoreMatchers.is;
@@ -52,7 +51,7 @@ public class RestMethodInfoTest {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    Observable<String> testAsyncronousMethod() {
+    Mono<String> testAsyncronousMethod() {
         return null;
     }
 
