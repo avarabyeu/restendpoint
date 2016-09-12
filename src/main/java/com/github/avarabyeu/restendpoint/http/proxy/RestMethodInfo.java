@@ -8,8 +8,6 @@ import com.github.avarabyeu.restendpoint.http.annotation.Path;
 import com.github.avarabyeu.restendpoint.http.annotation.Query;
 import com.github.avarabyeu.restendpoint.http.annotation.Request;
 import com.github.avarabyeu.restendpoint.http.uri.UrlTemplate;
-import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
@@ -26,6 +24,8 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST interface methods parser.
@@ -50,10 +50,12 @@ class RestMethodInfo {
     private UrlTemplate urlTemplate;
 
     /* body is absent by default */
-    private Optional<Integer> bodyArgument = Optional.absent();
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private Optional<Integer> bodyArgument = Optional.empty();
 
     /* Query parameter index */
-    private Optional<Integer> queryParameter = Optional.absent();
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private Optional<Integer> queryParameter = Optional.empty();
 
     /* Whether method returns body or Response wrapper */
     private boolean returnBodyOnly;
@@ -134,7 +136,7 @@ class RestMethodInfo {
         Preconditions.checkState(difference.isEmpty(),
                 "The following path arguments found in URL template, but not found in method signature: [%s]. "
                         + "Class: [%s]. Method [%s]. Did you forget @Path annotation?",
-                Joiner.on(',').join(difference),
+                difference.stream().collect(Collectors.joining(",")),
                 method.getDeclaringClass().getSimpleName(),
                 method.getName());
     }
@@ -143,10 +145,8 @@ class RestMethodInfo {
     private String createUrl(Object... args) {
 
         /* re-map method arguments. We have argIndex -> argName map, we need to build argName -> argValue map */
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        for (Map.Entry<Integer, String> pathVariables : pathArguments.entrySet()) {
-            parameters.put(pathVariables.getValue(), args[pathVariables.getKey()]);
-        }
+        final Map<String, Object> parameters = pathArguments.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getValue, entry -> args[entry.getKey()]));
 
         UrlTemplate.Merger template = urlTemplate.merge().expand(parameters);
         if (queryParameter.isPresent()) {
