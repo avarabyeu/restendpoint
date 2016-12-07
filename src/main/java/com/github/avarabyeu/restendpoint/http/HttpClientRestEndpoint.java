@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -194,8 +195,12 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     @Override
     public final <RS> Mono<Response<RS>> post(String resource, MultiPartRequest request, Class<RS> clazz)
             throws RestEndpointIOException {
-        HttpPost post = new HttpPost(spliceUrl(resource));
+        HttpPost post = buildMultipartRequest(spliceUrl(resource), request);
+        return executeInternal(post, new ClassConverterCallback<>(serializers, clazz));
+    }
 
+    private HttpPost buildMultipartRequest(URI uri, MultiPartRequest request) throws RestEndpointIOException {
+        HttpPost post = new HttpPost(uri);
         try {
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -241,7 +246,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         } catch (Exception e) {
             throw new RestEndpointIOException("Unable to build post multipart request", e);
         }
-        return executeInternal(post, new ClassConverterCallback<>(serializers, clazz));
+        return post;
     }
 
     @Override
@@ -392,11 +397,16 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
             rq = new HttpGet(uri);
             break;
         case POST:
-            serializer = getSupportedSerializer(command.getRequest());
-            rq = new HttpPost(uri);
-            ((HttpPost) rq)
-                    .setEntity(new ByteArrayEntity(serializer.serialize(command.getRequest()), ContentType.create(
-                            serializer.getMimeType())));
+            if (MultiPartRequest.class.equals(command.getRequest())){
+                MultiPartRequest rqData = (MultiPartRequest) command.getRequest();
+                rq = buildMultipartRequest(uri, rqData);
+            } else {
+                serializer = getSupportedSerializer(command.getRequest());
+                rq = new HttpPost(uri);
+                ((HttpPost) rq)
+                        .setEntity(new ByteArrayEntity(serializer.serialize(command.getRequest()), ContentType.create(
+                                serializer.getMimeType())));
+            }
             break;
         case PUT:
             serializer = getSupportedSerializer(command.getRequest());

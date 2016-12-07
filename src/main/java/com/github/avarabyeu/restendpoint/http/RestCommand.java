@@ -36,18 +36,25 @@ public class RestCommand<RQ, RS> {
     private final RQ request;
     private final String uri;
     private final Type responseType;
+    private final boolean multipart;
 
     public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request,
             @Nonnull Class<RS> responseClass) {
-        this(uri, method, request, TypeToken.of(responseClass).getType());
+        this(uri, method, request, TypeToken.of(responseClass).getType(), false);
     }
 
     public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request,
-            @Nonnull Type responseType) {
+            @Nonnull Class<RS> responseClass, boolean multipart) {
+        this(uri, method, request, TypeToken.of(responseClass).getType(), multipart);
+    }
+
+    public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request,
+            @Nonnull Type responseType, boolean multipart) {
         this.httpMethod = method;
         this.request = request;
         this.uri = uri;
         this.responseType = responseType;
+        this.multipart = multipart;
 
         validate();
     }
@@ -73,6 +80,7 @@ public class RestCommand<RQ, RS> {
         /* Requests with no body should pass body parameter as NULL */
         if (!this.httpMethod.hasBody()) {
             Preconditions.checkState(null == this.request, "'%s' shouldn't contain body", this.httpMethod);
+            Preconditions.checkState(!multipart, "Incorrect request type for multipart: '%s'", this.httpMethod);
         }
     }
 }

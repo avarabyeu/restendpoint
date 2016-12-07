@@ -1,9 +1,11 @@
 package com.github.avarabyeu.restendpoint.http.proxy;
 
 import com.github.avarabyeu.restendpoint.http.HttpMethod;
+import com.github.avarabyeu.restendpoint.http.MultiPartRequest;
 import com.github.avarabyeu.restendpoint.http.Response;
 import com.github.avarabyeu.restendpoint.http.RestCommand;
 import com.github.avarabyeu.restendpoint.http.annotation.Body;
+import com.github.avarabyeu.restendpoint.http.annotation.Multipart;
 import com.github.avarabyeu.restendpoint.http.annotation.Path;
 import com.github.avarabyeu.restendpoint.http.annotation.Query;
 import com.github.avarabyeu.restendpoint.http.annotation.Request;
@@ -59,6 +61,9 @@ class RestMethodInfo {
 
     /* Whether method returns body or Response wrapper */
     private boolean returnBodyOnly;
+
+    /* Whether request is multipart */
+    private boolean multiPart;
 
     @Nonnull
     public static Map<Method, RestMethodInfo> mapMethods(@Nonnull Class<?> clazz) {
@@ -120,6 +125,13 @@ class RestMethodInfo {
                 pathArguments.put(i, path.value());
             } else if (parameter.isAnnotationPresent(Body.class)) {
                 this.bodyArgument = Optional.of(i);
+                if (parameter.isAnnotationPresent(Multipart.class)) {
+                    Preconditions.checkArgument(TypeToken.of(MultiPartRequest.class).isSupertypeOf(parameter.getType()),
+                            "@Multipart parameters are expected to be MultiPartRequest. '%s' is not a MultiPartRequest",
+                            parameter.getType());
+                    multiPart = true;
+                }
+
             } else if (parameter.isAnnotationPresent(Query.class)) {
                 Preconditions.checkArgument(TypeToken.of(Map.class).isSupertypeOf(parameter.getType()),
                         "@Query parameters are expected to be maps. '%s' is not a Map", parameter.getType());
@@ -163,7 +175,7 @@ class RestMethodInfo {
 
     @SuppressWarnings("unchecked")
     public <RQ, RS> RestCommand<RQ, RS> createRestCommand(Object... args) {
-        return new RestCommand(createUrl(args), this.method, createBody(args), responseType);
+        return new RestCommand(createUrl(args), this.method, createBody(args), responseType, multiPart);
     }
 
     private Type getGenericSubtype(TypeToken<?> typeToken) {

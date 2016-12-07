@@ -89,7 +89,7 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      * @param errorBody     - HTTP response body
      */
     protected void handleClientError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
-                                     byte[] errorBody) {
+                                     byte[] errorBody) throws RestEndpointIOException {
         throw new RestEndpointClientException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
     }
 
@@ -103,7 +103,7 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      * @param errorBody     - HTTP response body
      */
     protected void handleServerError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
-                                     byte[] errorBody) {
+                                     byte[] errorBody) throws RestEndpointIOException {
         throw new RestEndpointServerException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
     }
 
@@ -117,7 +117,7 @@ public class DefaultErrorHandler implements ErrorHandler<HttpUriRequest, HttpRes
      * @param errorBody     - HTTP response body
      */
     protected void handleDefaultError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
-                                      byte[] errorBody) {
+                                      byte[] errorBody) throws RestEndpointIOException {
         throw new RestEndpointException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
     }
 
