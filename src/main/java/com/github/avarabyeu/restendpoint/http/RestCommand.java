@@ -63,6 +63,10 @@ public class RestCommand<RQ, RS> {
         return httpMethod;
     }
 
+    public final boolean isMultipart() {
+        return multipart;
+    }
+
     public final RQ getRequest() {
         return request;
     }

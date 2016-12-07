@@ -397,7 +397,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
             rq = new HttpGet(uri);
             break;
         case POST:
-            if (MultiPartRequest.class.equals(command.getRequest())){
+            if (command.isMultipart()){
                 MultiPartRequest rqData = (MultiPartRequest) command.getRequest();
                 rq = buildMultipartRequest(uri, rqData);
             } else {
