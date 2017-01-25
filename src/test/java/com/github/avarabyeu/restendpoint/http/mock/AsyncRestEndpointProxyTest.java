@@ -27,9 +27,9 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Tests for asynchronous client methods
@@ -61,33 +61,33 @@ public class AsyncRestEndpointProxyTest extends BaseRestEndointTest {
     @Test
     public void testGetAsync() throws IOException, InterruptedException {
         serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        Mono<String> to = restInterface.getAsync();
+        CompletableFuture<String> to = restInterface.getAsync();
         Assert.assertTrue(isScheduled(to));
     }
 
     @Test
     public void testPostAsync() throws IOException, InterruptedException {
         serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        Mono<String> to = restInterface.postAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
+        CompletableFuture<String> to = restInterface.postAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
         Assert.assertTrue(isScheduled(to));
     }
 
     @Test
     public void testPutAsync() throws IOException, InterruptedException {
         serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        Mono<String> to = restInterface.putAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
+        CompletableFuture<String> to = restInterface.putAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
         Assert.assertTrue(isScheduled(to));
     }
 
     @Test
     public void testDeleteAsync() throws IOException, InterruptedException {
         serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        Mono<String> to = restInterface.deleteAsync();
+        CompletableFuture<String> to = restInterface.deleteAsync();
         Assert.assertTrue(isScheduled(to));
     }
 
-    private boolean isScheduled(Mono<?> observable) {
-        return observable.hasElement().block();
+    private boolean isScheduled(CompletableFuture<?> observable) {
+        return !observable.isDone();
     }
 
 

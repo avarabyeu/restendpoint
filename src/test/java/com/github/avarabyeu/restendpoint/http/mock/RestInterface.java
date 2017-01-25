@@ -21,9 +21,9 @@ import com.github.avarabyeu.restendpoint.http.annotation.Body;
 import com.github.avarabyeu.restendpoint.http.annotation.Path;
 import com.github.avarabyeu.restendpoint.http.annotation.Query;
 import com.github.avarabyeu.restendpoint.http.annotation.Request;
-import reactor.core.publisher.Mono;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Andrey Vorobyov
@@ -43,7 +43,7 @@ public interface RestInterface {
     String post(@Body String body);
 
     @Request(method = HttpMethod.POST, url = "/")
-    void postVoid(@Body String body);
+    CompletableFuture<Void> postVoid(@Body String body);
 
     @Request(method = HttpMethod.PUT, url = "/")
     String put(@Body String body);
@@ -52,14 +52,14 @@ public interface RestInterface {
     String delete();
 
     @Request(method = HttpMethod.GET, url = "/")
-    Mono<String> getAsync();
+    CompletableFuture<String> getAsync();
 
     @Request(method = HttpMethod.POST, url = "/")
-    Mono<String> postAsync(@Body String body);
+    CompletableFuture<String> postAsync(@Body String body);
 
     @Request(method = HttpMethod.PUT, url = "/")
-    Mono<String> putAsync(@Body String body);
+    CompletableFuture<String> putAsync(@Body String body);
 
     @Request(method = HttpMethod.DELETE, url = "/")
-    Mono<String> deleteAsync();
+    CompletableFuture<String> deleteAsync();
 }

@@ -31,6 +31,7 @@ import org.junit.*;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import static com.smarttested.qa.smartassert.SmartAssert.assertSoft;
 import static org.hamcrest.CoreMatchers.is;
@@ -90,8 +91,8 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
     @Test
     public void testPostVoid() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(""));
-        restInterface.postVoid(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
-//        Assert.assertNotNull("Recieved Object is null", to);
+        CompletableFuture<Void> to = restInterface.postVoid(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
+        Assert.assertNotNull("Recieved Object is null", to);
 
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "POST / HTTP/1.1", request.getRequestLine());

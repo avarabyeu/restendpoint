@@ -42,17 +42,17 @@ public class RestEndpointException extends RuntimeException {
     /**
      * HTTP Status Code
      */
-    protected final int statusCode;
+    private final int statusCode;
 
     /**
      * HTTP Status Message
      */
-    protected final String statusMessage;
+    private final String statusMessage;
 
     /**
      * HTTP Response Body
      */
-    protected final byte[] content;
+    private final byte[] content;
 
     public RestEndpointException(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
             byte[] content) {
@@ -63,11 +63,31 @@ public class RestEndpointException extends RuntimeException {
         this.content = content;
     }
 
+    public URI getRequestUri() {
+        return requestUri;
+    }
+
+    public HttpMethod getRequestMethod() {
+        return requestMethod;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
     /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Throwable#getMessage()
-     */
+         * (non-Javadoc)
+         *
+         * @see java.lang.Throwable#getMessage()
+         */
     @Override
     public String getMessage() {
         return new StringBuilder()

@@ -23,11 +23,9 @@ import com.github.avarabyeu.restendpoint.serializer.TextSerializer;
 import com.github.avarabyeu.restendpoint.serializer.json.GsonSerializer;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.Reflection;
-import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
@@ -117,7 +115,7 @@ public final class RestEndpoints {
 
         private CloseableHttpAsyncClient httpClient;
 
-        private ErrorHandler<HttpUriRequest, HttpResponse> errorHandler;
+        private ErrorHandler errorHandler;
 
         private String endpointUrl;
 
@@ -153,7 +151,7 @@ public final class RestEndpoints {
             return this;
         }
 
-        public final Builder withErrorHandler(ErrorHandler<HttpUriRequest, HttpResponse> errorHandler) {
+        public final Builder withErrorHandler(ErrorHandler errorHandler) {
             this.errorHandler = errorHandler;
             return this;
         }

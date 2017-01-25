@@ -30,9 +30,9 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Tests for asynchronous client methods
@@ -61,14 +61,14 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testGet() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Mono<String> to = endpoint.getFor("/", String.class);
+        CompletableFuture<String> to = endpoint.getFor("/", String.class);
         Assert.assertTrue(isScheduled(to));
     }
 
     @Test
     public void testPost() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Mono<String> to = endpoint
+        CompletableFuture<String> to = endpoint
                 .postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
         Assert.assertTrue(isScheduled(to));
     }
@@ -76,7 +76,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testPut() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Mono<String> to = endpoint
+        CompletableFuture<String> to = endpoint
                 .putFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
         Assert.assertTrue(isScheduled(to));
     }
@@ -84,7 +84,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testDelete() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Mono<String> to = endpoint.deleteFor("/", String.class);
+        CompletableFuture<String> to = endpoint.deleteFor("/", String.class);
         Assert.assertTrue(isScheduled(to));
     }
 
@@ -92,7 +92,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     public void testCommand() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
         RestCommand<String, String> command = new RestCommand<>("/", HttpMethod.POST, SERIALIZED_STRING, String.class);
-        Mono<Response<String>> to = endpoint.executeRequest(command);
+        CompletableFuture<Response<String>> to = endpoint.executeRequest(command);
         Assert.assertTrue(isScheduled(to));
 
     }
@@ -100,13 +100,13 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testVoid() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(""));
-        Mono<Void> to = endpoint
+        CompletableFuture<Void> to = endpoint
                 .postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), Void.class);
-        Assert.assertTrue(!to.hasElement().block());
+        Assert.assertTrue(!to.isDone());
 
     }
 
-    private boolean isScheduled(Mono<?> observable) {
-        return observable.hasElement().block();
+    private boolean isScheduled(CompletableFuture<?> future) {
+        return !future.isDone();
     }
 }

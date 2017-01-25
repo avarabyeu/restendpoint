@@ -4,11 +4,11 @@ import com.github.avarabyeu.restendpoint.http.HttpClientRestEndpoint;
 import com.github.avarabyeu.restendpoint.http.Response;
 import com.github.avarabyeu.restendpoint.http.RestEndpoint;
 import com.google.common.base.Preconditions;
-import reactor.core.publisher.Mono;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Proxy invocation handler for REST interfaces
@@ -20,6 +20,7 @@ import java.util.Map;
  */
 public class RestEndpointInvocationHandler implements InvocationHandler {
 
+    public static final HttpClientRestEndpoint.BodyTransformer<Object> BODY_TRANSFORMER = new HttpClientRestEndpoint.BodyTransformer<>();
     private final Map<Method, RestMethodInfo> restMethods;
 
     private final RestEndpoint delegate;
@@ -43,18 +44,18 @@ public class RestEndpointInvocationHandler implements InvocationHandler {
         RestMethodInfo methodInfo = restMethods.get(method);
 
         /* delegate request execution to RestEndpoint */
-        Mono<Response<Object>> response = delegate.executeRequest(methodInfo.createRestCommand(args));
+        CompletableFuture<Response<Object>> response = delegate.executeRequest(methodInfo.createRestCommand(args));
 
-        Mono<?> result = methodInfo.isBodyOnly() ?
-                response.then(new HttpClientRestEndpoint.BodyTransformer<>()) :
+        CompletableFuture<?> result = methodInfo.isBodyOnly() ?
+                response.thenApply(BODY_TRANSFORMER) :
                 response;
 
         if (methodInfo.isAsynchronous()) {
             return result;
         } else {
             /* cannot block twice so cache it */
-            final Mono<?> cached = result.cache();
-            return cached.hasElement().block() ? cached.block() : null;
+            //timeout?
+            return result.get();
         }
     }
 

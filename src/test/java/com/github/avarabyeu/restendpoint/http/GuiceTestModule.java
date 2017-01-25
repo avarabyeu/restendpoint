@@ -19,14 +19,16 @@ package com.github.avarabyeu.restendpoint.http;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.github.avarabyeu.restendpoint.serializer.StringSerializer;
 import com.google.common.util.concurrent.Uninterruptibles;
-import com.google.inject.*;
+import com.google.inject.Binder;
+import com.google.inject.Key;
+import com.google.inject.Module;
+import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.google.inject.name.Named;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.QueueDispatcher;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -39,8 +41,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class GuiceTestModule implements Module {
 
-
-    public static final Key<ErrorHandler<HttpUriRequest, HttpResponse>> ERROR_HANDLER_KEY = new Key<ErrorHandler<HttpUriRequest, HttpResponse>>() {
+    public static final Key<ErrorHandler> ERROR_HANDLER_KEY = new Key<ErrorHandler>() {
     };
 
     @Override
@@ -53,7 +54,6 @@ public class GuiceTestModule implements Module {
 
     }
 
-
     /**
      * Default {@link com.github.avarabyeu.restendpoint.serializer.Serializer} binding
      *
@@ -63,7 +63,6 @@ public class GuiceTestModule implements Module {
     public Serializer provideSeriazer() {
         return new StringSerializer();
     }
-
 
     @Provides
     @Named("slow")
@@ -78,7 +77,6 @@ public class GuiceTestModule implements Module {
         });
         return mockWebServer;
     }
-
 
     private static int findFreePort() {
         ServerSocket socket = null;

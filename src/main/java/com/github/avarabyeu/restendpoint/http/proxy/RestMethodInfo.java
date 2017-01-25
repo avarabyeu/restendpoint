@@ -16,7 +16,6 @@ import com.google.common.collect.Sets;
 import com.google.common.reflect.Invokable;
 import com.google.common.reflect.Parameter;
 import com.google.common.reflect.TypeToken;
-import reactor.core.publisher.Mono;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,6 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -82,7 +82,7 @@ class RestMethodInfo {
     }
 
     static boolean isAsynchronous(Invokable<?, ?> method) {
-        return Mono.class.equals(method.getReturnType().getRawType());
+        return CompletableFuture.class.equals(method.getReturnType().getRawType());
     }
 
     static boolean bodyOnly(Invokable<?, ?> method) {

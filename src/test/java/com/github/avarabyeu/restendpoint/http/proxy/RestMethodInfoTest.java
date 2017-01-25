@@ -20,7 +20,8 @@ import com.smarttested.qa.smartassert.SmartAssert;
 import com.smarttested.qa.smartassert.junit.SoftAssertVerifier;
 import org.junit.Rule;
 import org.junit.Test;
-import reactor.core.publisher.Mono;
+
+import java.util.concurrent.CompletableFuture;
 
 import static com.github.avarabyeu.restendpoint.http.proxy.RestMethodInfo.isAsynchronous;
 import static org.hamcrest.CoreMatchers.is;
@@ -51,7 +52,7 @@ public class RestMethodInfoTest {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    Mono<String> testAsyncronousMethod() {
+    CompletableFuture<String> testAsyncronousMethod() {
         return null;
     }
 
