@@ -22,13 +22,16 @@ import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.github.avarabyeu.restendpoint.serializer.VoidSerializer;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
@@ -50,6 +53,7 @@ import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -60,10 +64,11 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * {@link RestEndpoint} implementation. Uses
- * Apache HTTP Components {@link org.apache.http.client.HttpClient} as default
+ * Apache HTTP Components {@link HttpClient} as default
  * http client implementation
  *
  * @author Andrei Varabyeu
@@ -491,7 +496,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
     }
 
     /**
-     * Executes {@link org.apache.http.client.methods.HttpUriRequest}
+     * Executes {@link HttpUriRequest}
      *
      * @param rq       - Request
      * @param callback - Callback to be applied on response
@@ -506,9 +511,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         httpClient.execute(rq, new FutureCallback<HttpResponse>() {
             @Override
             public void completed(final HttpResponse response) {
-                try {
+                try (LazyByteSource bodySupplier = new LazyByteSource(response.getEntity())) {
 
-                    HttpEntity entity = response.getEntity();
 
                     /* convert headers to multimap */
                     Header[] allHeaders = response.getAllHeaders();
@@ -521,12 +525,12 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                     }
 
                     /* convert entire response */
-                    Response<byte[]> rs = new Response<>(rq.getURI(),
+                    Response<ByteSource> rs = new Response<>(rq.getURI(),
                             HttpMethod.valueOf(rq.getMethod()),
                             response.getStatusLine().getStatusCode(),
                             response.getStatusLine().getReasonPhrase(),
                             headersBuilder.build(),
-                            getBody(response));
+                            bodySupplier);
 
                     /* check whether there is error in the response */
                     if (errorHandler.hasError(rs)) {
@@ -534,8 +538,8 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                     }
 
                     /* parse Content-Type header to be able to find appropriate serializer */
-                    MediaType contentType = null == entity.getContentType() ? MediaType.ANY_TYPE
-                            : MediaType.parse(entity.getContentType().getValue());
+                    MediaType contentType = null == response.getEntity().getContentType() ? MediaType.ANY_TYPE
+                            : MediaType.parse(response.getEntity().getContentType().getValue());
 
                     /* build response with converted instance */
                     Response<RS> converterRS = new Response<>(rs.getUri(),
@@ -543,7 +547,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                             rs.getStatus(),
                             rs.getReason(),
                             rs.getHeaders(),
-                            callback.callback(contentType, rs.getBody()));
+                            callback.callback(contentType, bodySupplier.read()));
 
                     future.complete(converterRS);
 
@@ -695,22 +699,41 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         }
     }
 
-    /**
-     * Parses byte from entity
-     *
-     * @param rs HTTP Response
-     * @return Body as byte array
-     * @throws RestEndpointIOException In case of request error
-     */
-    private byte[] getBody(HttpResponse rs) throws RestEndpointIOException {
-        HttpEntity entity = null;
-        try {
-            entity = rs.getEntity();
-            return EntityUtils.toByteArray(rs.getEntity());
-        } catch (IOException e) {
-            throw new RestEndpointIOException("Unable to read body from error", e);
-        } finally {
-            EntityUtils.consumeQuietly(entity);
+    private static class LazyByteSource extends ByteSource implements AutoCloseable {
+
+        private final HttpEntity httpEntity;
+        private final Supplier<ByteSource> supplier;
+
+        private LazyByteSource(HttpEntity httpEntity) {
+            this.httpEntity = httpEntity;
+            this.supplier = Suppliers.memoize(() -> ByteSource.wrap(readEntity(httpEntity)));
+        }
+
+        @Override
+        public InputStream openStream() throws IOException {
+            return supplier.get().openStream();
+        }
+
+        /**
+         * Parses byte from entity
+         *
+         * @param entity HTTP Entity
+         * @return Body as byte array
+         * @throws RestEndpointIOException In case of request error
+         */
+        private byte[] readEntity(HttpEntity entity) {
+            try {
+                return EntityUtils.toByteArray(entity);
+            } catch (IOException e) {
+                throw new RestEndpointIOException("Unable to read body from error", e);
+            } finally {
+                EntityUtils.consumeQuietly(entity);
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            EntityUtils.consumeQuietly(httpEntity);
         }
     }
 }

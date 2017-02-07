@@ -17,6 +17,7 @@
 package com.github.avarabyeu.restendpoint.http.exception;
 
 import com.github.avarabyeu.restendpoint.http.HttpMethod;
+import com.google.common.io.ByteSource;
 
 import java.net.URI;
 
@@ -52,10 +53,10 @@ public class RestEndpointException extends RuntimeException {
     /**
      * HTTP Response Body
      */
-    private final byte[] content;
+    private final ByteSource content;
 
     public RestEndpointException(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
-            byte[] content) {
+            ByteSource content) {
         this.requestUri = requestUri;
         this.requestMethod = requestMethod;
         this.statusCode = statusCode;
@@ -79,7 +80,7 @@ public class RestEndpointException extends RuntimeException {
         return statusMessage;
     }
 
-    public byte[] getContent() {
+    public ByteSource getContent() {
         return content;
     }
 
@@ -97,7 +98,7 @@ public class RestEndpointException extends RuntimeException {
                 .append(statusCode).append('\n')
                 .append("Status message: ")
                 .append(statusMessage).append('\n')
-                .append("Content: '").append(new String(content)).append('\'')
+                .append("Content: '").append(content).append('\'')
                 .toString();
     }
 

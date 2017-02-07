@@ -20,6 +20,7 @@ import com.github.avarabyeu.restendpoint.http.exception.RestEndpointException;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.io.ByteSource;
 import com.google.inject.Key;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Assert;
@@ -53,67 +54,67 @@ public class DefaultErrorHandlerTest {
 
     @Test
     public void errorHandlerCheckClientError() {
-        Response<byte[]> response = getHttpResponse(404, "Not Found");
+        Response<ByteSource> response = getHttpResponse(404, "Not Found");
         Assert.assertTrue("Client Error is not handled", handler.hasError(response));
     }
 
     @Test
     public void errorHandlerCheckServerError() {
-        Response<byte[]> response = getHttpResponse(500, "Internal Server Error");
+        Response<ByteSource> response = getHttpResponse(500, "Internal Server Error");
         Assert.assertTrue("Server Error is not handled", handler.hasError(response));
     }
 
     @Test
     public void errorHandlerCheckInformationalResponse() {
-        Response<byte[]> response = getHttpResponse(100, "Continue");
+        Response<ByteSource> response = getHttpResponse(100, "Continue");
         Assert.assertFalse("Infromation response is handled", handler.hasError(response));
     }
 
     @Test
     public void errorHandlerCheckSuccessResponse() {
-        Response<byte[]> response = getHttpResponse(200, "Success");
+        Response<ByteSource> response = getHttpResponse(200, "Success");
         Assert.assertFalse("Success response is handled", handler.hasError(response));
     }
 
     @Test
     public void errorHandlerCheckRedirectionResponse() {
-        Response<byte[]> response = getHttpResponse(302, "Found");
+        Response<ByteSource> response = getHttpResponse(302, "Found");
         Assert.assertFalse("Redirection response is handled", handler.hasError(response));
     }
 
     @Test(expected = RestEndpointException.class)
     public void testErrorHandlerClientError() throws RestEndpointIOException {
-        Response<byte[]> response = getHttpResponse(404, "Not Found");
+        Response<ByteSource> response = getHttpResponse(404, "Not Found");
         handler.handle(response);
     }
 
     @Test(expected = RestEndpointException.class)
     public void testErrorHandlerServerError() throws RestEndpointIOException {
-        Response<byte[]> response = getHttpResponse(500, "Internal Server Error");
+        Response<ByteSource> response = getHttpResponse(500, "Internal Server Error");
         handler.handle(response);
     }
 
     @Test
     public void testHandlerInformationalResponse() throws RestEndpointIOException {
-        Response<byte[]> response = getHttpResponse(100, "Continue");
+        Response<ByteSource> response = getHttpResponse(100, "Continue");
         handler.handle(response);
     }
 
     @Test
     public void testErrorHandlerSuccessResponse() throws RestEndpointIOException {
-        Response<byte[]> response = getHttpResponse(200, "Success");
+        Response<ByteSource> response = getHttpResponse(200, "Success");
         handler.handle(response);
     }
 
     @Test
     public void testHandlerRedirectionResponse() throws RestEndpointIOException {
-        Response<byte[]> response = getHttpResponse(302, "Found");
+        Response<ByteSource> response = getHttpResponse(302, "Found");
         handler.handle(response);
     }
 
-    private Response<byte[]> getHttpResponse(int statusCode, String message) {
+    private Response<ByteSource> getHttpResponse(int statusCode, String message) {
         return new Response<>(request.getURI(), HttpMethod.valueOf(request.getMethod()), statusCode, message,
                 ImmutableMultimap.<String, String>builder().build(),
-                "test string response body".getBytes(Charsets.UTF_8));
+                ByteSource.wrap("test string response body".getBytes(Charsets.UTF_8)));
     }
 }

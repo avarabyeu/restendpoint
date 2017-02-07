@@ -18,9 +18,9 @@ package com.github.avarabyeu.restendpoint.http;
 
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointException;
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
+import com.google.common.io.ByteSource;
 
 import java.net.URI;
-import java.net.URL;
 
 /**
  * Default implementation of
@@ -34,7 +34,7 @@ public class DefaultErrorHandler implements ErrorHandler {
      * Returns TRUE in case status code of response starts with 4 or 5
      */
     @Override
-    public boolean hasError(Response<byte[]> rs) {
+    public boolean hasError(Response<ByteSource> rs) {
         StatusType statusType = StatusType.valueOf(rs.getStatus());
         return (statusType == StatusType.CLIENT_ERROR || statusType == StatusType.SERVER_ERROR);
     }
@@ -48,7 +48,7 @@ public class DefaultErrorHandler implements ErrorHandler {
      * Throwed exceptions may be overridden in handle* methods
      */
     @Override
-    public void handle(Response<byte[]> rs) throws RestEndpointIOException {
+    public void handle(Response<ByteSource> rs) throws RestEndpointIOException {
         if (!hasError(rs)) {
             return;
         }
@@ -67,7 +67,7 @@ public class DefaultErrorHandler implements ErrorHandler {
      * @param errorBody     - HTTP response body
      */
     protected void handleError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
-            byte[] errorBody) throws RestEndpointIOException {
+            ByteSource errorBody) throws RestEndpointIOException {
         throw new RestEndpointException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
     }
 

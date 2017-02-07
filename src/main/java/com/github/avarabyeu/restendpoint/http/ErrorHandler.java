@@ -17,11 +17,11 @@
 package com.github.avarabyeu.restendpoint.http;
 
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
+import com.google.common.io.ByteSource;
 
 /**
  * Error Handler for RestEndpoint
  *
- * @param <RS> - Type of Response
  * @author Andrei Varabyeu
  */
 public interface ErrorHandler {
@@ -32,7 +32,7 @@ public interface ErrorHandler {
      * @param rs response instance
      * @return TRUE if response contains error
      */
-    boolean hasError(Response<byte[]> rs);
+    boolean hasError(Response<ByteSource> rs);
 
     /**
      * Handles response if there is an error
@@ -40,5 +40,5 @@ public interface ErrorHandler {
      * @param rs response instance
      * @throws com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException In case of error
      */
-    void handle(Response<byte[]> rs) throws RestEndpointIOException;
+    void handle(Response<ByteSource> rs) throws RestEndpointIOException;
 }
