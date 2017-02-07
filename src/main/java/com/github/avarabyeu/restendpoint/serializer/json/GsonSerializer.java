@@ -16,6 +16,7 @@
 
 package com.github.avarabyeu.restendpoint.serializer.json;
 
+import com.github.avarabyeu.restendpoint.http.IOUtils;
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
@@ -63,10 +64,14 @@ public class GsonSerializer extends AbstractJsonSerializer {
 
     @Override
     public <T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException {
-        try (BufferedReader is = ByteSource.wrap(content).asCharSource(Charsets.UTF_8).openBufferedStream()) {
+        BufferedReader is = null;
+        try {
+            is = ByteSource.wrap(content).asCharSource(Charsets.UTF_8).openBufferedStream();
             return gson.fromJson(is, clazz);
         } catch (IOException e) {
             throw new SerializerException("Unable to serialize content", e);
+        } finally {
+            IOUtils.closeQuietly(is);
         }
     }
 

@@ -30,7 +30,7 @@ public class UrlTemplate {
 
     private UrlTemplate(String template) {
 
-        this.pathVariables = new LinkedList<>();
+        this.pathVariables = new LinkedList<String>();
         this.template = template;
 
         parsePathVariables();

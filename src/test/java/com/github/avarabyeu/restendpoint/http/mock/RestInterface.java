@@ -21,9 +21,9 @@ import com.github.avarabyeu.restendpoint.http.annotation.Body;
 import com.github.avarabyeu.restendpoint.http.annotation.Path;
 import com.github.avarabyeu.restendpoint.http.annotation.Query;
 import com.github.avarabyeu.restendpoint.http.annotation.Request;
+import io.reactivex.Maybe;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Andrey Vorobyov
@@ -43,7 +43,7 @@ public interface RestInterface {
     String post(@Body String body);
 
     @Request(method = HttpMethod.POST, url = "/")
-    CompletableFuture<Void> postVoid(@Body String body);
+    Maybe<Void> postVoid(@Body String body);
 
     @Request(method = HttpMethod.PUT, url = "/")
     String put(@Body String body);
@@ -52,14 +52,14 @@ public interface RestInterface {
     String delete();
 
     @Request(method = HttpMethod.GET, url = "/")
-    CompletableFuture<String> getAsync();
+    Maybe<String> getAsync();
 
     @Request(method = HttpMethod.POST, url = "/")
-    CompletableFuture<String> postAsync(@Body String body);
+    Maybe<String> postAsync(@Body String body);
 
     @Request(method = HttpMethod.PUT, url = "/")
-    CompletableFuture<String> putAsync(@Body String body);
+    Maybe<String> putAsync(@Body String body);
 
     @Request(method = HttpMethod.DELETE, url = "/")
-    CompletableFuture<String> deleteAsync();
+    Maybe<String> deleteAsync();
 }

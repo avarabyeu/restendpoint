@@ -27,11 +27,11 @@ import com.google.common.collect.ImmutableMap;
 import com.smarttested.qa.smartassert.junit.SoftAssertVerifier;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
+import io.reactivex.Maybe;
 import org.junit.*;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import static com.smarttested.qa.smartassert.SmartAssert.assertSoft;
 import static org.hamcrest.CoreMatchers.is;
@@ -91,7 +91,8 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
     @Test
     public void testPostVoid() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(""));
-        CompletableFuture<Void> to = restInterface.postVoid(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
+        Maybe<Void> to = restInterface.postVoid(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
+        to.subscribe();
         Assert.assertNotNull("Recieved Object is null", to);
 
         RecordedRequest request = server.takeRequest();

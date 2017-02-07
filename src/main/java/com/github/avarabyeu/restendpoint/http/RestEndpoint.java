@@ -17,9 +17,10 @@
 package com.github.avarabyeu.restendpoint.http;
 
 import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
+import io.reactivex.Maybe;
+
 import java.lang.reflect.Type;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Interface of endpoint of REST web service
@@ -39,7 +40,7 @@ public interface RestEndpoint {
      * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
-    <RQ, RS> CompletableFuture<Response<RS>> post(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
+    <RQ, RS> Maybe<Response<RS>> post(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP POST method. Returns body only
@@ -52,7 +53,7 @@ public interface RestEndpoint {
      * @return - Response body
      * @throws RestEndpointIOException In case of error
      */
-    <RQ, RS> CompletableFuture<RS> postFor(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
+    <RQ, RS> Maybe<RS> postFor(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP POST method
@@ -65,7 +66,7 @@ public interface RestEndpoint {
      * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
-    <RQ, RS> CompletableFuture<Response<RS>> post(String resource, RQ rq, Type type) throws RestEndpointIOException;
+    <RQ, RS> Maybe<Response<RS>> post(String resource, RQ rq, Type type) throws RestEndpointIOException;
 
     /**
      * HTTP POST method. Returns body only
@@ -78,7 +79,7 @@ public interface RestEndpoint {
      * @return - Response body
      * @throws RestEndpointIOException In case of error
      */
-    <RQ, RS> CompletableFuture<RS> postFor(String resource, RQ rq, Type type) throws RestEndpointIOException;
+    <RQ, RS> Maybe<RS> postFor(String resource, RQ rq, Type type) throws RestEndpointIOException;
 
     /**
      * HTTP MultiPart POST. May contain whether serialized and binary parts
@@ -90,7 +91,7 @@ public interface RestEndpoint {
      * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
-    <RS> CompletableFuture<Response<RS>> post(String resource, MultiPartRequest request, Class<RS> clazz)
+    <RS> Maybe<Response<RS>> post(String resource, MultiPartRequest request, Class<RS> clazz)
             throws RestEndpointIOException;
 
     /**
@@ -103,7 +104,7 @@ public interface RestEndpoint {
      * @return - Response Body
      * @throws RestEndpointIOException In case of error
      */
-    <RS> CompletableFuture<RS> postFor(String resource, MultiPartRequest request, Class<RS> clazz) throws RestEndpointIOException;
+    <RS> Maybe<RS> postFor(String resource, MultiPartRequest request, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP PUT
@@ -116,7 +117,7 @@ public interface RestEndpoint {
      * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
-    <RQ, RS> CompletableFuture<Response<RS>> put(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
+    <RQ, RS> Maybe<Response<RS>> put(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP PUT. Returns body only
@@ -129,7 +130,7 @@ public interface RestEndpoint {
      * @return - Response body
      * @throws RestEndpointIOException In case of error
      */
-    <RQ, RS> CompletableFuture<RS> putFor(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
+    <RQ, RS> Maybe<RS> putFor(String resource, RQ rq, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP PUT
@@ -142,7 +143,7 @@ public interface RestEndpoint {
      * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
-    <RQ, RS> CompletableFuture<Response<RS>> put(String resource, RQ rq, Type type) throws RestEndpointIOException;
+    <RQ, RS> Maybe<Response<RS>> put(String resource, RQ rq, Type type) throws RestEndpointIOException;
 
     /**
      * HTTP PUT. Returns body only
@@ -155,7 +156,7 @@ public interface RestEndpoint {
      * @return - Response body
      * @throws RestEndpointIOException In case of error
      */
-    <RQ, RS> CompletableFuture<RS> putFor(String resource, RQ rq, Type type) throws RestEndpointIOException;
+    <RQ, RS> Maybe<RS> putFor(String resource, RQ rq, Type type) throws RestEndpointIOException;
 
     /**
      * HTTP DELETE
@@ -166,7 +167,7 @@ public interface RestEndpoint {
      * @return Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
-    <RS> CompletableFuture<Response<RS>> delete(String resource, Class<RS> clazz) throws RestEndpointIOException;
+    <RS> Maybe<Response<RS>> delete(String resource, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP DELETE. Returns body only
@@ -177,7 +178,7 @@ public interface RestEndpoint {
      * @return - Response Body
      * @throws RestEndpointIOException In case of error
      */
-    <RS> CompletableFuture<RS> deleteFor(String resource, Class<RS> clazz) throws RestEndpointIOException;
+    <RS> Maybe<RS> deleteFor(String resource, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP GET
@@ -188,7 +189,7 @@ public interface RestEndpoint {
      * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
-    <RS> CompletableFuture<Response<RS>> get(String resource, Class<RS> clazz) throws RestEndpointIOException;
+    <RS> Maybe<Response<RS>> get(String resource, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP GET. Returns body only
@@ -199,7 +200,7 @@ public interface RestEndpoint {
      * @return - Response Body
      * @throws RestEndpointIOException In case of error
      */
-    <RS> CompletableFuture<RS> getFor(String resource, Class<RS> clazz) throws RestEndpointIOException;
+    <RS> Maybe<RS> getFor(String resource, Class<RS> clazz) throws RestEndpointIOException;
 
     /**
      * HTTP GET
@@ -210,7 +211,7 @@ public interface RestEndpoint {
      * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
-    <RS> CompletableFuture<Response<RS>> get(String resource, Type type) throws RestEndpointIOException;
+    <RS> Maybe<Response<RS>> get(String resource, Type type) throws RestEndpointIOException;
 
     /**
      * HTTP GET. Returns body only
@@ -221,7 +222,7 @@ public interface RestEndpoint {
      * @return - Response Body
      * @throws RestEndpointIOException In case of error
      */
-    <RS> CompletableFuture<RS> getFor(String resource, Type type) throws RestEndpointIOException;
+    <RS> Maybe<RS> getFor(String resource, Type type) throws RestEndpointIOException;
 
     /**
      * HTTP GET with parameters
@@ -233,7 +234,7 @@ public interface RestEndpoint {
      * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
-    <RS> CompletableFuture<Response<RS>> get(String resource, Map<String, String> parameters, Class<RS> clazz)
+    <RS> Maybe<Response<RS>> get(String resource, Map<String, String> parameters, Class<RS> clazz)
             throws RestEndpointIOException;
 
     /**
@@ -246,7 +247,7 @@ public interface RestEndpoint {
      * @return - Response Body
      * @throws RestEndpointIOException In case of error
      */
-    <RS> CompletableFuture<RS> getFor(String resource, Map<String, String> parameters, Class<RS> clazz)
+    <RS> Maybe<RS> getFor(String resource, Map<String, String> parameters, Class<RS> clazz)
             throws RestEndpointIOException;
 
     /**
@@ -260,7 +261,7 @@ public interface RestEndpoint {
      * @return - Wrapped Response
      * @throws RestEndpointIOException In case of error
      */
-    <RS> CompletableFuture<Response<RS>> get(String resource, Map<String, String> parameters, Type type)
+    <RS> Maybe<Response<RS>> get(String resource, Map<String, String> parameters, Type type)
             throws RestEndpointIOException;
 
     /**
@@ -274,7 +275,7 @@ public interface RestEndpoint {
      * @return - Response Body
      * @throws RestEndpointIOException In case of error
      */
-    <RS> CompletableFuture<RS> getFor(String resource, Map<String, String> parameters, Type type) throws RestEndpointIOException;
+    <RS> Maybe<RS> getFor(String resource, Map<String, String> parameters, Type type) throws RestEndpointIOException;
 
     /**
      * General method for executing HTTP requests
@@ -285,5 +286,5 @@ public interface RestEndpoint {
      * @return Response object
      * @throws RestEndpointIOException In case of error
      */
-    <RQ, RS> CompletableFuture<Response<RS>> executeRequest(RestCommand<RQ, RS> command) throws RestEndpointIOException;
+    <RQ, RS> Maybe<Response<RS>> executeRequest(RestCommand<RQ, RS> command) throws RestEndpointIOException;
 }

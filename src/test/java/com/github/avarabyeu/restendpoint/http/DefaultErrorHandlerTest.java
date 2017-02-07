@@ -113,7 +113,7 @@ public class DefaultErrorHandlerTest {
     }
 
     private Response<ByteSource> getHttpResponse(int statusCode, String message) {
-        return new Response<>(request.getURI(), HttpMethod.valueOf(request.getMethod()), statusCode, message,
+        return new Response<ByteSource>(request.getURI(), HttpMethod.valueOf(request.getMethod()), statusCode, message,
                 ImmutableMultimap.<String, String>builder().build(),
                 ByteSource.wrap("test string response body".getBytes(Charsets.UTF_8)));
     }

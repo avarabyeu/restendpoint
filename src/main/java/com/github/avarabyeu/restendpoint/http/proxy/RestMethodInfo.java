@@ -10,12 +10,15 @@ import com.github.avarabyeu.restendpoint.http.annotation.Path;
 import com.github.avarabyeu.restendpoint.http.annotation.Query;
 import com.github.avarabyeu.restendpoint.http.annotation.Request;
 import com.github.avarabyeu.restendpoint.http.uri.UrlTemplate;
+import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.Invokable;
 import com.google.common.reflect.Parameter;
 import com.google.common.reflect.TypeToken;
+import io.reactivex.Maybe;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,9 +28,6 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 /**
  * REST interface methods parser.
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 class RestMethodInfo {
 
     /* map: method argument index -> path variable */
-    private final Map<Integer, String> pathArguments = new LinkedHashMap<>();
+    private final Map<Integer, String> pathArguments = new LinkedHashMap<Integer, String>();
 
     /* HTTP method */
     private HttpMethod method;
@@ -53,11 +53,11 @@ class RestMethodInfo {
 
     /* body is absent by default */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private Optional<Integer> bodyArgument = Optional.empty();
+    private Optional<Integer> bodyArgument = Optional.absent();
 
     /* Query parameter index */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private Optional<Integer> queryParameter = Optional.empty();
+    private Optional<Integer> queryParameter = Optional.absent();
 
     /* Whether method returns body or Response wrapper */
     private boolean returnBodyOnly;
@@ -67,7 +67,7 @@ class RestMethodInfo {
 
     @Nonnull
     public static Map<Method, RestMethodInfo> mapMethods(@Nonnull Class<?> clazz) {
-        Map<Method, RestMethodInfo> methodInfos = new HashMap<>();
+        Map<Method, RestMethodInfo> methodInfos = new HashMap<Method, RestMethodInfo>();
         for (Method method : clazz.getDeclaredMethods()){
             if (RestMethodInfo.isRestMethodDefinition(method)){
                 methodInfos.put(method, new RestMethodInfo(method));
@@ -82,7 +82,7 @@ class RestMethodInfo {
     }
 
     static boolean isAsynchronous(Invokable<?, ?> method) {
-        return CompletableFuture.class.equals(method.getReturnType().getRawType());
+        return Maybe.class.isAssignableFrom(method.getReturnType().getRawType());
     }
 
     static boolean bodyOnly(Invokable<?, ?> method) {
@@ -148,7 +148,7 @@ class RestMethodInfo {
         Preconditions.checkState(difference.isEmpty(),
                 "The following path arguments found in URL template, but not found in method signature: [%s]. "
                         + "Class: [%s]. Method [%s]. Did you forget @Path annotation?",
-                difference.stream().collect(Collectors.joining(",")),
+                Joiner.on(",").join(difference),
                 method.getDeclaringClass().getSimpleName(),
                 method.getName());
     }
@@ -156,9 +156,11 @@ class RestMethodInfo {
     @SuppressWarnings("unchecked")
     private String createUrl(Object... args) {
 
-        /* re-map method arguments. We have argIndex -> argName map, we need to build argName -> argValue map */
-        final Map<String, Object> parameters = pathArguments.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getValue, entry -> args[entry.getKey()]));
+                /* re-map method arguments. We have argIndex -> argName map, we need to build argName -> argValue map */
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        for (Map.Entry<Integer, String> pathVariables : pathArguments.entrySet()) {
+            parameters.put(pathVariables.getValue(), args[pathVariables.getKey()]);
+        }
 
         UrlTemplate.Merger template = urlTemplate.merge().expand(parameters);
         if (queryParameter.isPresent()) {
