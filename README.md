@@ -1,5 +1,7 @@
 # restendpoint [![Build Status](https://travis-ci.org/avarabyeu/restendpoint.svg?branch=master)](https://travis-ci.org/avarabyeu/restendpoint) [![Maven central](https://maven-badges.herokuapp.com/maven-central/com.github.avarabyeu/restendpoint/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.avarabyeu/restendpoint)
 
+[![Join the chat at https://gitter.im/avarabyeu/restendpoint](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/avarabyeu/restendpoint?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Asynchronous REST client based on Apache Http Async Client
 
 
