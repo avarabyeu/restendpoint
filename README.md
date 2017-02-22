@@ -1,6 +1,6 @@
 # restendpoint [![Build Status](https://travis-ci.org/avarabyeu/restendpoint.svg?branch=master)](https://travis-ci.org/avarabyeu/restendpoint) [![Maven central](https://maven-badges.herokuapp.com/maven-central/com.github.avarabyeu/restendpoint/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.avarabyeu/restendpoint)
 
-Asynchronous REST client based on Apache Http Async Client
+Asynchronous REST client based on Apache Http Async Client and Reactive Streams
 
 
 * [Maven Dependencies](#maven-dependencies)
