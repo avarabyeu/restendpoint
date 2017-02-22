@@ -1,0 +1,8 @@
+title: Restendpoint
+description: Asynchronous REST client based on Apache Http Async
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-architect
+
+gems:
+  - jekyll-mentions
