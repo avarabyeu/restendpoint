@@ -1,6 +1,6 @@
 # restendpoint [![Build Status](https://travis-ci.org/avarabyeu/restendpoint.svg?branch=master)](https://travis-ci.org/avarabyeu/restendpoint) [![Maven central](https://maven-badges.herokuapp.com/maven-central/com.github.avarabyeu/restendpoint/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.avarabyeu/restendpoint)
 
-Asynchronous REST client based on Apache Http Async Client
+Asynchronous REST client based on Apache Http Async Client and Reactive Streams
 
 
 * [Maven Dependencies](#maven-dependencies)
@@ -26,8 +26,8 @@ Last stable version:
 ```xml
 <dependency>
     <groupId>com.github.avarabyeu</groupId>
-    <artifactId>restendpoint</artifactId>
-    <version>X.X.X</version>
+    <artifactId>restendpoint-jdk6</artifactId>
+    <version>0.2.0</version>
 </dependency>
 ```
 
@@ -68,19 +68,19 @@ public interface SomeYourService {
 
     /* Asynchronous GET request */
     @Request(method = HttpMethod.GET, url = "/")
-    Will<String> getAsync();
+    Maybe<String> getAsync();
 
     /* Asynchronous POST request */
     @Request(method = HttpMethod.POST, url = "/")
-    Will<String> postAsync(@Body String body);
+    Maybe<String> postAsync(@Body String body);
 
     /* Asynchronous PUT request */
     @Request(method = HttpMethod.PUT, url = "/")
-    Will<String> putAsync(@Body String body);
+    Maybe<String> putAsync(@Body String body);
 
     /* Asynchronous DELETE request */
     @Request(method = HttpMethod.DELETE, url = "/")
-    Will<String> deleteAsync();
+    Maybe<String> deleteAsync();
 }
 
 ```
@@ -105,14 +105,13 @@ RestEndpoint endpoint = RestEndpoints.createDefault("http://airports.pidgets.com
   * http://airports.pidgets.com/v1/airports?country=Belarus&format=json
   * asynchronously
   */
-Will<String> airports = endpoint.get(
+Maybe<String> airports = endpoint.get(
    "/v1/airports",
    ImmutableMap.<String, String>builder()
-      .put("country", "Belarus").put("format", "json").build(),
-   String.class);
+      .put("country", "Belarus").put("format", "json").build(), String.class);
 
 /* Waits for result and prints it once received */
-System.out.println(airports.obtain());
+System.out.println(airports.blockingGet());
 ```
 
 ### Creating
@@ -159,13 +158,13 @@ So, you are able to configure HttpClient explicitly, but in this case builder's 
 #### GET
 
 ```java
-Will<String> responseBody = endpoint.get("/", String.class);
+Maybe<String> responseBody = endpoint.get("/", String.class);
 ```
 #### POST/PUT
 
 ```java
-Will<String> postResponseBody = endpoint.post("/", "this is request body", String.class);
-Will<String> putResponseBody = endpoint.put("/", "this is request body", String.class);
+Maybe<String> postResponseBody = endpoint.post("/", "this is request body", String.class);
+Maybe<String> putResponseBody = endpoint.put("/", "this is request body", String.class);
 ```
 
 #### POST Multipart
@@ -178,7 +177,7 @@ MultiPartRequest multiPartRequest = new MultiPartRequest.Builder().
         addSerializedPart("this part will be serialized using serializer", "part body").
         build();
 
-Will<String> post = endpoint.post("/", multiPartRequest, String.class);
+Maybe<String> post = endpoint.post("/", multiPartRequest, String.class);
 ```
 
 Take a look at the request builder. We have possibility to provide some part as is (binary part, as byte array) and also
@@ -188,14 +187,14 @@ with JSON's, for example
 #### DELETE
 
 ```java
-Will<String> deleteResponseBody = endpoint.delete("/", String.class);
+Maybe<String> deleteResponseBody = endpoint.delete("/", String.class);
 ```
 
 #### AS COMMAND
 
 ```java
 RestCommand<String, String> command = new RestCommand<String, String>("/", HttpMethod.POST, "request body", String.class);
-Will<String> to = endpoint.executeRequest(command);
+Maybe<String> to = endpoint.executeRequest(command);
 ```
 
 ### Serializers
