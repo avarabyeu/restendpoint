@@ -32,7 +32,6 @@ import com.google.common.net.MediaType;
 import io.reactivex.Maybe;
 import io.reactivex.MaybeEmitter;
 import io.reactivex.MaybeOnSubscribe;
-import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import org.apache.http.Header;
@@ -758,7 +757,6 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
         @Override
         public void close() throws IOException {
-            System.out.println("closing!!!");
             EntityUtils.consumeQuietly(httpEntity);
         }
     }
