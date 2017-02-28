@@ -16,8 +16,6 @@
 
 package com.github.avarabyeu.restendpoint.http;
 
-import java.util.Arrays;
-
 /**
  * HTTP Response Status Type
  *

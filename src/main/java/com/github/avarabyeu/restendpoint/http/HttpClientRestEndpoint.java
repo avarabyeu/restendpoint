@@ -758,6 +758,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
         @Override
         public void close() throws IOException {
+            System.out.println("closing!!!");
             EntityUtils.consumeQuietly(httpEntity);
         }
     }
