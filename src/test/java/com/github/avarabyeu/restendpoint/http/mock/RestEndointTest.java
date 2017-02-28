@@ -56,7 +56,18 @@ public class RestEndointTest extends BaseRestEndointTest {
     public void testGet() throws IOException, InterruptedException, ExecutionException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
         String to = endpoint.getFor("/", String.class).blockingGet();
-        Assert.assertNotNull("Recieved Object is null", to);
+        Assert.assertNotNull("Received Object is null", to);
+        RecordedRequest request = server.takeRequest();
+        Assert.assertEquals("Incorrect Request Line", "GET / HTTP/1.1", request.getRequestLine());
+
+    }
+
+    @Test
+    public void testGetResponse() throws IOException, InterruptedException, ExecutionException {
+        server.enqueue(prepareResponse(SERIALIZED_STRING));
+        Response<String> to = endpoint.get("/", String.class).blockingGet();
+        Assert.assertNotNull("Received Object is null", to);
+        Assert.assertNotNull("Received Body is null", to);
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "GET / HTTP/1.1", request.getRequestLine());
 
@@ -67,7 +78,7 @@ public class RestEndointTest extends BaseRestEndointTest {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
         String to = endpoint.postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class)
                 .blockingGet();
-        Assert.assertNotNull("Recieved Object is null", to);
+        Assert.assertNotNull("Received Object is null", to);
 
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "POST / HTTP/1.1", request.getRequestLine());
@@ -80,7 +91,7 @@ public class RestEndointTest extends BaseRestEndointTest {
     public void testPut() throws IOException, InterruptedException, ExecutionException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
         String to = endpoint.putFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class).blockingGet();
-        Assert.assertNotNull("Recieved Object is null", to);
+        Assert.assertNotNull("Received Object is null", to);
 
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "PUT / HTTP/1.1", request.getRequestLine());
@@ -93,7 +104,7 @@ public class RestEndointTest extends BaseRestEndointTest {
     public void testDelete() throws IOException, InterruptedException, ExecutionException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
         String to = endpoint.deleteFor("/", String.class).blockingGet();
-        Assert.assertNotNull("Recieved Object is null", to);
+        Assert.assertNotNull("Received Object is null", to);
 
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "DELETE / HTTP/1.1", request.getRequestLine());
@@ -120,7 +131,7 @@ public class RestEndointTest extends BaseRestEndointTest {
 
         Response<String> to = endpoint.executeRequest(command).blockingGet();
 
-        Assert.assertNotNull("Recieved Object is null", to.getBody());
+        Assert.assertNotNull("Received Object is null", to.getBody());
 
         RecordedRequest request = server.takeRequest();
         Assert.assertEquals("Incorrect Request Line", "POST / HTTP/1.1", request.getRequestLine());

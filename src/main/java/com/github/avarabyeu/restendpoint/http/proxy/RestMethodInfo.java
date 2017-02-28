@@ -68,8 +68,8 @@ class RestMethodInfo {
     @Nonnull
     public static Map<Method, RestMethodInfo> mapMethods(@Nonnull Class<?> clazz) {
         Map<Method, RestMethodInfo> methodInfos = new HashMap<Method, RestMethodInfo>();
-        for (Method method : clazz.getDeclaredMethods()){
-            if (RestMethodInfo.isRestMethodDefinition(method)){
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (RestMethodInfo.isRestMethodDefinition(method)) {
                 methodInfos.put(method, new RestMethodInfo(method));
             }
         }
@@ -87,6 +87,25 @@ class RestMethodInfo {
 
     static boolean bodyOnly(Invokable<?, ?> method) {
         return !Response.class.equals(method.getReturnType().getRawType());
+    }
+
+    static Type getResponseType(Invokable<?, ?> method) {
+        Type returnType;
+        if (isAsynchronous(method)) {
+            final Type[] genericArgs = getGenericTypeArguments(method.getReturnType());
+            if (Response.class.equals(genericArgs[0])) {
+                returnType = genericArgs[1];
+            } else {
+                returnType = genericArgs[0];
+            }
+
+        } else if (!bodyOnly(method)) {
+            final Type[] genericArgs = getGenericTypeArguments(method.getReturnType());
+            returnType = genericArgs[0];
+        } else {
+            returnType = method.getReturnType().getType();
+        }
+        return returnType;
     }
 
     public RestMethodInfo(Method m) {
@@ -109,7 +128,7 @@ class RestMethodInfo {
         this.method = request.method();
 
         /* If instance wrapped with Observable, we should extract generic type parameter */
-        this.responseType = asynchronous ? getGenericSubtype(method.getReturnType()) : method.getReturnType().getType();
+        this.responseType = getResponseType(method);
         this.returnBodyOnly = bodyOnly(method);
 
         /* walk through method parameters and find marked with internal annotations */
@@ -180,11 +199,11 @@ class RestMethodInfo {
         return new RestCommand(createUrl(args), this.method, createBody(args), responseType, multiPart);
     }
 
-    private Type getGenericSubtype(TypeToken<?> typeToken) {
+    private static Type[] getGenericTypeArguments(TypeToken<?> typeToken) {
         Type rawType = typeToken.getType();
         Preconditions.checkArgument(rawType instanceof ParameterizedType,
                 "Incorrect configuration. {} should be parameterized", rawType);
-        return ((ParameterizedType) rawType).getActualTypeArguments()[0];
+        return ((ParameterizedType) rawType).getActualTypeArguments();
     }
 
 }
