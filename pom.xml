@@ -10,7 +10,7 @@
 
     <groupId>com.github.avarabyeu</groupId>
     <artifactId>restendpoint-jdk6</artifactId>
-    <version>0.2.2-SNAPSHOT</version>
+    <version>0.2.2</version>
 
     <name>RestEndpoint</name>
     <description>Asynchronous Rest/HTTP client based on Apache Async HTTP Client</description>
@@ -43,7 +43,7 @@
         <connection>scm:git:git@github.com:avarabyeu/restendpoint.git</connection>
         <developerConnection>scm:git:git@github.com:avarabyeu/restendpoint.git</developerConnection>
         <url>https://github.com/avarabyeu</url>
-      <tag>0.2.1</tag>
+      <tag>0.2.2</tag>
   </scm>
 
     <build>
