@@ -32,7 +32,6 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy;
-import org.apache.http.ssl.SSLContexts;
 
 import javax.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
@@ -198,7 +197,7 @@ public final class RestEndpoints {
         public final Builder withSsl(InputStream keyStore, String keyStorePass) {
             SSLContext sslcontext;
             try {
-                sslcontext = SSLContexts.custom().loadTrustMaterial(IOUtils.loadKeyStore(keyStore, keyStorePass), null)
+                sslcontext = org.apache.http.ssl.SSLContexts.custom().loadTrustMaterial(IOUtils.loadKeyStore(keyStore, keyStorePass), null)
                         .build();
             } catch (Exception e) {
                 throw new IllegalArgumentException("Unable to load trust store", e);
