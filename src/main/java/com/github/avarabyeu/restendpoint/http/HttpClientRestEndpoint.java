@@ -20,6 +20,7 @@ import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.github.avarabyeu.restendpoint.serializer.VoidSerializer;
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
@@ -215,7 +216,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
             for (MultiPartRequest.MultiPartSerialized<?> serializedPart : request.getSerializedRQs()) {
                 Serializer serializer = getSupportedSerializer(serializedPart);
                 builder.addPart(serializedPart.getPartName(),
-                        new StringBody(new String(serializer.serialize(serializedPart.getRequest())),
+                        new StringBody(new String(serializer.serialize(serializedPart.getRequest()), Charsets.UTF_8),
                                 ContentType.parse(serializer.getMimeType())));
             }
 
@@ -714,7 +715,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         @Override
         public Maybe<T> apply(@Nonnull Response<T> input) {
             final T body = input.getBody();
-            return null == body ? Maybe.<T>empty() : Maybe.just(body);
+            return (null == body ? Maybe.<T>empty() : Maybe.just(body));
         }
     }
 

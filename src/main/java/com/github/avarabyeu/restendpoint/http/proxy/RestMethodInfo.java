@@ -67,13 +67,13 @@ class RestMethodInfo {
 
     @Nonnull
     public static Map<Method, RestMethodInfo> mapMethods(@Nonnull Class<?> clazz) {
-        Map<Method, RestMethodInfo> methodInfos = new HashMap<Method, RestMethodInfo>();
+        Map<Method, RestMethodInfo> methodInfo = new HashMap<Method, RestMethodInfo>();
         for (Method method : clazz.getDeclaredMethods()) {
             if (RestMethodInfo.isRestMethodDefinition(method)) {
-                methodInfos.put(method, new RestMethodInfo(method));
+                methodInfo.put(method, new RestMethodInfo(method));
             }
         }
-        return methodInfos;
+        return methodInfo;
 
     }
 

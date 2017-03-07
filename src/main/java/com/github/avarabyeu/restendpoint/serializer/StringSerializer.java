@@ -17,6 +17,7 @@
 package com.github.avarabyeu.restendpoint.serializer;
 
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
+import com.google.common.base.Charsets;
 import com.google.common.net.MediaType;
 import com.google.common.reflect.TypeToken;
 
@@ -52,14 +53,14 @@ public class StringSerializer implements Serializer {
     @Override
     public <T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException {
         validateString(clazz);
-        return (T) new String(content);
+        return (T) new String(content, Charsets.UTF_8);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T deserialize(byte[] content, Type type) throws SerializerException {
         validateString(type);
-        return (T) new String(content);
+        return (T) new String(content, Charsets.UTF_8);
     }
 
     /**
