@@ -9,7 +9,7 @@
     </parent>
 
     <groupId>com.github.avarabyeu</groupId>
-    <artifactId>restendpoint-jdk6-repacked</artifactId>
+    <artifactId>restendpoint-jdk6</artifactId>
     <version>0.2.1-SNAPSHOT</version>
 
     <name>RestEndpoint</name>
