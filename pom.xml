@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
 
@@ -10,7 +11,7 @@
 
     <groupId>com.github.avarabyeu</groupId>
     <artifactId>restendpoint-jdk6</artifactId>
-    <version>0.2.3-SNAPSHOT</version>
+    <version>0.2.3</version>
 
     <name>RestEndpoint</name>
     <description>Asynchronous Rest/HTTP client based on Apache Async HTTP Client</description>
@@ -43,8 +44,8 @@
         <connection>scm:git:git@github.com:avarabyeu/restendpoint.git</connection>
         <developerConnection>scm:git:git@github.com:avarabyeu/restendpoint.git</developerConnection>
         <url>https://github.com/avarabyeu</url>
-      <tag>0.2.1</tag>
-  </scm>
+        <tag>0.2.3</tag>
+    </scm>
 
     <build>
         <finalName>restendpoint</finalName>
@@ -71,6 +72,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.6</version>
+                <configuration>
+                    <gpgArguments>
+                        <arg>--pinentry-mode loopback</arg>
+                    </gpgArguments>
+                </configuration>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
