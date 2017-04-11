@@ -26,7 +26,7 @@ import io.reactivex.Maybe;
 import java.util.Map;
 
 /**
- * @author Andrey Vorobyov
+ * @author Andrei Varabyeu
  */
 public interface RestInterface {
 
