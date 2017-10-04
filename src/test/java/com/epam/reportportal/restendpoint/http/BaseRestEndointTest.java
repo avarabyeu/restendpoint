@@ -34,7 +34,7 @@ public class BaseRestEndointTest {
     public static final String CONTENT_TYPE_HEADER = "Content-Type";
 
     protected void validateHeader(RecordedRequest request) {
-        Assert.assertTrue(request.getHeaders().get("Content-Type").equals("text/plain; charset=utf-8"));
+        Assert.assertTrue(request.getHeaders().get("Content-Type").equals("text/plain; charset=UTF-8"));
     }
 
     protected MockResponse prepareResponse(String body) {

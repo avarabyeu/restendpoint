@@ -43,79 +43,79 @@ import java.lang.reflect.Type;
  */
 public class JaxbSerializer implements Serializer {
 
-    private final JAXBContext jaxbContext;
+	private final JAXBContext jaxbContext;
 
-    public JaxbSerializer(JAXBContext jaxbContext) {
-        this.jaxbContext = jaxbContext;
-    }
+	public JaxbSerializer(JAXBContext jaxbContext) {
+		this.jaxbContext = jaxbContext;
+	}
 
-    public JaxbSerializer(Class... classes) throws SerializerException {
-        try {
-            this.jaxbContext = JAXBContext.newInstance(classes);
-        } catch (JAXBException e) {
-            throw new SerializerException("Unable to create JaxbContext", e);
-        }
-    }
+	public JaxbSerializer(Class... classes) throws SerializerException {
+		try {
+			this.jaxbContext = JAXBContext.newInstance(classes);
+		} catch (JAXBException e) {
+			throw new SerializerException("Unable to create JaxbContext", e);
+		}
+	}
 
-    public JaxbSerializer(String contextPath) throws SerializerException {
-        try {
-            this.jaxbContext = JAXBContext.newInstance(contextPath);
-        } catch (JAXBException e) {
-            throw new SerializerException("Unable to create JaxbContext", e);
-        }
-    }
+	public JaxbSerializer(String contextPath) throws SerializerException {
+		try {
+			this.jaxbContext = JAXBContext.newInstance(contextPath);
+		} catch (JAXBException e) {
+			throw new SerializerException("Unable to create JaxbContext", e);
+		}
+	}
 
-    @Override
-    public <T> byte[] serialize(T t) throws SerializerException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            StreamResult result = new StreamResult(baos);
-            jaxbContext.createMarshaller().marshal(t, result);
-            return baos.toByteArray();
-        } catch (JAXBException e) {
-            throw new SerializerException("Unable to serialize xml", e);
-        } finally {
-            IOUtils.closeQuietly(baos);
-        }
+	@Override
+	public <T> byte[] serialize(T t) throws SerializerException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			StreamResult result = new StreamResult(baos);
+			jaxbContext.createMarshaller().marshal(t, result);
+			return baos.toByteArray();
+		} catch (JAXBException e) {
+			throw new SerializerException("Unable to serialize xml", e);
+		} finally {
+			IOUtils.closeQuietly(baos);
+		}
 
-    }
+	}
 
-    @Override
-    public <T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException {
-        InputStream is;
-        try {
-            is = new ByteArrayInputStream(content);
-            JAXBElement<T> result = jaxbContext.createUnmarshaller().unmarshal(new StreamSource(is), clazz);
-            return result.getValue();
-        } catch (JAXBException e) {
-            throw new SerializerException("Unable to deserialize xml", e);
-        }
+	@Override
+	public <T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException {
+		InputStream is;
+		try {
+			is = new ByteArrayInputStream(content);
+			JAXBElement<T> result = jaxbContext.createUnmarshaller().unmarshal(new StreamSource(is), clazz);
+			return result.getValue();
+		} catch (JAXBException e) {
+			throw new SerializerException("Unable to deserialize xml", e);
+		}
 
-    }
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T deserialize(byte[] content, Type type) throws SerializerException {
-        return (T) deserialize(content, TypeToken.of(type).getRawType());
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T deserialize(byte[] content, Type type) throws SerializerException {
+		return (T) deserialize(content, TypeToken.of(type).getRawType());
+	}
 
-    @Override
-    public String getMimeType() {
-        return MediaType.APPLICATION_XML_UTF_8.toString();
-    }
+	@Override
+	public MediaType getMimeType() {
+		return MediaType.APPLICATION_XML_UTF_8;
+	}
 
-    @Override
-    public boolean canRead(MediaType mimeType, Class<?> resultType) {
-        return canRead(mimeType, TypeToken.of(resultType).getType());
-    }
+	@Override
+	public boolean canRead(MediaType mimeType, Class<?> resultType) {
+		return canRead(mimeType, TypeToken.of(resultType).getType());
+	}
 
-    @Override
-    public boolean canRead(MediaType mimeType, Type resultType) {
-        return mimeType.withoutParameters().is(MediaType.APPLICATION_XML_UTF_8.withoutParameters());
-    }
+	@Override
+	public boolean canRead(MediaType mimeType, Type resultType) {
+		return mimeType.withoutParameters().is(MediaType.APPLICATION_XML_UTF_8.withoutParameters());
+	}
 
-    @Override
-    public boolean canWrite(Object o) {
-        return null != o && o.getClass().isAnnotationPresent(XmlRootElement.class);
-    }
+	@Override
+	public boolean canWrite(Object o) {
+		return null != o && o.getClass().isAnnotationPresent(XmlRootElement.class);
+	}
 }

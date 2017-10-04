@@ -42,7 +42,7 @@
     <scm>
         <connection>scm:git:git@github.com:reportportal/restendpoint.git</connection>
         <developerConnection>scm:git:git@github.com:reportportal/restendpoint.git</developerConnection>
-        <url>https://github.com/avarabyeu</url>
+        <url>https://github.com/reportportal/restendpoint</url>
         <tag>0.2.3-SNAPSHOT</tag>
     </scm>
 

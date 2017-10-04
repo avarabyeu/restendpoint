@@ -67,9 +67,9 @@ public class StringSerializer implements Serializer {
      * Returns default MIME type
      */
     @Override
-    public String getMimeType() {
-        return MediaType.PLAIN_TEXT_UTF_8.toString();
-    }
+	public MediaType getMimeType() {
+		return MediaType.PLAIN_TEXT_UTF_8;
+	}
 
     /**
      * Checks whether mime types is supported by this serializer implementation

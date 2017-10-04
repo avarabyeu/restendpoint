@@ -27,8 +27,8 @@ public class VoidSerializer implements Serializer {
     }
 
     @Override
-    public final String getMimeType() {
-        throw new UnsupportedOperationException("Void type doesn't have mime type");
+	public final MediaType getMimeType() {
+		throw new UnsupportedOperationException("Void type doesn't have mime type");
     }
 
     @Override

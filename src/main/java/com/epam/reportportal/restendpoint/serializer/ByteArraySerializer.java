@@ -30,82 +30,82 @@ import java.lang.reflect.Type;
  */
 public class ByteArraySerializer implements Serializer {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * Serializer#serialize(java.lang.Object)
-     */
-    @Override
-    public final <T> byte[] serialize(T t) throws SerializerException {
-        return (byte[]) t;
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * Serializer#serialize(java.lang.Object)
+	 */
+	@Override
+	public final <T> byte[] serialize(T t) throws SerializerException {
+		return (byte[]) t;
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see Serializer#deserialize(byte[],
-     * java.lang.Class)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public final <T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException {
-        if (byte[].class.equals(clazz)) {
-            return (T) content;
-        }
-        throw new SerializerException("Unable to deserialize to type '" + clazz.getName() + "'");
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see Serializer#deserialize(byte[],
+	 * java.lang.Class)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public final <T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException {
+		if (byte[].class.equals(clazz)) {
+			return (T) content;
+		}
+		throw new SerializerException("Unable to deserialize to type '" + clazz.getName() + "'");
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see Serializer#deserialize(byte[],
-     * java.lang.reflect.Type)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public final <T> T deserialize(byte[] content, Type type) throws SerializerException {
-        if (byte[].class.equals(type)) {
-            return (T) content;
-        }
-        throw new SerializerException("Unable to deserialize to type '" + type + "'");
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see Serializer#deserialize(byte[],
+	 * java.lang.reflect.Type)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public final <T> T deserialize(byte[] content, Type type) throws SerializerException {
+		if (byte[].class.equals(type)) {
+			return (T) content;
+		}
+		throw new SerializerException("Unable to deserialize to type '" + type + "'");
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see Serializer#getMimeType()
-     */
-    @Override
-    public final String getMimeType() {
-        return MediaType.OCTET_STREAM.toString();
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see Serializer#getMimeType()
+	 */
+	@Override
+	public final MediaType getMimeType() {
+		return MediaType.OCTET_STREAM;
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see Serializer#canRead(java.lang.String)
-     */
-    @Override
-    public final boolean canRead(MediaType mimeType, Class<?> resultType) {
-        return mimeType.is(MediaType.ANY_TYPE) && byte[].class.equals(resultType);
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see Serializer#canRead(java.lang.String)
+	 */
+	@Override
+	public final boolean canRead(MediaType mimeType, Class<?> resultType) {
+		return mimeType.is(MediaType.ANY_TYPE) && byte[].class.equals(resultType);
+	}
 
-    @Override
-    public final boolean canRead(MediaType mimeType, Type resultType) {
-        return canRead(mimeType, TypeToken.of(resultType).getRawType());
-    }
+	@Override
+	public final boolean canRead(MediaType mimeType, Type resultType) {
+		return canRead(mimeType, TypeToken.of(resultType).getRawType());
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * Serializer#canWrite(java.lang.Object)
-     */
-    @Override
-    public final boolean canWrite(Object o) {
-        //noinspection EqualsBetweenInconvertibleTypes
-        return byte[].class.equals(o.getClass());
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * Serializer#canWrite(java.lang.Object)
+	 */
+	@Override
+	public final boolean canWrite(Object o) {
+		//noinspection EqualsBetweenInconvertibleTypes
+		return byte[].class.equals(o.getClass());
+	}
 
 }

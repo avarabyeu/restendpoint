@@ -26,12 +26,11 @@ import com.google.common.reflect.Reflection;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 
 import javax.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
@@ -45,190 +44,185 @@ import java.util.List;
  */
 public final class RestEndpoints {
 
-    /**
-     * No need to create instance
-     */
-    private RestEndpoints() {
-    }
+	/**
+	 * No need to create instance
+	 */
+	private RestEndpoints() {
+	}
 
-    /**
-     * Creates default {@link RestEndpoint} for provided endpoint URL.
-     * Adds {@link DefaultErrorHandler} and all possible serializers
-     *
-     * @return created RestEndpoint
-     */
-    public static RestEndpoint createDefault() {
-        return new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),
-                Lists.newArrayList(
-                        new TextSerializer(),
-                        new ByteArraySerializer(), new GsonSerializer()),
-                new DefaultErrorHandler());
-    }
+	/**
+	 * Creates default {@link RestEndpoint} for provided endpoint URL.
+	 * Adds {@link DefaultErrorHandler} and all possible serializers
+	 *
+	 * @return created RestEndpoint
+	 */
+	public static RestEndpoint createDefault() {
+		return new HttpClientRestEndpoint(
+				HttpClients.createDefault(),
+				Lists.newArrayList(new TextSerializer(), new ByteArraySerializer(), new GsonSerializer()),
+				new DefaultErrorHandler()
+		);
+	}
 
-    /**
-     * Creates default {@link RestEndpoint} for provided endpoint URL.
-     * Adds {@link DefaultErrorHandler} and all possible serializers
-     *
-     * @param endpointUrl Base endpoint URL
-     * @return created RestEndpoint
-     */
-    public static RestEndpoint createDefault(String endpointUrl) {
-        return new HttpClientRestEndpoint(HttpAsyncClients.createDefault(),
-                Lists.newArrayList(
-                        new TextSerializer(),
-                        new ByteArraySerializer(), new GsonSerializer()),
-                new DefaultErrorHandler(),
-                endpointUrl);
-    }
+	/**
+	 * Creates default {@link RestEndpoint} for provided endpoint URL.
+	 * Adds {@link DefaultErrorHandler} and all possible serializers
+	 *
+	 * @param endpointUrl Base endpoint URL
+	 * @return created RestEndpoint
+	 */
+	public static RestEndpoint createDefault(String endpointUrl) {
+		return new HttpClientRestEndpoint(
+				HttpClients.createDefault(),
+				Lists.newArrayList(new TextSerializer(), new ByteArraySerializer(), new GsonSerializer()),
+				new DefaultErrorHandler(),
+				endpointUrl
+		);
+	}
 
-    /**
-     * Creates interface implementation (via proxy) of provided class using RestEndpoint as rest client
-     * <b>Only interfaces are supported!</b>
-     *
-     * @param clazz    - interface to be proxied
-     * @param endpoint - RestEndpoint to be used as rest client
-     * @param <T>      - Type of interface to be proxied
-     * @return interface implementation (e.g.) just proxy
-     */
-    public static <T> T forInterface(@Nonnull Class<T> clazz, RestEndpoint endpoint) {
-        return Reflection.newProxy(clazz, new RestEndpointInvocationHandler(clazz, endpoint));
-    }
+	/**
+	 * Creates interface implementation (via proxy) of provided class using RestEndpoint as rest client
+	 * <b>Only interfaces are supported!</b>
+	 *
+	 * @param clazz    - interface to be proxied
+	 * @param endpoint - RestEndpoint to be used as rest client
+	 * @param <T>      - Type of interface to be proxied
+	 * @return interface implementation (e.g.) just proxy
+	 */
+	public static <T> T forInterface(@Nonnull Class<T> clazz, RestEndpoint endpoint) {
+		return Reflection.newProxy(clazz, new RestEndpointInvocationHandler(clazz, endpoint));
+	}
 
-    /**
-     * Creates default builder which uses Apache Http Commons Async client as endpoint implementation
-     *
-     * @return New Builder instance
-     */
-    public static Builder create() {
-        return new Builder();
-    }
+	/**
+	 * Creates default builder which uses Apache Http Commons Async client as endpoint implementation
+	 *
+	 * @return New Builder instance
+	 */
+	public static Builder create() {
+		return new Builder();
+	}
 
-    /**
-     * Builder for {@link RestEndpoint}
-     */
-    public static class Builder {
+	/**
+	 * Builder for {@link RestEndpoint}
+	 */
+	public static class Builder {
 
-        private final List<Serializer> serializers;
+		private final List<Serializer> serializers;
 
-        private final HttpAsyncClientBuilder httpClientBuilder;
+		private final HttpClientBuilder httpClientBuilder;
 
-        private CloseableHttpAsyncClient httpClient;
+		private HttpClient httpClient;
 
-        private ErrorHandler errorHandler;
+		private ErrorHandler errorHandler;
 
-        private String endpointUrl;
+		private String endpointUrl;
 
-        /**
-         * Default RestEndpoints builder
-         */
-        Builder() {
-            this.serializers = Lists.newArrayList();
-            this.httpClientBuilder = HttpAsyncClientBuilder.create();
-        }
+		/**
+		 * Default RestEndpoints builder
+		 */
+		Builder() {
+			this.serializers = Lists.newArrayList();
+			this.httpClientBuilder = HttpClientBuilder.create();
+		}
 
-        /**
-         * Build {@link RestEndpoint}
-         *
-         * @return Built RestEndpoint
-         */
-        public final RestEndpoint build() {
-            CloseableHttpAsyncClient closeableHttpAsyncClient;
-            if (null == httpClient) {
-                closeableHttpAsyncClient = httpClientBuilder.build();
-            } else {
-                closeableHttpAsyncClient = httpClient;
-            }
+		/**
+		 * Build {@link RestEndpoint}
+		 *
+		 * @return Built RestEndpoint
+		 */
+		public final RestEndpoint build() {
+			HttpClient closeableHttpAsyncClient;
+			if (null == httpClient) {
+				closeableHttpAsyncClient = httpClientBuilder.build();
+			} else {
+				closeableHttpAsyncClient = httpClient;
+			}
 
-            return new HttpClientRestEndpoint(closeableHttpAsyncClient,
-                    serializers,
-                    errorHandler,
-                    endpointUrl);
-        }
+			return new HttpClientRestEndpoint(closeableHttpAsyncClient, serializers, errorHandler, endpointUrl);
+		}
 
-        public final Builder withBaseUrl(String url) {
-            this.endpointUrl = url;
-            return this;
-        }
+		public final Builder withBaseUrl(String url) {
+			this.endpointUrl = url;
+			return this;
+		}
 
-        public final Builder withErrorHandler(ErrorHandler errorHandler) {
-            this.errorHandler = errorHandler;
-            return this;
-        }
+		public final Builder withErrorHandler(ErrorHandler errorHandler) {
+			this.errorHandler = errorHandler;
+			return this;
+		}
 
-        public final Builder withSerializer(Serializer serializer) {
-            this.serializers.add(serializer);
-            return this;
-        }
+		public final Builder withSerializer(Serializer serializer) {
+			this.serializers.add(serializer);
+			return this;
+		}
 
-        /**
-         * Uses provided {@link org.apache.http.impl.nio.client.CloseableHttpAsyncClient}
-         * <b>May override some configuration methods like {@link #withBasicAuth(String, String)}</b>
-         *
-         * @param httpClient Apache HTTP client
-         * @return this Builder
-         */
-        public final Builder withHttpClient(CloseableHttpAsyncClient httpClient) {
-            this.httpClient = httpClient;
-            return this;
-        }
+		/**
+		 * Uses provided {@link HttpClient}
+		 * <b>May override some configuration methods like {@link #withBasicAuth(String, String)}</b>
+		 *
+		 * @param httpClient Apache HTTP client
+		 * @return this Builder
+		 */
+		public final Builder withHttpClient(HttpClient httpClient) {
+			this.httpClient = httpClient;
+			return this;
+		}
 
-        /**
-         * Adds Preemptive Basic authentication to the client
-         *
-         * @param username Username
-         * @param password Password
-         * @return this Builder
-         */
-        public final Builder withBasicAuth(String username, String password) {
-            CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
-            httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-            httpClientBuilder.addInterceptorFirst(new PreemptiveAuthInterceptor());
-            return this;
-        }
+		/**
+		 * Adds Preemptive Basic authentication to the client
+		 *
+		 * @param username Username
+		 * @param password Password
+		 * @return this Builder
+		 */
+		public final Builder withBasicAuth(String username, String password) {
+			CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+			credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
+			httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+			httpClientBuilder.addInterceptorFirst(new PreemptiveAuthInterceptor());
+			return this;
+		}
 
-        /**
-         * Adds Keystore for SSL
-         *
-         * @param keyStore     KeyStore input stream
-         * @param keyStorePass KeyStore password
-         * @return This builder
-         */
-        public final Builder withSsl(InputStream keyStore, String keyStorePass) {
-            SSLContext sslcontext;
-            try {
-                sslcontext = org.apache.http.ssl.SSLContexts.custom().loadTrustMaterial(IOUtils.loadKeyStore(keyStore, keyStorePass), null)
-                        .build();
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Unable to load trust store", e);
-            }
+		/**
+		 * Adds Keystore for SSL
+		 *
+		 * @param keyStore     KeyStore input stream
+		 * @param keyStorePass KeyStore password
+		 * @return This builder
+		 */
+		public final Builder withSsl(InputStream keyStore, String keyStorePass) {
+			SSLContext sslcontext;
+			try {
+				sslcontext = org.apache.http.ssl.SSLContexts.custom()
+						.loadTrustMaterial(IOUtils.loadKeyStore(keyStore, keyStorePass), null)
+						.build();
+			} catch (Exception e) {
+				throw new IllegalArgumentException("Unable to load trust store", e);
+			}
 
             /*
-             * Unreal magic, but we can't use
+			 * Unreal magic, but we can't use
 			 * org.apache.http.conn.ssl.SSLConnectionSocketFactory
 			 * .BROWSER_COMPATIBLE_HOSTNAME_VERIFIER here due to some problems
 			 * related to classloaders. Initialize host name verifier explicitly
 			 */
-            SSLIOSessionStrategy sslSessionStrategy = new SSLIOSessionStrategy(
-                    sslcontext,
-                    new DefaultHostnameVerifier());
-            httpClientBuilder.setSSLStrategy(sslSessionStrategy);
+			httpClientBuilder.setSSLContext(sslcontext).setSSLHostnameVerifier(new DefaultHostnameVerifier());
 
-            return this;
-        }
+			return this;
+		}
 
-        /**
-         * Builds RestEndpoints and created proxy implementation for provided class
-         * <b>Only interfaces are supported!</b>
-         *
-         * @param clazz - interface to be proxied
-         * @param <T>   - type of interface to be proxied
-         * @return - interface implementation based on proxy
-         */
-        public final <T> T forInterface(@Nonnull Class<T> clazz) {
-            return RestEndpoints.forInterface(clazz, build());
-        }
+		/**
+		 * Builds RestEndpoints and created proxy implementation for provided class
+		 * <b>Only interfaces are supported!</b>
+		 *
+		 * @param clazz - interface to be proxied
+		 * @param <T>   - type of interface to be proxied
+		 * @return - interface implementation based on proxy
+		 */
+		public final <T> T forInterface(@Nonnull Class<T> clazz) {
+			return RestEndpoints.forInterface(clazz, build());
+		}
 
-    }
+	}
 
 }

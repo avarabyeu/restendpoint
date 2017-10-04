@@ -14,8 +14,8 @@ import java.lang.reflect.Type;
 abstract class AbstractJsonSerializer implements Serializer {
 
     @Override
-    public String getMimeType() {
-        return MediaType.JSON_UTF_8.toString();
+    public MediaType getMimeType() {
+        return MediaType.JSON_UTF_8;
     }
 
     @Override
