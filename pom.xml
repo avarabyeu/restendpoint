@@ -8,8 +8,8 @@
         <version>9</version>
     </parent>
 
-    <groupId>com.github.avarabyeu</groupId>
-    <artifactId>restendpoint-jdk6</artifactId>
+    <groupId>com.epam.reportportal</groupId>
+    <artifactId>restendpoint</artifactId>
     <version>0.2.4-SNAPSHOT</version>
 
     <name>RestEndpoint</name>
@@ -40,8 +40,8 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git@github.com:avarabyeu/restendpoint.git</connection>
-        <developerConnection>scm:git:git@github.com:avarabyeu/restendpoint.git</developerConnection>
+        <connection>scm:git:git@github.com:reportportal/restendpoint.git</connection>
+        <developerConnection>scm:git:git@github.com:reportportal/restendpoint.git</developerConnection>
         <url>https://github.com/avarabyeu</url>
         <tag>0.2.3-SNAPSHOT</tag>
     </scm>
