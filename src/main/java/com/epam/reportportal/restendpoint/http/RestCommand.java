@@ -32,59 +32,58 @@ import java.lang.reflect.Type;
  */
 public class RestCommand<RQ, RS> {
 
-    private final HttpMethod httpMethod;
-    private final RQ request;
-    private final String uri;
-    private final Type responseType;
-    private final boolean multipart;
+	private final HttpMethod httpMethod;
+	private final RQ request;
+	private final String uri;
+	private final Type responseType;
+	private final boolean multipart;
 
-    public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request,
-            @Nonnull Class<RS> responseClass) {
-        this(uri, method, request, TypeToken.of(responseClass).getType(), false);
-    }
+	public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request, @Nonnull Class<RS> responseClass) {
+		this(uri, method, request, TypeToken.of(responseClass).getType(), false);
+	}
 
-    public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request,
-            @Nonnull Class<RS> responseClass, boolean multipart) {
-        this(uri, method, request, TypeToken.of(responseClass).getType(), multipart);
-    }
+	public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request, @Nonnull Class<RS> responseClass,
+			boolean multipart) {
+		this(uri, method, request, TypeToken.of(responseClass).getType(), multipart);
+	}
 
-    public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request,
-            @Nonnull Type responseType, boolean multipart) {
-        this.httpMethod = method;
-        this.request = request;
-        this.uri = uri;
-        this.responseType = responseType;
-        this.multipart = multipart;
+	public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request, @Nonnull Type responseType,
+			boolean multipart) {
+		this.httpMethod = method;
+		this.request = request;
+		this.uri = uri;
+		this.responseType = responseType;
+		this.multipart = multipart;
 
-        validate();
-    }
+		validate();
+	}
 
-    public final HttpMethod getHttpMethod() {
-        return httpMethod;
-    }
+	public final HttpMethod getHttpMethod() {
+		return httpMethod;
+	}
 
-    public final boolean isMultipart() {
-        return multipart;
-    }
+	public final boolean isMultipart() {
+		return multipart;
+	}
 
-    public final RQ getRequest() {
-        return request;
-    }
+	public final RQ getRequest() {
+		return request;
+	}
 
-    public final String getUri() {
-        return uri;
-    }
+	public final String getUri() {
+		return uri;
+	}
 
-    public final Type getResponseType() {
-        return responseType;
-    }
+	public final Type getResponseType() {
+		return responseType;
+	}
 
-    private void validate() {
+	private void validate() {
 
         /* Requests with no body should pass body parameter as NULL */
-        if (!this.httpMethod.hasBody()) {
-            Preconditions.checkState(null == this.request, "'%s' shouldn't contain body", this.httpMethod);
-            Preconditions.checkState(!multipart, "Incorrect request type for multipart: '%s'", this.httpMethod);
-        }
-    }
+		if (!this.httpMethod.hasBody()) {
+			Preconditions.checkState(null == this.request, "'%s' shouldn't contain body", this.httpMethod);
+			Preconditions.checkState(!multipart, "Incorrect request type for multipart: '%s'", this.httpMethod);
+		}
+	}
 }

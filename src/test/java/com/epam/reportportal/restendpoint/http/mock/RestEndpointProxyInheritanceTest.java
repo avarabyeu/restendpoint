@@ -35,43 +35,44 @@ import java.io.IOException;
  * @author Andrei Varabyeu
  */
 public class RestEndpointProxyInheritanceTest extends BaseRestEndointTest {
-    private static MockWebServer server = Injector.getInstance().getBean(MockWebServer.class);
-    private static RestInterfaceExt restInterface;
+	private static MockWebServer server = Injector.getInstance().getBean(MockWebServer.class);
+	private static RestInterfaceExt restInterface;
 
-    @BeforeClass
-    public static void before() throws IOException {
-        server.start();
+	@BeforeClass
+	public static void before() throws IOException {
+		server.start();
 
-        restInterface = RestEndpoints.create().withBaseUrl("http://localhost:" + server.getPort())
-                .withSerializer(new StringSerializer())
-                .withSerializer(new ByteArraySerializer())
-                .withErrorHandler(new DefaultErrorHandler())
-                .forInterface(RestInterfaceExt.class);
-    }
+		restInterface = RestEndpoints.create()
+				.withBaseUrl("http://localhost:" + server.getPort())
+				.withSerializer(new StringSerializer())
+				.withSerializer(new ByteArraySerializer())
+				.withErrorHandler(new DefaultErrorHandler())
+				.forInterface(RestInterfaceExt.class);
+	}
 
-    @AfterClass
-    public static void after() throws IOException {
-        server.shutdown();
-    }
+	@AfterClass
+	public static void after() throws IOException {
+		server.shutdown();
+	}
 
-    @Rule
-    public SoftAssertVerifier verifier = SoftAssertVerifier.instance();
+	@Rule
+	public SoftAssertVerifier verifier = SoftAssertVerifier.instance();
 
-    @Test
-    public void testGet() throws IOException, InterruptedException {
-        server.enqueue(prepareResponse(SERIALIZED_STRING));
-        String to = restInterface.get();
-        Assert.assertNotNull("Recieved Object is null", to);
-    }
+	@Test
+	public void testGet() throws IOException, InterruptedException {
+		server.enqueue(prepareResponse(SERIALIZED_STRING));
+		String to = restInterface.get();
+		Assert.assertNotNull("Recieved Object is null", to);
+	}
 
-    @Test
-    public void testGetExt() throws IOException, InterruptedException {
-        server.enqueue(prepareResponse(SERIALIZED_STRING));
-        String to = restInterface.getExtended();
-        Assert.assertNotNull("Recieved Object is null", to);
-        RecordedRequest request = server.takeRequest();
-        Assert.assertEquals("Incorrect Request Line", "GET / HTTP/1.1", request.getRequestLine());
+	@Test
+	public void testGetExt() throws IOException, InterruptedException {
+		server.enqueue(prepareResponse(SERIALIZED_STRING));
+		String to = restInterface.getExtended();
+		Assert.assertNotNull("Recieved Object is null", to);
+		RecordedRequest request = server.takeRequest();
+		Assert.assertEquals("Incorrect Request Line", "GET / HTTP/1.1", request.getRequestLine());
 
-    }
+	}
 
 }

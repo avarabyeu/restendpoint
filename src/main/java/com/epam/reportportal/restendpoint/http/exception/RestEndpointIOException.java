@@ -23,14 +23,14 @@ package com.epam.reportportal.restendpoint.http.exception;
  */
 public class RestEndpointIOException extends RuntimeException {
 
-    private static final long serialVersionUID = -5339772980222891685L;
+	private static final long serialVersionUID = -5339772980222891685L;
 
-    public RestEndpointIOException(String message, Throwable e) {
-        super(message, e);
-    }
+	public RestEndpointIOException(String message, Throwable e) {
+		super(message, e);
+	}
 
-    public RestEndpointIOException(String message) {
-        super(message);
-    }
+	public RestEndpointIOException(String message) {
+		super(message);
+	}
 
 }

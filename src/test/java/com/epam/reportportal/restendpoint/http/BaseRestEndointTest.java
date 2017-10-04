@@ -29,15 +29,15 @@ import org.junit.Ignore;
 @Ignore
 public class BaseRestEndointTest {
 
-    public static final String SERIALIZED_STRING = "{\"intField\":100,\"stringField\":\"test string\"}";
-    public static final String SERIALIZED_STRING_PATTERN = "{\"intField\":%d,\"stringField\":\"%s\"}";
-    public static final String CONTENT_TYPE_HEADER = "Content-Type";
+	public static final String SERIALIZED_STRING = "{\"intField\":100,\"stringField\":\"test string\"}";
+	public static final String SERIALIZED_STRING_PATTERN = "{\"intField\":%d,\"stringField\":\"%s\"}";
+	public static final String CONTENT_TYPE_HEADER = "Content-Type";
 
-    protected void validateHeader(RecordedRequest request) {
-        Assert.assertTrue(request.getHeaders().get("Content-Type").equals("text/plain; charset=UTF-8"));
-    }
+	protected void validateHeader(RecordedRequest request) {
+		Assert.assertTrue(request.getHeaders().get("Content-Type").equals("text/plain; charset=UTF-8"));
+	}
 
-    protected MockResponse prepareResponse(String body) {
-        return new MockResponse().setBody(body).setHeader(CONTENT_TYPE_HEADER, "application/json");
-    }
+	protected MockResponse prepareResponse(String body) {
+		return new MockResponse().setBody(body).setHeader(CONTENT_TYPE_HEADER, "application/json");
+	}
 }

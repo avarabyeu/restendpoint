@@ -37,84 +37,88 @@ import java.net.URISyntaxException;
  */
 public class DefaultErrorHandlerTest {
 
-    private ErrorHandler handler = Injector.getInstance()
-            .getBean(new Key<ErrorHandler>() {
-            });
+	private ErrorHandler handler = Injector.getInstance().getBean(new Key<ErrorHandler>() {
+	});
 
-    private HttpUriRequest request = Mockito.mock(HttpUriRequest.class);
+	private HttpUriRequest request = Mockito.mock(HttpUriRequest.class);
 
-    {
-        Mockito.when(request.getMethod()).thenReturn("GET");
-        try {
-            Mockito.when(request.getURI()).thenReturn(new URI("http://google.com"));
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Incorrect URI");
-        }
-    }
+	{
+		Mockito.when(request.getMethod()).thenReturn("GET");
+		try {
+			Mockito.when(request.getURI()).thenReturn(new URI("http://google.com"));
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException("Incorrect URI");
+		}
+	}
 
-    @Test
-    public void errorHandlerCheckClientError() {
-        Response<ByteSource> response = getHttpResponse(404, "Not Found");
-        Assert.assertTrue("Client Error is not handled", handler.hasError(response));
-    }
+	@Test
+	public void errorHandlerCheckClientError() {
+		Response<ByteSource> response = getHttpResponse(404, "Not Found");
+		Assert.assertTrue("Client Error is not handled", handler.hasError(response));
+	}
 
-    @Test
-    public void errorHandlerCheckServerError() {
-        Response<ByteSource> response = getHttpResponse(500, "Internal Server Error");
-        Assert.assertTrue("Server Error is not handled", handler.hasError(response));
-    }
+	@Test
+	public void errorHandlerCheckServerError() {
+		Response<ByteSource> response = getHttpResponse(500, "Internal Server Error");
+		Assert.assertTrue("Server Error is not handled", handler.hasError(response));
+	}
 
-    @Test
-    public void errorHandlerCheckInformationalResponse() {
-        Response<ByteSource> response = getHttpResponse(100, "Continue");
-        Assert.assertFalse("Infromation response is handled", handler.hasError(response));
-    }
+	@Test
+	public void errorHandlerCheckInformationalResponse() {
+		Response<ByteSource> response = getHttpResponse(100, "Continue");
+		Assert.assertFalse("Infromation response is handled", handler.hasError(response));
+	}
 
-    @Test
-    public void errorHandlerCheckSuccessResponse() {
-        Response<ByteSource> response = getHttpResponse(200, "Success");
-        Assert.assertFalse("Success response is handled", handler.hasError(response));
-    }
+	@Test
+	public void errorHandlerCheckSuccessResponse() {
+		Response<ByteSource> response = getHttpResponse(200, "Success");
+		Assert.assertFalse("Success response is handled", handler.hasError(response));
+	}
 
-    @Test
-    public void errorHandlerCheckRedirectionResponse() {
-        Response<ByteSource> response = getHttpResponse(302, "Found");
-        Assert.assertFalse("Redirection response is handled", handler.hasError(response));
-    }
+	@Test
+	public void errorHandlerCheckRedirectionResponse() {
+		Response<ByteSource> response = getHttpResponse(302, "Found");
+		Assert.assertFalse("Redirection response is handled", handler.hasError(response));
+	}
 
-    @Test(expected = RestEndpointException.class)
-    public void testErrorHandlerClientError() throws RestEndpointIOException {
-        Response<ByteSource> response = getHttpResponse(404, "Not Found");
-        handler.handle(response);
-    }
+	@Test(expected = RestEndpointException.class)
+	public void testErrorHandlerClientError() throws RestEndpointIOException {
+		Response<ByteSource> response = getHttpResponse(404, "Not Found");
+		handler.handle(response);
+	}
 
-    @Test(expected = RestEndpointException.class)
-    public void testErrorHandlerServerError() throws RestEndpointIOException {
-        Response<ByteSource> response = getHttpResponse(500, "Internal Server Error");
-        handler.handle(response);
-    }
+	@Test(expected = RestEndpointException.class)
+	public void testErrorHandlerServerError() throws RestEndpointIOException {
+		Response<ByteSource> response = getHttpResponse(500, "Internal Server Error");
+		handler.handle(response);
+	}
 
-    @Test
-    public void testHandlerInformationalResponse() throws RestEndpointIOException {
-        Response<ByteSource> response = getHttpResponse(100, "Continue");
-        handler.handle(response);
-    }
+	@Test
+	public void testHandlerInformationalResponse() throws RestEndpointIOException {
+		Response<ByteSource> response = getHttpResponse(100, "Continue");
+		handler.handle(response);
+	}
 
-    @Test
-    public void testErrorHandlerSuccessResponse() throws RestEndpointIOException {
-        Response<ByteSource> response = getHttpResponse(200, "Success");
-        handler.handle(response);
-    }
+	@Test
+	public void testErrorHandlerSuccessResponse() throws RestEndpointIOException {
+		Response<ByteSource> response = getHttpResponse(200, "Success");
+		handler.handle(response);
+	}
 
-    @Test
-    public void testHandlerRedirectionResponse() throws RestEndpointIOException {
-        Response<ByteSource> response = getHttpResponse(302, "Found");
-        handler.handle(response);
-    }
+	@Test
+	public void testHandlerRedirectionResponse() throws RestEndpointIOException {
+		Response<ByteSource> response = getHttpResponse(302, "Found");
+		handler.handle(response);
+	}
 
-    private Response<ByteSource> getHttpResponse(int statusCode, String message) {
-        return new Response<ByteSource>(request.getURI(), HttpMethod.valueOf(request.getMethod()), statusCode, message,
-                ImmutableMultimap.<String, String>builder().build(),
-                ByteSource.wrap("test string response body".getBytes(Charsets.UTF_8)));
-    }
+	private Response<ByteSource> getHttpResponse(int statusCode, String message) {
+		return new Response<ByteSource>(
+				request.getURI(),
+				HttpMethod.valueOf(request.getMethod()),
+				statusCode,
+				message,
+				ImmutableMultimap.<String, String>builder().build(),
+				ByteSource.wrap("test string response body".getBytes(Charsets.UTF_8))
+		);
+	}
 }

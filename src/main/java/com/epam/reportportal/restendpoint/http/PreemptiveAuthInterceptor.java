@@ -37,20 +37,20 @@ import java.io.IOException;
  */
 public class PreemptiveAuthInterceptor implements HttpRequestInterceptor {
 
-    /**
-     * Adds provided auth scheme to the client if there are no another provided
-     * auth schemes
-     */
-    @Override
-    public final void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
+	/**
+	 * Adds provided auth scheme to the client if there are no another provided
+	 * auth schemes
+	 */
+	@Override
+	public final void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
 
-        AuthState authState = (AuthState) context.getAttribute(HttpClientContext.TARGET_AUTH_STATE);
-        if (authState.getAuthScheme() == null) {
+		AuthState authState = (AuthState) context.getAttribute(HttpClientContext.TARGET_AUTH_STATE);
+		if (authState.getAuthScheme() == null) {
 
-            HttpHost targetHost = (HttpHost) context.getAttribute(HttpCoreContext.HTTP_TARGET_HOST);
-            AuthCache authCache = new BasicAuthCache();
-            authCache.put(targetHost, new BasicScheme());
-            context.setAttribute(HttpClientContext.AUTH_CACHE, authCache);
-        }
-    }
+			HttpHost targetHost = (HttpHost) context.getAttribute(HttpCoreContext.HTTP_TARGET_HOST);
+			AuthCache authCache = new BasicAuthCache();
+			authCache.put(targetHost, new BasicScheme());
+			context.setAttribute(HttpClientContext.AUTH_CACHE, authCache);
+		}
+	}
 }

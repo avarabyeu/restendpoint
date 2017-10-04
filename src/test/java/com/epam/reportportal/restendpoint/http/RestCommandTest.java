@@ -27,17 +27,15 @@ import static org.hamcrest.CoreMatchers.is;
  */
 public class RestCommandTest {
 
-    @Test
-    public void testGenericTypes() {
-        RestCommand<String, String> command = new RestCommand<String, String>("", HttpMethod.POST, "hello",
-                String.class);
-        SmartAssert.assertHard(command.getResponseType(), is(TypeToken.of(String.class).getType()),
-                "Incorrect class type resolver");
-    }
+	@Test
+	public void testGenericTypes() {
+		RestCommand<String, String> command = new RestCommand<String, String>("", HttpMethod.POST, "hello", String.class);
+		SmartAssert.assertHard(command.getResponseType(), is(TypeToken.of(String.class).getType()), "Incorrect class type resolver");
+	}
 
-    @Test(expected = IllegalStateException.class)
-    public void testGetWithBody() {
-        new RestCommand<String, String>("", HttpMethod.GET, "hello", String.class);
-    }
+	@Test(expected = IllegalStateException.class)
+	public void testGetWithBody() {
+		new RestCommand<String, String>("", HttpMethod.GET, "hello", String.class);
+	}
 
 }

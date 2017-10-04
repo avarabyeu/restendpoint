@@ -13,29 +13,29 @@ import java.lang.reflect.Type;
  */
 abstract class AbstractJsonSerializer implements Serializer {
 
-    @Override
-    public MediaType getMimeType() {
-        return MediaType.JSON_UTF_8;
-    }
+	@Override
+	public MediaType getMimeType() {
+		return MediaType.JSON_UTF_8;
+	}
 
-    @Override
-    public boolean canRead(MediaType mimeType, Class<?> resultType) {
-        return MediaType.JSON_UTF_8.withoutParameters().is(mimeType.withoutParameters());
-    }
+	@Override
+	public boolean canRead(MediaType mimeType, Class<?> resultType) {
+		return MediaType.JSON_UTF_8.withoutParameters().is(mimeType.withoutParameters());
+	}
 
-    @Override
-    public boolean canRead(MediaType mimeType, Type resultType) {
-        return canRead(mimeType, TypeToken.of(resultType).getRawType());
-    }
+	@Override
+	public boolean canRead(MediaType mimeType, Type resultType) {
+		return canRead(mimeType, TypeToken.of(resultType).getRawType());
+	}
 
-    /**
-     * GSON can try to serialize and object so just leave TRUE here
-     *
-     * @param o - Object to be serialized
-     * @return TRUE if method can serialize providede object
-     */
-    @Override
-    public boolean canWrite(Object o) {
-        return true;
-    }
+	/**
+	 * GSON can try to serialize and object so just leave TRUE here
+	 *
+	 * @param o - Object to be serialized
+	 * @return TRUE if method can serialize providede object
+	 */
+	@Override
+	public boolean canWrite(Object o) {
+		return true;
+	}
 }

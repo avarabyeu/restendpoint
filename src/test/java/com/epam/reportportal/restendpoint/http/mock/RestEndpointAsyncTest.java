@@ -42,8 +42,11 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @BeforeClass
     public static void before() throws IOException {
         server.start();
-        endpoint = RestEndpoints.create().withBaseUrl("http://localhost:" + server.getPort())
-                .withSerializer(new StringSerializer()).withSerializer(new ByteArraySerializer()).build();
+        endpoint = RestEndpoints.create()
+                .withBaseUrl("http://localhost:" + server.getPort())
+                .withSerializer(new StringSerializer())
+                .withSerializer(new ByteArraySerializer())
+                .build();
 
     }
 
@@ -62,16 +65,14 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testPost() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Maybe<String> to = endpoint
-                .postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
+        Maybe<String> to = endpoint.postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
         Assert.assertTrue(isScheduled(to));
     }
 
     @Test
     public void testPut() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        Maybe<String> to = endpoint
-                .putFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
+        Maybe<String> to = endpoint.putFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), String.class);
         Assert.assertTrue(isScheduled(to));
     }
 
@@ -85,8 +86,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testCommand() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(SERIALIZED_STRING));
-        RestCommand<String, String> command = new RestCommand<String, String>("/", HttpMethod.POST, SERIALIZED_STRING,
-                String.class);
+        RestCommand<String, String> command = new RestCommand<String, String>("/", HttpMethod.POST, SERIALIZED_STRING, String.class);
         Maybe<Response<String>> to = endpoint.executeRequest(command);
         Assert.assertTrue(isScheduled(to));
 
@@ -95,8 +95,7 @@ public class RestEndpointAsyncTest extends BaseRestEndointTest {
     @Test
     public void testVoid() throws IOException, InterruptedException {
         server.enqueue(prepareResponse(""));
-        Maybe<Void> to = endpoint
-                .postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), Void.class);
+        Maybe<Void> to = endpoint.postFor("/", String.format(SERIALIZED_STRING_PATTERN, 100, "test string"), Void.class);
         Assert.assertTrue(0 == to.count().blockingGet());
 
     }

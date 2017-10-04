@@ -52,5 +52,4 @@ public class JacksonSerializer extends AbstractJsonSerializer {
         }
     }
 
-
 }

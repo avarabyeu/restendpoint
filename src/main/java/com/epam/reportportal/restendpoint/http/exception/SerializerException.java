@@ -22,9 +22,8 @@ import com.epam.reportportal.restendpoint.serializer.Serializer;
  * Serializer Exception. <br>
  * Throwed from {@link Serializer}
  * implementations
- * 
+ *
  * @author Andrei Varabyeu
- * 
  */
 public class SerializerException extends RestEndpointIOException {
 

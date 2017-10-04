@@ -38,8 +38,7 @@ public class RestEndpointInvocationHandler implements InvocationHandler {
 
     private Object executeRestMethod(Method method, Object[] args) throws Throwable {
 
-        Preconditions
-                .checkState(restMethods.containsKey(method), "Method with name [%s] is not mapped", method.getName());
+        Preconditions.checkState(restMethods.containsKey(method), "Method with name [%s] is not mapped", method.getName());
 
         /* find appropriate method information*/
         RestMethodInfo methodInfo = restMethods.get(method);
@@ -47,9 +46,7 @@ public class RestEndpointInvocationHandler implements InvocationHandler {
         /* delegate request execution to RestEndpoint */
         Maybe<Response<Object>> response = delegate.executeRequest(methodInfo.createRestCommand(args));
 
-        Maybe<?> result = methodInfo.isBodyOnly() ?
-                response.flatMap(BODY_TRANSFORMER) :
-                response;
+        Maybe<?> result = methodInfo.isBodyOnly() ? response.flatMap(BODY_TRANSFORMER) : response;
 
         if (methodInfo.isAsynchronous()) {
             return result;

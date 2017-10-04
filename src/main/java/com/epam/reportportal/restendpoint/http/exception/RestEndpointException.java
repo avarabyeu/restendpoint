@@ -28,78 +28,84 @@ import java.net.URI;
  */
 public class RestEndpointException extends RuntimeException {
 
-    private static final long serialVersionUID = 728718628763519460L;
+	private static final long serialVersionUID = 728718628763519460L;
 
-    /**
-     * Request URI
-     */
-    private final URI requestUri;
+	/**
+	 * Request URI
+	 */
+	private final URI requestUri;
 
-    /**
-     * Request Method
-     */
-    private final HttpMethod requestMethod;
+	/**
+	 * Request Method
+	 */
+	private final HttpMethod requestMethod;
 
-    /**
-     * HTTP Status Code
-     */
-    private final int statusCode;
+	/**
+	 * HTTP Status Code
+	 */
+	private final int statusCode;
 
-    /**
-     * HTTP Status Message
-     */
-    private final String statusMessage;
+	/**
+	 * HTTP Status Message
+	 */
+	private final String statusMessage;
 
-    /**
-     * HTTP Response Body
-     */
-    private final ByteSource content;
+	/**
+	 * HTTP Response Body
+	 */
+	private final ByteSource content;
 
-    public RestEndpointException(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
-            ByteSource content) {
-        this.requestUri = requestUri;
-        this.requestMethod = requestMethod;
-        this.statusCode = statusCode;
-        this.statusMessage = statusMessage;
-        this.content = content;
-    }
+	public RestEndpointException(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage, ByteSource content) {
+		this.requestUri = requestUri;
+		this.requestMethod = requestMethod;
+		this.statusCode = statusCode;
+		this.statusMessage = statusMessage;
+		this.content = content;
+	}
 
-    public URI getRequestUri() {
-        return requestUri;
-    }
+	public URI getRequestUri() {
+		return requestUri;
+	}
 
-    public HttpMethod getRequestMethod() {
-        return requestMethod;
-    }
+	public HttpMethod getRequestMethod() {
+		return requestMethod;
+	}
 
-    public int getStatusCode() {
-        return statusCode;
-    }
+	public int getStatusCode() {
+		return statusCode;
+	}
 
-    public String getStatusMessage() {
-        return statusMessage;
-    }
+	public String getStatusMessage() {
+		return statusMessage;
+	}
 
-    public ByteSource getContent() {
-        return content;
-    }
+	public ByteSource getContent() {
+		return content;
+	}
 
-    /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Throwable#getMessage()
-         */
-    @Override
-    public String getMessage() {
-        return new StringBuilder()
-                .append("Request [").append(requestMethod.toString()).append("] ")
-                .append("to URL: ").append(requestUri).append(" has failed with ")
-                .append("Status code: ")
-                .append(statusCode).append('\n')
-                .append("Status message: ")
-                .append(statusMessage).append('\n')
-                .append("Content: '").append(content).append('\'')
-                .toString();
-    }
+	/*
+		 * (non-Javadoc)
+		 *
+		 * @see java.lang.Throwable#getMessage()
+		 */
+	@Override
+	public String getMessage() {
+		return new StringBuilder().append("Request [")
+				.append(requestMethod.toString())
+				.append("] ")
+				.append("to URL: ")
+				.append(requestUri)
+				.append(" has failed with ")
+				.append("Status code: ")
+				.append(statusCode)
+				.append('\n')
+				.append("Status message: ")
+				.append(statusMessage)
+				.append('\n')
+				.append("Content: '")
+				.append(content)
+				.append('\'')
+				.toString();
+	}
 
 }

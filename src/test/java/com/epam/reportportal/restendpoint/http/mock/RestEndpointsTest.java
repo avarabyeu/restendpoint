@@ -47,75 +47,79 @@ import static org.hamcrest.CoreMatchers.notNullValue;
  */
 public class RestEndpointsTest extends BaseRestEndointTest {
 
-    public static final String HTTP_TEST_URK = "http://localhost:";
-    public static final String ECHO_STRING = "Hello world!";
-    public static final String RESOURCE = "/";
+	public static final String HTTP_TEST_URK = "http://localhost:";
+	public static final String ECHO_STRING = "Hello world!";
+	public static final String RESOURCE = "/";
 
-    private static MockWebServer server = Injector.getInstance().getBean(MockWebServer.class);
+	private static MockWebServer server = Injector.getInstance().getBean(MockWebServer.class);
 
-    @BeforeClass
-    public static void before() throws IOException {
-        server.start();
-    }
+	@BeforeClass
+	public static void before() throws IOException {
+		server.start();
+	}
 
-    @AfterClass
-    public static void after() throws IOException {
-        server.shutdown();
-    }
+	@AfterClass
+	public static void after() throws IOException {
+		server.shutdown();
+	}
 
-    @Test
-    public void testDefault() throws RestEndpointIOException, ExecutionException, InterruptedException {
-        RestEndpoint endpoint = RestEndpoints.createDefault(HTTP_TEST_URK + server.getPort());
-        Assert.assertThat(endpoint, notNullValue());
+	@Test
+	public void testDefault() throws RestEndpointIOException, ExecutionException, InterruptedException {
+		RestEndpoint endpoint = RestEndpoints.createDefault(HTTP_TEST_URK + server.getPort());
+		Assert.assertThat(endpoint, notNullValue());
 
-        server.enqueue(prepareResponse(ECHO_STRING).setHeader(CONTENT_TYPE_HEADER, MediaType.PLAIN_TEXT_UTF_8));
-        Maybe<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
-        Assert.assertThat(helloRS.blockingGet(), is(ECHO_STRING));
+		server.enqueue(prepareResponse(ECHO_STRING).setHeader(CONTENT_TYPE_HEADER, MediaType.PLAIN_TEXT_UTF_8));
+		Maybe<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
+		Assert.assertThat(helloRS.blockingGet(), is(ECHO_STRING));
 
-    }
+	}
 
-    /**
-     * Put wrong serializer into non-default configuration
-     *
-     * @throws RestEndpointIOException
-     */
-    @Test(expected = SerializerException.class)
-    public void testNoSerializer() throws RestEndpointIOException, ExecutionException, InterruptedException {
-        RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK + server.getPort())
-                .withSerializer(new ByteArraySerializer())
-                .build();
-        Assert.assertThat(endpoint, notNullValue());
+	/**
+	 * Put wrong serializer into non-default configuration
+	 *
+	 * @throws RestEndpointIOException
+	 */
+	@Test(expected = SerializerException.class)
+	public void testNoSerializer() throws RestEndpointIOException, ExecutionException, InterruptedException {
+		RestEndpoint endpoint = RestEndpoints.create()
+				.withBaseUrl(HTTP_TEST_URK + server.getPort())
+				.withSerializer(new ByteArraySerializer())
+				.build();
+		Assert.assertThat(endpoint, notNullValue());
 
-        server.enqueue(prepareResponse(ECHO_STRING));
-        Maybe<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
-        Assert.assertThat(helloRS.blockingGet(), is(ECHO_STRING));
-    }
+		server.enqueue(prepareResponse(ECHO_STRING));
+		Maybe<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
+		Assert.assertThat(helloRS.blockingGet(), is(ECHO_STRING));
+	}
 
-    @Test
-    public void testBuilderHappy() throws RestEndpointIOException, ExecutionException, InterruptedException {
-        RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK + server.getPort())
-                .withSerializer(new StringSerializer())
-                .build();
-        Assert.assertThat(endpoint, notNullValue());
+	@Test
+	public void testBuilderHappy() throws RestEndpointIOException, ExecutionException, InterruptedException {
+		RestEndpoint endpoint = RestEndpoints.create()
+				.withBaseUrl(HTTP_TEST_URK + server.getPort())
+				.withSerializer(new StringSerializer())
+				.build();
+		Assert.assertThat(endpoint, notNullValue());
 
-        server.enqueue(prepareResponse(ECHO_STRING));
-        Maybe<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
-        Assert.assertThat(helloRS.blockingGet(), is(ECHO_STRING));
-    }
+		server.enqueue(prepareResponse(ECHO_STRING));
+		Maybe<String> helloRS = endpoint.postFor(RESOURCE, ECHO_STRING, String.class);
+		Assert.assertThat(helloRS.blockingGet(), is(ECHO_STRING));
+	}
 
-    @Test
-    public void testBuilderBasicAuth() throws RestEndpointIOException, InterruptedException, ExecutionException {
-        RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK + server.getPort())
-                .withSerializer(new StringSerializer()).withBasicAuth("login", "password")
-                .build();
-        Assert.assertThat(endpoint, notNullValue());
+	@Test
+	public void testBuilderBasicAuth() throws RestEndpointIOException, InterruptedException, ExecutionException {
+		RestEndpoint endpoint = RestEndpoints.create()
+				.withBaseUrl(HTTP_TEST_URK + server.getPort())
+				.withSerializer(new StringSerializer())
+				.withBasicAuth("login", "password")
+				.build();
+		Assert.assertThat(endpoint, notNullValue());
 
-        server.enqueue(prepareResponse(ECHO_STRING));
-        endpoint.post(RESOURCE, ECHO_STRING, String.class).blockingGet();
+		server.enqueue(prepareResponse(ECHO_STRING));
+		endpoint.post(RESOURCE, ECHO_STRING, String.class).blockingGet();
 
-        String basicAuthHeader = server.takeRequest().getHeader(HttpHeaders.AUTHORIZATION);
-        Assert.assertThat(basicAuthHeader, is("Basic " + Base64.encodeBase64String("login:password".getBytes())));
-    }
+		String basicAuthHeader = server.takeRequest().getHeader(HttpHeaders.AUTHORIZATION);
+		Assert.assertThat(basicAuthHeader, is("Basic " + Base64.encodeBase64String("login:password".getBytes())));
+	}
 
-    //TODO add test for SSL
+	//TODO add test for SSL
 }

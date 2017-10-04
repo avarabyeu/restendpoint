@@ -30,45 +30,45 @@ import java.net.URI;
  */
 public class DefaultErrorHandler implements ErrorHandler {
 
-    /**
-     * Returns TRUE in case status code of response starts with 4 or 5
-     */
-    @Override
-    public boolean hasError(Response<ByteSource> rs) {
-        StatusType statusType = StatusType.valueOf(rs.getStatus());
-        return (statusType == StatusType.CLIENT_ERROR || statusType == StatusType.SERVER_ERROR);
-    }
+	/**
+	 * Returns TRUE in case status code of response starts with 4 or 5
+	 */
+	@Override
+	public boolean hasError(Response<ByteSource> rs) {
+		StatusType statusType = StatusType.valueOf(rs.getStatus());
+		return (statusType == StatusType.CLIENT_ERROR || statusType == StatusType.SERVER_ERROR);
+	}
 
-    /**
-     * Default implementation. May be overridden in subclasses<br>
-     * Throws
-     * {@link RestEndpointException}
-     * if Response status code starts from 4xx or 5xx
-     * <p>
-     * Throwed exceptions may be overridden in handle* methods
-     */
-    @Override
-    public void handle(Response<ByteSource> rs) throws RestEndpointIOException {
-        if (!hasError(rs)) {
-            return;
-        }
+	/**
+	 * Default implementation. May be overridden in subclasses<br>
+	 * Throws
+	 * {@link RestEndpointException}
+	 * if Response status code starts from 4xx or 5xx
+	 * <p>
+	 * Throwed exceptions may be overridden in handle* methods
+	 */
+	@Override
+	public void handle(Response<ByteSource> rs) throws RestEndpointIOException {
+		if (!hasError(rs)) {
+			return;
+		}
 
-        handleError(rs.getUri(), rs.getHttpMethod(), rs.getStatus(), rs.getReason(), rs.getBody());
+		handleError(rs.getUri(), rs.getHttpMethod(), rs.getStatus(), rs.getReason(), rs.getBody());
 
-    }
+	}
 
-    /**
-     * Handler methods for HTTP client errors
-     *
-     * @param requestUri    - Request URI
-     * @param requestMethod - Request HTTP Method
-     * @param statusCode    - HTTP status code
-     * @param statusMessage - HTTP status message
-     * @param errorBody     - HTTP response body
-     */
-    protected void handleError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage,
-            ByteSource errorBody) throws RestEndpointIOException {
-        throw new RestEndpointException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
-    }
+	/**
+	 * Handler methods for HTTP client errors
+	 *
+	 * @param requestUri    - Request URI
+	 * @param requestMethod - Request HTTP Method
+	 * @param statusCode    - HTTP status code
+	 * @param statusMessage - HTTP status message
+	 * @param errorBody     - HTTP response body
+	 */
+	protected void handleError(URI requestUri, HttpMethod requestMethod, int statusCode, String statusMessage, ByteSource errorBody)
+			throws RestEndpointIOException {
+		throw new RestEndpointException(requestUri, requestMethod, statusCode, statusMessage, errorBody);
+	}
 
 }

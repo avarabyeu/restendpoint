@@ -35,14 +35,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface Request {
 
-    /**
-     * HTTP method type
-     */
-    HttpMethod method();
+	/**
+	 * HTTP method type
+	 */
+	HttpMethod method();
 
-    /**
-     * URL template. Usage example: "/api/resource/{id}".
-     * So, placeholders in form '{}' are acceptable
-     */
-    String url();
+	/**
+	 * URL template. Usage example: "/api/resource/{id}".
+	 * So, placeholders in form '{}' are acceptable
+	 */
+	String url();
 }

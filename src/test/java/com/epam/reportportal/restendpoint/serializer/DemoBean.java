@@ -27,35 +27,37 @@ import java.util.Objects;
 @XmlRootElement
 public class DemoBean {
 
-    private String someField;
+	private String someField;
 
-    public DemoBean() {
-    }
+	public DemoBean() {
+	}
 
-    public DemoBean(String someField) {
-        this.someField = someField;
-    }
+	public DemoBean(String someField) {
+		this.someField = someField;
+	}
 
-    public String getSomeField() {
-        return someField;
-    }
+	public String getSomeField() {
+		return someField;
+	}
 
-    public void setSomeField(String someField) {
-        this.someField = someField;
-    }
+	public void setSomeField(String someField) {
+		this.someField = someField;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        DemoBean demoBean = (DemoBean) o;
-        return Objects.equals(someField, demoBean.someField);
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		DemoBean demoBean = (DemoBean) o;
+		return Objects.equals(someField, demoBean.someField);
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(someField);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(someField);
+	}
 }

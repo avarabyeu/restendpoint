@@ -35,55 +35,55 @@ import java.lang.reflect.Type;
  */
 public class GsonSerializer extends AbstractJsonSerializer {
 
-    private final Gson gson;
+	private final Gson gson;
 
-    /**
-     * Creates serializer with provided GSON
-     *
-     * @param gson Gson object
-     */
-    public GsonSerializer(Gson gson) {
-        this.gson = gson;
-    }
+	/**
+	 * Creates serializer with provided GSON
+	 *
+	 * @param gson Gson object
+	 */
+	public GsonSerializer(Gson gson) {
+		this.gson = gson;
+	}
 
-    /**
-     * Creates serializer with default GSON
-     */
-    public GsonSerializer() {
-        this(new Gson());
-    }
+	/**
+	 * Creates serializer with default GSON
+	 */
+	public GsonSerializer() {
+		this(new Gson());
+	}
 
-    @Override
-    public <T> byte[] serialize(T t) throws SerializerException {
-        try {
-            return gson.toJson(t).getBytes(Charsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new SerializerException("UTF-8 is not supported", e);
-        }
-    }
+	@Override
+	public <T> byte[] serialize(T t) throws SerializerException {
+		try {
+			return gson.toJson(t).getBytes(Charsets.UTF_8.name());
+		} catch (UnsupportedEncodingException e) {
+			throw new SerializerException("UTF-8 is not supported", e);
+		}
+	}
 
-    @Override
-    public <T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException {
-        BufferedReader is = null;
-        try {
-            is = ByteSource.wrap(content).asCharSource(Charsets.UTF_8).openBufferedStream();
-            return gson.fromJson(is, clazz);
-        } catch (IOException e) {
-            throw new SerializerException("Unable to serialize content", e);
-        } finally {
-            IOUtils.closeQuietly(is);
-        }
-    }
+	@Override
+	public <T> T deserialize(byte[] content, Class<T> clazz) throws SerializerException {
+		BufferedReader is = null;
+		try {
+			is = ByteSource.wrap(content).asCharSource(Charsets.UTF_8).openBufferedStream();
+			return gson.fromJson(is, clazz);
+		} catch (IOException e) {
+			throw new SerializerException("Unable to serialize content", e);
+		} finally {
+			IOUtils.closeQuietly(is);
+		}
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T deserialize(byte[] content, Type type) throws SerializerException {
-        try {
-            return (T) gson.getAdapter(com.google.gson.reflect.TypeToken.<T>get(type))
-                    .fromJson(ByteSource.wrap(content).asCharSource(Charsets.UTF_8).openBufferedStream());
-        } catch (IOException e) {
-            throw new SerializerException("Unable to serialize content", e);
-        }
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T deserialize(byte[] content, Type type) throws SerializerException {
+		try {
+			return (T) gson.getAdapter(com.google.gson.reflect.TypeToken.<T>get(type))
+					.fromJson(ByteSource.wrap(content).asCharSource(Charsets.UTF_8).openBufferedStream());
+		} catch (IOException e) {
+			throw new SerializerException("Unable to serialize content", e);
+		}
+	}
 
 }

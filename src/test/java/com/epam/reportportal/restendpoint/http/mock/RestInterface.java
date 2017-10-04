@@ -30,36 +30,36 @@ import java.util.Map;
  */
 public interface RestInterface {
 
-    @Request(method = HttpMethod.GET, url = "/")
-    String get();
+	@Request(method = HttpMethod.GET, url = "/")
+	String get();
 
-    @Request(method = HttpMethod.GET, url = "/{path}")
-    String getWithPath(@Path("path") String path);
+	@Request(method = HttpMethod.GET, url = "/{path}")
+	String getWithPath(@Path("path") String path);
 
-    @Request(method = HttpMethod.GET, url = "/")
-    String getWithQuery(@Query Map<String, String> queryParams);
+	@Request(method = HttpMethod.GET, url = "/")
+	String getWithQuery(@Query Map<String, String> queryParams);
 
-    @Request(method = HttpMethod.POST, url = "/")
-    String post(@Body String body);
+	@Request(method = HttpMethod.POST, url = "/")
+	String post(@Body String body);
 
-    @Request(method = HttpMethod.POST, url = "/")
-    Maybe<Void> postVoid(@Body String body);
+	@Request(method = HttpMethod.POST, url = "/")
+	Maybe<Void> postVoid(@Body String body);
 
-    @Request(method = HttpMethod.PUT, url = "/")
-    String put(@Body String body);
+	@Request(method = HttpMethod.PUT, url = "/")
+	String put(@Body String body);
 
-    @Request(method = HttpMethod.DELETE, url = "/")
-    String delete();
+	@Request(method = HttpMethod.DELETE, url = "/")
+	String delete();
 
-    @Request(method = HttpMethod.GET, url = "/")
-    Maybe<String> getAsync();
+	@Request(method = HttpMethod.GET, url = "/")
+	Maybe<String> getAsync();
 
-    @Request(method = HttpMethod.POST, url = "/")
-    Maybe<String> postAsync(@Body String body);
+	@Request(method = HttpMethod.POST, url = "/")
+	Maybe<String> postAsync(@Body String body);
 
-    @Request(method = HttpMethod.PUT, url = "/")
-    Maybe<String> putAsync(@Body String body);
+	@Request(method = HttpMethod.PUT, url = "/")
+	Maybe<String> putAsync(@Body String body);
 
-    @Request(method = HttpMethod.DELETE, url = "/")
-    Maybe<String> deleteAsync();
+	@Request(method = HttpMethod.DELETE, url = "/")
+	Maybe<String> deleteAsync();
 }

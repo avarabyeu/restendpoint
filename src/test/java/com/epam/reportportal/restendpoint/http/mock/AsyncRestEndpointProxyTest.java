@@ -38,57 +38,56 @@ import java.io.IOException;
  */
 public class AsyncRestEndpointProxyTest extends BaseRestEndointTest {
 
-    private static RestInterface restInterface;
+	private static RestInterface restInterface;
 
-    private static final MockWebServer serverSlow = Injector.getInstance().getBean("slow", MockWebServer.class);
+	private static final MockWebServer serverSlow = Injector.getInstance().getBean("slow", MockWebServer.class);
 
+	@BeforeClass
+	public static void before() throws IOException {
+		serverSlow.start();
+		restInterface = RestEndpoints.create()
+				.withBaseUrl("http://localhost:" + serverSlow.getPort())
+				.withSerializer(new StringSerializer())
+				.withSerializer(new ByteArraySerializer())
+				.withErrorHandler(new DefaultErrorHandler())
+				.forInterface(RestInterface.class);
+	}
 
-    @BeforeClass
-    public static void before() throws IOException {
-        serverSlow.start();
-        restInterface = RestEndpoints.create().withBaseUrl("http://localhost:" + serverSlow.getPort())
-                .withSerializer(new StringSerializer())
-                .withSerializer(new ByteArraySerializer())
-                .withErrorHandler(new DefaultErrorHandler())
-                .forInterface(RestInterface.class);
-    }
+	@AfterClass
+	public static void after() throws IOException {
+		serverSlow.shutdown();
+	}
 
-    @AfterClass
-    public static void after() throws IOException {
-        serverSlow.shutdown();
-    }
+	@Test
+	public void testGetAsync() throws IOException, InterruptedException {
+		serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
+		Maybe<String> to = restInterface.getAsync();
+		Assert.assertTrue(isScheduled(to));
+	}
 
-    @Test
-    public void testGetAsync() throws IOException, InterruptedException {
-        serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        Maybe<String> to = restInterface.getAsync();
-        Assert.assertTrue(isScheduled(to));
-    }
+	@Test
+	public void testPostAsync() throws IOException, InterruptedException {
+		serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
+		Maybe<String> to = restInterface.postAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
+		Assert.assertTrue(isScheduled(to));
+	}
 
-    @Test
-    public void testPostAsync() throws IOException, InterruptedException {
-        serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        Maybe<String> to = restInterface.postAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
-        Assert.assertTrue(isScheduled(to));
-    }
+	@Test
+	public void testPutAsync() throws IOException, InterruptedException {
+		serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
+		Maybe<String> to = restInterface.putAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
+		Assert.assertTrue(isScheduled(to));
+	}
 
-    @Test
-    public void testPutAsync() throws IOException, InterruptedException {
-        serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        Maybe<String> to = restInterface.putAsync(String.format(SERIALIZED_STRING_PATTERN, 100, "test string"));
-        Assert.assertTrue(isScheduled(to));
-    }
+	@Test
+	public void testDeleteAsync() throws IOException, InterruptedException {
+		serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
+		Maybe<String> to = restInterface.deleteAsync();
+		Assert.assertTrue(isScheduled(to));
+	}
 
-    @Test
-    public void testDeleteAsync() throws IOException, InterruptedException {
-        serverSlow.enqueue(prepareResponse(SERIALIZED_STRING));
-        Maybe<String> to = restInterface.deleteAsync();
-        Assert.assertTrue(isScheduled(to));
-    }
-
-    private boolean isScheduled(Maybe<?> observable) {
-        return 1 == observable.count().blockingGet();
-    }
-
+	private boolean isScheduled(Maybe<?> observable) {
+		return 1 == observable.count().blockingGet();
+	}
 
 }

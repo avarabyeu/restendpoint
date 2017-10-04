@@ -472,9 +472,13 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 				}
 
                             /* convert entire response */
-				Response<ByteSource> rs = new Response<ByteSource>(rq.getURI(), HttpMethod.valueOf(rq.getMethod()),
+				Response<ByteSource> rs = new Response<ByteSource>(
+						rq.getURI(),
+						HttpMethod.valueOf(rq.getMethod()),
 						response.getStatusLine().getStatusCode(),
-						response.getStatusLine().getReasonPhrase(), headersBuilder.build(), bodySupplier
+						response.getStatusLine().getReasonPhrase(),
+						headersBuilder.build(),
+						bodySupplier
 				);
 
                             /* check whether there is error in the response */

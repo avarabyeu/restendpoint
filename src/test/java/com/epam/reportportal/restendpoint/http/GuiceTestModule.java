@@ -37,60 +37,60 @@ import java.util.concurrent.TimeUnit;
  */
 public class GuiceTestModule implements Module {
 
-    public static final Key<ErrorHandler> ERROR_HANDLER_KEY = new Key<ErrorHandler>() {
-    };
+	public static final Key<ErrorHandler> ERROR_HANDLER_KEY = new Key<ErrorHandler>() {
+	};
 
-    @Override
-    public void configure(Binder binder) {
+	@Override
+	public void configure(Binder binder) {
 
-        /** Error Handler binding */
-        binder.bind(ERROR_HANDLER_KEY).to(DefaultErrorHandler.class).in(Scopes.SINGLETON);
+		/** Error Handler binding */
+		binder.bind(ERROR_HANDLER_KEY).to(DefaultErrorHandler.class).in(Scopes.SINGLETON);
 
-        binder.bind(MockWebServer.class).in(Scopes.NO_SCOPE);
+		binder.bind(MockWebServer.class).in(Scopes.NO_SCOPE);
 
-    }
+	}
 
-    /**
+	/**
 	 * Default {@link Serializer} binding
 	 *
-     * @return Serializer
-     */
-    @Provides
-    public Serializer provideSeriazer() {
-        return new StringSerializer();
-    }
+	 * @return Serializer
+	 */
+	@Provides
+	public Serializer provideSeriazer() {
+		return new StringSerializer();
+	}
 
-    @Provides
-    @Named("slow")
-    public MockWebServer provideSlowWsMock() {
-        MockWebServer mockWebServer = new MockWebServer();
-        mockWebServer.setDispatcher(new QueueDispatcher() {
-            @Override
-            public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
-                Uninterruptibles.sleepUninterruptibly(3L, TimeUnit.SECONDS);
-                return super.dispatch(request);
-            }
-        });
-        return mockWebServer;
-    }
+	@Provides
+	@Named("slow")
+	public MockWebServer provideSlowWsMock() {
+		MockWebServer mockWebServer = new MockWebServer();
+		mockWebServer.setDispatcher(new QueueDispatcher() {
+			@Override
+			public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
+				Uninterruptibles.sleepUninterruptibly(3L, TimeUnit.SECONDS);
+				return super.dispatch(request);
+			}
+		});
+		return mockWebServer;
+	}
 
-    private static int findFreePort() {
-        ServerSocket socket = null;
-        try {
-            socket = new ServerSocket(0);
-            System.out.println("Used Port: " + socket.getLocalPort());
-            return socket.getLocalPort();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to find free port", e);
-        } finally {
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    // do nothing
-                }
-            }
-        }
-    }
+	private static int findFreePort() {
+		ServerSocket socket = null;
+		try {
+			socket = new ServerSocket(0);
+			System.out.println("Used Port: " + socket.getLocalPort());
+			return socket.getLocalPort();
+		} catch (IOException e) {
+			throw new RuntimeException("Unable to find free port", e);
+		} finally {
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+					// do nothing
+				}
+			}
+		}
+	}
 
 }

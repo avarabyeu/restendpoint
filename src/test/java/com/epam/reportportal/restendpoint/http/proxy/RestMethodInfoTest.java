@@ -30,33 +30,33 @@ import static org.hamcrest.CoreMatchers.is;
  */
 public class RestMethodInfoTest {
 
-    @Rule
-    public SoftAssertVerifier verifier = SoftAssertVerifier.instance();
+	@Rule
+	public SoftAssertVerifier verifier = SoftAssertVerifier.instance();
 
-    @Test
-    public void testSynchronousParser() throws NoSuchMethodException {
-        Invokable<?, Object> testSyncronousMethod = Invokable.from(this.getClass().getDeclaredMethod("testSyncronousMethod"));
-        Invokable<?, Object> testAsyncronousMethod = Invokable.from(this.getClass().getDeclaredMethod("testAsyncronousMethod"));
-        Invokable<?, Object> testVoidMethod = Invokable.from(this.getClass().getDeclaredMethod("testVoidMethod"));
-        System.out.println(isAsynchronous(testSyncronousMethod));
+	@Test
+	public void testSynchronousParser() throws NoSuchMethodException {
+		Invokable<?, Object> testSyncronousMethod = Invokable.from(this.getClass().getDeclaredMethod("testSyncronousMethod"));
+		Invokable<?, Object> testAsyncronousMethod = Invokable.from(this.getClass().getDeclaredMethod("testAsyncronousMethod"));
+		Invokable<?, Object> testVoidMethod = Invokable.from(this.getClass().getDeclaredMethod("testVoidMethod"));
+		System.out.println(isAsynchronous(testSyncronousMethod));
 
-        SmartAssert.assertSoft(isAsynchronous(testSyncronousMethod), is(false), "Incorrect synchronous method detection");
-        SmartAssert.assertSoft(isAsynchronous(testAsyncronousMethod), is(true), "Incorrect asynchronous method detection");
-        SmartAssert.assertSoft(isAsynchronous(testVoidMethod), is(false), "Incorrect void method detection");
-    }
+		SmartAssert.assertSoft(isAsynchronous(testSyncronousMethod), is(false), "Incorrect synchronous method detection");
+		SmartAssert.assertSoft(isAsynchronous(testAsyncronousMethod), is(true), "Incorrect asynchronous method detection");
+		SmartAssert.assertSoft(isAsynchronous(testVoidMethod), is(false), "Incorrect void method detection");
+	}
 
-    @SuppressWarnings("UnusedDeclaration")
-    String testSyncronousMethod() {
-        return null;
-    }
+	@SuppressWarnings("UnusedDeclaration")
+	String testSyncronousMethod() {
+		return null;
+	}
 
-    @SuppressWarnings("UnusedDeclaration")
-    Maybe<String> testAsyncronousMethod() {
-        return null;
-    }
+	@SuppressWarnings("UnusedDeclaration")
+	Maybe<String> testAsyncronousMethod() {
+		return null;
+	}
 
-    @SuppressWarnings("UnusedDeclaration")
-    void testVoidMethod() {
+	@SuppressWarnings("UnusedDeclaration")
+	void testVoidMethod() {
 
-    }
+	}
 }

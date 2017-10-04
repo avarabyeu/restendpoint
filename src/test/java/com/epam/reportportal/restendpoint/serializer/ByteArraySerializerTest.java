@@ -28,54 +28,52 @@ import org.junit.Test;
  */
 public class ByteArraySerializerTest {
 
-    private static final String TEST_STRING = "test";
-    private static final ByteArraySerializer serializer = new ByteArraySerializer();
+	private static final String TEST_STRING = "test";
+	private static final ByteArraySerializer serializer = new ByteArraySerializer();
 
-    @Test
-    public void testSerialize() throws SerializerException {
-        byte[] result = serializer.serialize(TEST_STRING.getBytes());
-        SmartAssert.assertHard(
-                result,
-                CoreMatchers
-                        .is(TEST_STRING.getBytes()), "Incorrect serialization result");
-    }
+	@Test
+	public void testSerialize() throws SerializerException {
+		byte[] result = serializer.serialize(TEST_STRING.getBytes());
+		SmartAssert.assertHard(result, CoreMatchers.is(TEST_STRING.getBytes()), "Incorrect serialization result");
+	}
 
-    @Test
-    public void testDeserialize() throws SerializerException {
-        byte[] result = serializer.deserialize(TEST_STRING.getBytes(), byte[].class);
-        SmartAssert.assertHard(
-                result,
-                CoreMatchers
-                        .is(TEST_STRING.getBytes()), "Incorrect deserialization result");
-    }
+	@Test
+	public void testDeserialize() throws SerializerException {
+		byte[] result = serializer.deserialize(TEST_STRING.getBytes(), byte[].class);
+		SmartAssert.assertHard(result, CoreMatchers.is(TEST_STRING.getBytes()), "Incorrect deserialization result");
+	}
 
-    @Test
-    public void testDeserializeByType() throws SerializerException {
-        byte[] result = serializer.deserialize(TEST_STRING.getBytes(), TypeToken.of(byte[].class).getType());
-        SmartAssert.assertHard(
-                result,
-                CoreMatchers
-                        .is(TEST_STRING.getBytes()), "Incorrect deserialization result");
-    }
+	@Test
+	public void testDeserializeByType() throws SerializerException {
+		byte[] result = serializer.deserialize(TEST_STRING.getBytes(), TypeToken.of(byte[].class).getType());
+		SmartAssert.assertHard(result, CoreMatchers.is(TEST_STRING.getBytes()), "Incorrect deserialization result");
+	}
 
-    @Test
-    public void testContentType() {
-        SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM, byte[].class),
-                CoreMatchers.is(true), "Wrong content type handling - octeat/stream");
+	@Test
+	public void testContentType() {
+		SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM, byte[].class),
+				CoreMatchers.is(true),
+				"Wrong content type handling - octeat/stream"
+		);
 
-        SmartAssert.assertSoft(serializer.canRead(MediaType.ANY_TEXT_TYPE, byte[].class),
-                CoreMatchers.is(true), "Wrong content type handling");
+		SmartAssert.assertSoft(serializer.canRead(MediaType.ANY_TEXT_TYPE, byte[].class),
+				CoreMatchers.is(true),
+				"Wrong content type handling"
+		);
 
-        SmartAssert.assertSoft(serializer.canRead(MediaType.ANY_TEXT_TYPE, Object.class),
-                CoreMatchers.is(false), "Wrong content type handling");
+		SmartAssert.assertSoft(serializer.canRead(MediaType.ANY_TEXT_TYPE, Object.class),
+				CoreMatchers.is(false),
+				"Wrong content type handling"
+		);
 
-        SmartAssert.assertSoft(serializer.canWrite(new byte[]{}),
-                CoreMatchers.is(true), "Wrong content type handling. Cannot write byte array");
+		SmartAssert.assertSoft(serializer.canWrite(new byte[] {}),
+				CoreMatchers.is(true),
+				"Wrong content type handling. Cannot write byte array"
+		);
 
-        SmartAssert.assertSoft(serializer.canWrite("some string"),
-                CoreMatchers.is(false), "Wrong content type handling. Can write string");
+		SmartAssert.assertSoft(serializer.canWrite("some string"), CoreMatchers.is(false), "Wrong content type handling. Can write string");
 
-        SmartAssert.validateSoftAsserts();
-    }
+		SmartAssert.validateSoftAsserts();
+	}
 
 }

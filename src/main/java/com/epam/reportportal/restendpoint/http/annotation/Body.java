@@ -31,4 +31,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Target(PARAMETER)
 @Retention(RUNTIME)
-public @interface Body {}
+public @interface Body {
+}

@@ -23,13 +23,14 @@ import com.google.inject.name.Names;
 /**
  * Guice Injector for testing purposes<br>
  * Simple Singleton implementation
- * 
+ *
  * @author Andrei Varabyeu
- * 
  */
 public class Injector {
 
-	/** Guice Injector */
+	/**
+	 * Guice Injector
+	 */
 	private final com.google.inject.Injector injector;
 
 	private static Injector instance;
@@ -46,15 +47,15 @@ public class Injector {
 		return injector.getInstance(type);
 	}
 
-    public <T> T getBean(String name, Class<T> type) {
-        return getBean(Key.get(type, Names.named(name)));
-    }
-
-	public <T> T getBean(Key<T> key) {
-        return injector.getInstance(key);
+	public <T> T getBean(String name, Class<T> type) {
+		return getBean(Key.get(type, Names.named(name)));
 	}
 
-    public void injectMembers(Object object){
-        this.injector.injectMembers(object);
-    }
+	public <T> T getBean(Key<T> key) {
+		return injector.getInstance(key);
+	}
+
+	public void injectMembers(Object object) {
+		this.injector.injectMembers(object);
+	}
 }

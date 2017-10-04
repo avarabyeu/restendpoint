@@ -35,64 +35,64 @@ import java.security.cert.CertificateException;
  */
 public final class IOUtils {
 
-    /**
-     * Do not need to create instance
-     */
-    private IOUtils() {
-    }
+	/**
+	 * Do not need to create instance
+	 */
+	private IOUtils() {
+	}
 
-    /**
-     * Closes Resource without throwing any errors
-     *
-     * @param closeable {@link Closeable} to close
-     */
-    public static void closeQuietly(Closeable closeable) {
-        try {
-            if (closeable != null) {
-                closeable.close();
-            }
-        } catch (IOException ioe) {
-            // ignore
-        }
-    }
+	/**
+	 * Closes Resource without throwing any errors
+	 *
+	 * @param closeable {@link Closeable} to close
+	 */
+	public static void closeQuietly(Closeable closeable) {
+		try {
+			if (closeable != null) {
+				closeable.close();
+			}
+		} catch (IOException ioe) {
+			// ignore
+		}
+	}
 
-    /**
-     * Check whether provided url string is a valid java {@link java.net.URL}
-     *
-     * @param url URL to be validated
-     * @return TRUE if URL is valid
-     */
-    public static boolean isValidUrl(String url) {
-        try {
-            if (Strings.isNullOrEmpty(url)) {
-                return false;
-            }
-            new URL(url);
-            return true;
-        } catch (MalformedURLException e) {
-            return false;
-        }
-    }
+	/**
+	 * Check whether provided url string is a valid java {@link java.net.URL}
+	 *
+	 * @param url URL to be validated
+	 * @return TRUE if URL is valid
+	 */
+	public static boolean isValidUrl(String url) {
+		try {
+			if (Strings.isNullOrEmpty(url)) {
+				return false;
+			}
+			new URL(url);
+			return true;
+		} catch (MalformedURLException e) {
+			return false;
+		}
+	}
 
-    /**
-     * Loads keystore
-     *
-     * @param keyStore Keystore InputStream
-     * @param password Keystore password
-     * @return Loaded Keystore
-     * @throws CertificateException     In case of Certificate error
-     * @throws NoSuchAlgorithmException If no such algorithm present
-     * @throws IOException              In case if some IO errors
-     * @throws KeyStoreException        If there is some error with KeyStore
-     */
-    public static KeyStore loadKeyStore(InputStream keyStore, String password)
-            throws CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException {
-        try {
-            KeyStore trustStore = KeyStore.getInstance("JKS");
-            trustStore.load(keyStore, password.toCharArray());
-            return trustStore;
-        } finally {
-            IOUtils.closeQuietly(keyStore);
-        }
-    }
+	/**
+	 * Loads keystore
+	 *
+	 * @param keyStore Keystore InputStream
+	 * @param password Keystore password
+	 * @return Loaded Keystore
+	 * @throws CertificateException     In case of Certificate error
+	 * @throws NoSuchAlgorithmException If no such algorithm present
+	 * @throws IOException              In case if some IO errors
+	 * @throws KeyStoreException        If there is some error with KeyStore
+	 */
+	public static KeyStore loadKeyStore(InputStream keyStore, String password)
+			throws CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException {
+		try {
+			KeyStore trustStore = KeyStore.getInstance("JKS");
+			trustStore.load(keyStore, password.toCharArray());
+			return trustStore;
+		} finally {
+			IOUtils.closeQuietly(keyStore);
+		}
+	}
 }

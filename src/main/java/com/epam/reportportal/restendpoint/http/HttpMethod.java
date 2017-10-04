@@ -22,25 +22,25 @@ package com.epam.reportportal.restendpoint.http;
  * @author Andrei Varabyeu
  */
 public enum HttpMethod {
-    GET(false),
-    POST(true),
-    PUT(true),
-    PATCH(true),
-    DELETE(false);
+	GET(false),
+	POST(true),
+	PUT(true),
+	PATCH(true),
+	DELETE(false);
 
-    private final boolean hasBody;
+	private final boolean hasBody;
 
-    /**
-     * @param hasBody Whether method contains body
-     */
-    HttpMethod(boolean hasBody) {
-        this.hasBody = hasBody;
-    }
+	/**
+	 * @param hasBody Whether method contains body
+	 */
+	HttpMethod(boolean hasBody) {
+		this.hasBody = hasBody;
+	}
 
-    /**
-     * @return TRUE if method contains body
-     */
-    boolean hasBody() {
-        return hasBody;
-    }
+	/**
+	 * @return TRUE if method contains body
+	 */
+	boolean hasBody() {
+		return hasBody;
+	}
 }

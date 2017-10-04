@@ -33,9 +33,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface Path {
 
-    /**
-     * Name of path variable from {@link Request#url()}
-     *
-     */
-    String value();
+	/**
+	 * Name of path variable from {@link Request#url()}
+	 */
+	String value();
 }

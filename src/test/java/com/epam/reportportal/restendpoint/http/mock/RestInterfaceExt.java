@@ -24,7 +24,7 @@ import com.epam.reportportal.restendpoint.http.annotation.Request;
  */
 public interface RestInterfaceExt extends RestInterface {
 
-    @Request(method = HttpMethod.GET, url = "/")
-    String getExtended();
+	@Request(method = HttpMethod.GET, url = "/")
+	String getExtended();
 
 }

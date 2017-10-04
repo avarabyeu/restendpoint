@@ -30,44 +30,44 @@ import java.io.IOException;
  */
 public class RestEndpointProxyNegativeTest {
 
-    /**
-     * Case when @Path annotation is remembered
-     *
-     * @throws java.io.IOException
-     * @throws InterruptedException
-     */
-    @Test(expected = IllegalStateException.class)
-    public void testGetWithPathIncorrect() throws IOException, InterruptedException {
-        RestEndpoints.create()
-                .withBaseUrl("http://localhost")
-                .withSerializer(new StringSerializer())
-                .forInterface(PathIncorrectInterface.class);
-    }
+	/**
+	 * Case when @Path annotation is remembered
+	 *
+	 * @throws java.io.IOException
+	 * @throws InterruptedException
+	 */
+	@Test(expected = IllegalStateException.class)
+	public void testGetWithPathIncorrect() throws IOException, InterruptedException {
+		RestEndpoints.create()
+				.withBaseUrl("http://localhost")
+				.withSerializer(new StringSerializer())
+				.forInterface(PathIncorrectInterface.class);
+	}
 
-    /**
-     * Case when @Query parameter is not a {@link java.util.Map}
-     *
-     * @throws java.io.IOException
-     * @throws InterruptedException
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetWithQueryIncorrect() throws IOException, InterruptedException {
-        RestEndpoints.create()
-                .withBaseUrl("http://localhost")
-                .withSerializer(new StringSerializer())
-                .forInterface(MapParameterIncorrectInterface.class);
-    }
+	/**
+	 * Case when @Query parameter is not a {@link java.util.Map}
+	 *
+	 * @throws java.io.IOException
+	 * @throws InterruptedException
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetWithQueryIncorrect() throws IOException, InterruptedException {
+		RestEndpoints.create()
+				.withBaseUrl("http://localhost")
+				.withSerializer(new StringSerializer())
+				.forInterface(MapParameterIncorrectInterface.class);
+	}
 
-    interface PathIncorrectInterface {
-        @Request(method = HttpMethod.GET, url = "/{path}")
-        String getWithPathIncorrect(String path);
+	interface PathIncorrectInterface {
+		@Request(method = HttpMethod.GET, url = "/{path}")
+		String getWithPathIncorrect(String path);
 
-    }
+	}
 
-    interface MapParameterIncorrectInterface {
+	interface MapParameterIncorrectInterface {
 
-        @Request(method = HttpMethod.GET, url = "/")
-        String getWithQueryString(@Query String queryParams);
+		@Request(method = HttpMethod.GET, url = "/")
+		String getWithQueryString(@Query String queryParams);
 
-    }
+	}
 }

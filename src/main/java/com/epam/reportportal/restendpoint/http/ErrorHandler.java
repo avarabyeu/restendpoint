@@ -26,19 +26,19 @@ import com.google.common.io.ByteSource;
  */
 public interface ErrorHandler {
 
-    /**
-     * Checks whether there is an error in response
-     *
-     * @param rs response instance
-     * @return TRUE if response contains error
-     */
-    boolean hasError(Response<ByteSource> rs);
+	/**
+	 * Checks whether there is an error in response
+	 *
+	 * @param rs response instance
+	 * @return TRUE if response contains error
+	 */
+	boolean hasError(Response<ByteSource> rs);
 
-    /**
-     * Handles response if there is an error
-     *
-     * @param rs response instance
+	/**
+	 * Handles response if there is an error
+	 *
+	 * @param rs response instance
 	 * @throws RestEndpointIOException In case of error
 	 */
-    void handle(Response<ByteSource> rs) throws RestEndpointIOException;
+	void handle(Response<ByteSource> rs) throws RestEndpointIOException;
 }

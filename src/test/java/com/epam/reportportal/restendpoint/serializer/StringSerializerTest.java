@@ -27,44 +27,45 @@ import org.junit.Test;
  */
 public class StringSerializerTest {
 
-    public static final String TEST_STRING = "test";
-    private StringSerializer serializer = new StringSerializer();
+	public static final String TEST_STRING = "test";
+	private StringSerializer serializer = new StringSerializer();
 
-    @Test
-    public void testSerialize() throws SerializerException {
-        byte[] result = serializer.serialize(TEST_STRING);
-        SmartAssert.assertHard(
-                result,
-                CoreMatchers
-                        .is(TEST_STRING.getBytes()), "Incorrect serialization result");
-    }
+	@Test
+	public void testSerialize() throws SerializerException {
+		byte[] result = serializer.serialize(TEST_STRING);
+		SmartAssert.assertHard(result, CoreMatchers.is(TEST_STRING.getBytes()), "Incorrect serialization result");
+	}
 
-    @Test
-    public void testDeserialize() throws SerializerException {
-        String result = serializer.deserialize(TEST_STRING.getBytes(), String.class);
-        SmartAssert.assertHard(
-                result,
-                CoreMatchers
-                        .is(TEST_STRING), "Incorrect deserialization result");
-    }
+	@Test
+	public void testDeserialize() throws SerializerException {
+		String result = serializer.deserialize(TEST_STRING.getBytes(), String.class);
+		SmartAssert.assertHard(result, CoreMatchers.is(TEST_STRING), "Incorrect deserialization result");
+	}
 
-    @Test
-    public void testContentType() {
-        SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM, String.class),
-                CoreMatchers.is(false), "Wrong content type handling - octeat/stream");
+	@Test
+	public void testContentType() {
+		SmartAssert.assertSoft(serializer.canRead(MediaType.OCTET_STREAM, String.class),
+				CoreMatchers.is(false),
+				"Wrong content type handling - octeat/stream"
+		);
 
-        SmartAssert.assertSoft(serializer.canRead(MediaType.ANY_TEXT_TYPE, String.class),
-                CoreMatchers.is(true), "Wrong content type handling - any text type");
+		SmartAssert.assertSoft(serializer.canRead(MediaType.ANY_TEXT_TYPE, String.class),
+				CoreMatchers.is(true),
+				"Wrong content type handling - any text type"
+		);
 
-        SmartAssert.assertSoft(serializer.canRead(MediaType.ANY_TEXT_TYPE, byte[].class),
-                CoreMatchers.is(false), "Wrong result type handling - byte array");
+		SmartAssert.assertSoft(serializer.canRead(MediaType.ANY_TEXT_TYPE, byte[].class),
+				CoreMatchers.is(false),
+				"Wrong result type handling - byte array"
+		);
 
-        SmartAssert.assertSoft(serializer.canWrite(new byte[]{}),
-                CoreMatchers.is(false), "Wrong content type handling. Cannot write byte array");
+		SmartAssert.assertSoft(serializer.canWrite(new byte[] {}),
+				CoreMatchers.is(false),
+				"Wrong content type handling. Cannot write byte array"
+		);
 
-        SmartAssert.assertSoft(serializer.canWrite("some string"),
-                CoreMatchers.is(true), "Wrong content type handling. Can write string");
+		SmartAssert.assertSoft(serializer.canWrite("some string"), CoreMatchers.is(true), "Wrong content type handling. Can write string");
 
-        SmartAssert.validateSoftAsserts();
-    }
+		SmartAssert.validateSoftAsserts();
+	}
 }

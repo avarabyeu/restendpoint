@@ -25,13 +25,13 @@ import com.google.common.io.ByteSource;
  * @author Andrei Varabyeu
  */
 public class NoopErrorHandler implements ErrorHandler {
-    @Override
-    public boolean hasError(Response<ByteSource> rs) {
-        return false;
-    }
+	@Override
+	public boolean hasError(Response<ByteSource> rs) {
+		return false;
+	}
 
-    @Override
-    public void handle(Response<ByteSource> rs) throws RestEndpointIOException {
-        //never being called
-    }
+	@Override
+	public void handle(Response<ByteSource> rs) throws RestEndpointIOException {
+		//never being called
+	}
 }
