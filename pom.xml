@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>7</version>
+        <version>9</version>
     </parent>
 
     <groupId>com.github.avarabyeu</groupId>
     <artifactId>restendpoint-jdk6</artifactId>
-    <version>0.2.3-SNAPSHOT</version>
+    <version>0.2.4-SNAPSHOT</version>
 
     <name>RestEndpoint</name>
     <description>Asynchronous Rest/HTTP client based on Apache Async HTTP Client</description>
@@ -43,8 +43,8 @@
         <connection>scm:git:git@github.com:avarabyeu/restendpoint.git</connection>
         <developerConnection>scm:git:git@github.com:avarabyeu/restendpoint.git</developerConnection>
         <url>https://github.com/avarabyeu</url>
-      <tag>0.2.1</tag>
-  </scm>
+        <tag>0.2.3-SNAPSHOT</tag>
+    </scm>
 
     <build>
         <finalName>restendpoint</finalName>
@@ -66,6 +66,20 @@
                 <configuration>
                     <tagNameFormat>@{project.version}</tagNameFormat>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

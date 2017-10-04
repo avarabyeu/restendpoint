@@ -68,7 +68,7 @@ class RestMethodInfo {
     @Nonnull
     public static Map<Method, RestMethodInfo> mapMethods(@Nonnull Class<?> clazz) {
         Map<Method, RestMethodInfo> methodInfo = new HashMap<Method, RestMethodInfo>();
-        for (Method method : clazz.getDeclaredMethods()) {
+        for (Method method : clazz.getMethods()) {
             if (RestMethodInfo.isRestMethodDefinition(method)) {
                 methodInfo.put(method, new RestMethodInfo(method));
             }
