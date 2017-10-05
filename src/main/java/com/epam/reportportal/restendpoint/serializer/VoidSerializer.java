@@ -38,8 +38,9 @@ public class VoidSerializer implements Serializer {
 
     @Override
     public final boolean canRead(MediaType mimeType, Type resultType) {
-        return Void.TYPE.equals(TypeToken.of(resultType).getRawType());
-    }
+		TypeToken type = TypeToken.of(resultType);
+		return Void.TYPE.equals(type.getType()) || canRead(mimeType, type.getRawType());
+	}
 
     @Override
     public final boolean canWrite(Object o) {

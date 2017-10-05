@@ -22,6 +22,7 @@ import com.epam.reportportal.restendpoint.http.Injector;
 import com.epam.reportportal.restendpoint.http.RestEndpoints;
 import com.epam.reportportal.restendpoint.serializer.ByteArraySerializer;
 import com.epam.reportportal.restendpoint.serializer.StringSerializer;
+import com.epam.reportportal.restendpoint.serializer.VoidSerializer;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.smarttested.qa.smartassert.junit.SoftAssertVerifier;
@@ -50,7 +51,7 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
 		server.start();
 
 		restInterface = RestEndpoints.create()
-				.withBaseUrl("http://localhost:" + server.getPort())
+				.withBaseUrl("http://localhost:" + server.getPort()).withSerializer(new VoidSerializer())
 				.withSerializer(new StringSerializer())
 				.withSerializer(new ByteArraySerializer())
 				.withErrorHandler(new DefaultErrorHandler())
@@ -98,6 +99,8 @@ public class RestEndpointProxyTest extends BaseRestEndointTest {
 		Assert.assertEquals("Incorrect Request Line", "POST / HTTP/1.1", request.getRequestLine());
 		validateHeader(request);
 		Assert.assertEquals("Incorrect body", SERIALIZED_STRING, request.getBody().readUtf8());
+
+		to.blockingGet();
 
 	}
 
