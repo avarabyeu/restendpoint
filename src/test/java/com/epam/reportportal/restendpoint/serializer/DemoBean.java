@@ -17,7 +17,6 @@
 package com.epam.reportportal.restendpoint.serializer;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Objects;
 
 /**
  * Bean for unit tests
@@ -53,11 +52,11 @@ public class DemoBean {
 			return false;
 		}
 		DemoBean demoBean = (DemoBean) o;
-		return Objects.equals(someField, demoBean.someField);
+		return com.google.common.base.Objects.equal(someField, demoBean.someField);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(someField);
+		return com.google.common.base.Objects.hashCode(someField);
 	}
 }
