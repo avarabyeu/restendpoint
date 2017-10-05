@@ -79,7 +79,7 @@ public class GsonSerializer extends AbstractJsonSerializer {
 	@Override
 	public <T> T deserialize(byte[] content, Type type) throws SerializerException {
 		try {
-			return (T) gson.getAdapter(com.google.gson.reflect.TypeToken.<T>get(type))
+			return (T) gson.getAdapter(com.google.gson.reflect.TypeToken.get(type))
 					.fromJson(ByteSource.wrap(content).asCharSource(Charsets.UTF_8).openBufferedStream());
 		} catch (IOException e) {
 			throw new SerializerException("Unable to serialize content", e);
