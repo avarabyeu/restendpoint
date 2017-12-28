@@ -31,7 +31,8 @@
     <distributionManagement>
         <repository>
             <id>bintray-epam-reportportal</id>
-            <url>https://api.bintray.com/maven/${bintray.repo}/${bintray.package}/;publish=1</url>
+            <name>epam-reportportal</name>
+            <url>https://api.bintray.com/maven/epam/reportportal/restendpoint/;publish=1</url>
         </repository>
     </distributionManagement>
 
