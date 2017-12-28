@@ -3,12 +3,6 @@
     <modelVersion>4.0.0</modelVersion>
 
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>9</version>
-    </parent>
-
     <groupId>com.epam.reportportal</groupId>
     <artifactId>restendpoint</artifactId>
     <version>0.2.4-SNAPSHOT</version>
@@ -34,10 +28,20 @@
         </developer>
     </developers>
 
+    <distributionManagement>
+        <repository>
+            <id>bintray-epam-reportportal</id>
+            <url>https://api.bintray.com/maven/${bintray.repo}/${bintray.package}/;publish=1</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
+
+        <bintray.repo>epam/reportportal</bintray.repo>
+        <bintray.package>restendpoint</bintray.package>
     </properties>
 
     <scm>

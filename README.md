@@ -25,9 +25,9 @@ Basically, **restendpoint** is convenient wrapper around
 Last stable version:
 ```xml
 <dependency>
-    <groupId>com.github.avarabyeu</groupId>
-    <artifactId>restendpoint-jdk6</artifactId>
-    <version>0.2.0</version>
+    <groupId>com.epam.reportportal</groupId>
+    <artifactId>restendpoint</artifactId>
+    <version>0.2.4</version>
 </dependency>
 ```
 
