@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
 
     <groupId>com.epam.reportportal</groupId>
     <artifactId>restendpoint</artifactId>
-    <version>0.2.4-SNAPSHOT</version>
+    <version>0.2.4</version>
 
     <name>RestEndpoint</name>
     <description>Asynchronous Rest/HTTP client based on Apache Async HTTP Client</description>
@@ -49,7 +48,7 @@
         <connection>scm:git:git@github.com:reportportal/restendpoint.git</connection>
         <developerConnection>scm:git:git@github.com:reportportal/restendpoint.git</developerConnection>
         <url>https://github.com/reportportal/restendpoint</url>
-        <tag>0.2.4-SNAPSHOT</tag>
+        <tag>0.2.4</tag>
     </scm>
 
     <build>
