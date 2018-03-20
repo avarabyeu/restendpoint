@@ -19,6 +19,9 @@ package com.epam.reportportal.restendpoint.http.annotation;
 import com.epam.reportportal.restendpoint.http.HttpMethod;
 import com.epam.reportportal.restendpoint.http.RestEndpoints;
 import com.epam.reportportal.restendpoint.serializer.StringSerializer;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -58,6 +61,23 @@ public class RestEndpointProxyNegativeTest {
 				.forInterface(MapParameterIncorrectInterface.class);
 	}
 
+	/**
+	 * Case when @Close is called
+	 */
+	@Test(expected = IllegalStateException.class)
+	public void testClose() {
+		PoolingHttpClientConnectionManager connMan = new PoolingHttpClientConnectionManager();
+		CloseableHttpClient client = HttpClients.custom().setConnectionManager(connMan).build();
+		ClosingInterface restClient = RestEndpoints.create()
+				.withSerializer(new StringSerializer())
+				.withHttpClient(client)
+				.forInterface(ClosingInterface.class);
+		restClient.close();
+
+		//must throw an exception since pool is closed
+		restClient.exec();
+	}
+
 	interface PathIncorrectInterface {
 		@Request(method = HttpMethod.GET, url = "/{path}")
 		String getWithPathIncorrect(String path);
@@ -69,5 +89,14 @@ public class RestEndpointProxyNegativeTest {
 		@Request(method = HttpMethod.GET, url = "/")
 		String getWithQueryString(@Query String queryParams);
 
+	}
+
+	interface ClosingInterface {
+
+		@Close
+		void close();
+
+		@Request(method = HttpMethod.GET, url = "http://google.com")
+		String exec();
 	}
 }

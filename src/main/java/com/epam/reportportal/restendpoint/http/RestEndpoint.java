@@ -19,6 +19,7 @@ package com.epam.reportportal.restendpoint.http;
 import com.epam.reportportal.restendpoint.http.exception.RestEndpointIOException;
 import io.reactivex.Maybe;
 
+import java.io.Closeable;
 import java.lang.reflect.Type;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ import java.util.Map;
  *
  * @author Andrei Varabyeu
  */
-public interface RestEndpoint {
+public interface RestEndpoint extends Closeable {
 
 	/**
 	 * HTTP POST method

@@ -41,6 +41,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import javax.annotation.Nonnull;
@@ -504,6 +505,14 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 		}).cache().subscribeOn(Schedulers.io());
 		rs.subscribe();
 		return rs;
+	}
+
+	@Override
+	public void close() throws IOException {
+		if (httpClient instanceof CloseableHttpClient) {
+			IOUtils.closeQuietly((CloseableHttpClient) this.httpClient);
+		}
+
 	}
 
 	private static abstract class HttpEntityCallback<RS> {
