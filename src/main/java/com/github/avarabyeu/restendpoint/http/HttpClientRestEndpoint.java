@@ -75,7 +75,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
 
-    private static final int DEFAULT_POOL_SIZE = 500;
+    private static final int DEFAULT_POOL_SIZE = 100;
 
     /**
      * Serializer for converting HTTP messages
