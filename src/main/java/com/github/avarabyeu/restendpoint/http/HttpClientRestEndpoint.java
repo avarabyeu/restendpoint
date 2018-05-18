@@ -20,19 +20,17 @@ import com.github.avarabyeu.restendpoint.http.exception.RestEndpointIOException;
 import com.github.avarabyeu.restendpoint.http.exception.SerializerException;
 import com.github.avarabyeu.restendpoint.serializer.Serializer;
 import com.github.avarabyeu.restendpoint.serializer.VoidSerializer;
-import com.google.common.base.Charsets;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
+import com.google.common.base.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Closer;
 import com.google.common.net.MediaType;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.reactivex.Maybe;
 import io.reactivex.MaybeEmitter;
 import io.reactivex.MaybeOnSubscribe;
+import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import org.apache.http.Header;
@@ -40,12 +38,7 @@ import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.ByteArrayEntity;
@@ -69,6 +62,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -79,6 +74,8 @@ import java.util.concurrent.TimeoutException;
  * @author Andrei Varabyeu
  */
 public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
+
+    private static final int DEFAULT_POOL_SIZE = 100;
 
     /**
      * Serializer for converting HTTP messages
@@ -99,6 +96,11 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
      * HTTP Client
      */
     private final CloseableHttpAsyncClient httpClient;
+
+    /**
+     * Scheduler to be used with io operations
+     */
+    private final Scheduler scheduler;
 
     /**
      * Default constructor.
@@ -124,6 +126,25 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
             ErrorHandler errorHandler,
             String baseUrl) {
 
+        this(httpClient, serializers, errorHandler, baseUrl, Executors.newFixedThreadPool(DEFAULT_POOL_SIZE,
+                new ThreadFactoryBuilder()
+                        .setNameFormat("http-thread-%s")
+                        .build()));
+    }
+
+    /**
+     * Default constructor.
+     *
+     * @param httpClient   Apache Async Http Client
+     * @param serializers  Serializer for converting HTTP messages. Shouldn't be null
+     * @param errorHandler Error handler for HTTP messages
+     * @param baseUrl      REST WebService Base URL
+     */
+    public HttpClientRestEndpoint(CloseableHttpAsyncClient httpClient, List<Serializer> serializers,
+            ErrorHandler errorHandler,
+            String baseUrl,
+            ExecutorService executorService) {
+
         Preconditions
                 .checkArgument(null != serializers && !serializers.isEmpty(), "There is no any serializer provided");
         //noinspection ConstantConditions
@@ -134,12 +155,13 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
         }
         this.baseUrl = baseUrl;
 
+        this.scheduler = Schedulers.from(executorService);
+
         this.errorHandler = errorHandler == null ? new DefaultErrorHandler() : errorHandler;
         this.httpClient = httpClient;
         if (!httpClient.isRunning()) {
             httpClient.start();
         }
-
     }
 
     /*
@@ -589,7 +611,7 @@ public class HttpClientRestEndpoint implements RestEndpoint, Closeable {
                     }
                 });
             }
-        }).cache().subscribeOn(Schedulers.io());
+        }).cache().subscribeOn(scheduler);
         /* subscribe to trigger request execution! TBD does it really needed */
 //        result.subscribe();
         return result;
