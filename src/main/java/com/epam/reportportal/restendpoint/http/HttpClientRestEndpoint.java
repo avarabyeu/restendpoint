@@ -117,9 +117,11 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	 */
 	public HttpClientRestEndpoint(HttpClient httpClient, List<Serializer> serializers, ErrorHandler errorHandler, String baseUrl) {
 
-		this(httpClient, serializers, errorHandler, baseUrl, Executors.newFixedThreadPool(DEFAULT_POOL_SIZE, new ThreadFactoryBuilder()
-																											.setNameFormat("http-thread-%s")
-																											.build())
+		this(httpClient,
+				serializers,
+				errorHandler,
+				baseUrl,
+				Executors.newFixedThreadPool(DEFAULT_POOL_SIZE, new ThreadFactoryBuilder().setNameFormat("rp-io-%s").build())
 		);
 	}
 
@@ -492,7 +494,7 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 				LazyByteSource bodySupplier = new LazyByteSource(response.getEntity());
 				closer.register(bodySupplier);
 
-                            /* convert headers to multimap */
+				/* convert headers to multimap */
 				Header[] allHeaders = response.getAllHeaders();
 				ImmutableMultimap.Builder<String, String> headersBuilder = ImmutableMultimap.builder();
 				for (Header header : allHeaders) {
@@ -501,9 +503,8 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 					}
 				}
 
-                            /* convert entire response */
-				Response<ByteSource> rs = new Response<ByteSource>(
-						rq.getURI(),
+				/* convert entire response */
+				Response<ByteSource> rs = new Response<ByteSource>(rq.getURI(),
 						HttpMethod.valueOf(rq.getMethod()),
 						response.getStatusLine().getStatusCode(),
 						response.getStatusLine().getReasonPhrase(),
@@ -511,17 +512,17 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 						bodySupplier
 				);
 
-                            /* check whether there is error in the response */
+				/* check whether there is error in the response */
 				if (errorHandler.hasError(rs)) {
 					errorHandler.handle(rs);
 				}
 
-                            /* parse Content-Type header to be able to find appropriate serializer */
+				/* parse Content-Type header to be able to find appropriate serializer */
 				MediaType contentType = null == response.getEntity().getContentType() ?
 						MediaType.ANY_TYPE :
 						MediaType.parse(response.getEntity().getContentType().getValue());
 
-                            /* build response with converted instance */
+				/* build response with converted instance */
 				return new Response<RS>(rs.getUri(),
 						rs.getHttpMethod(),
 						rs.getStatus(),
