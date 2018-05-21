@@ -26,7 +26,9 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Closer;
 import com.google.common.net.MediaType;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.reactivex.Maybe;
+import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import org.apache.http.Header;
@@ -55,6 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * {@link RestEndpoint} implementation. Uses
@@ -64,6 +68,8 @@ import java.util.concurrent.Callable;
  * @author Andrei Varabyeu
  */
 public class HttpClientRestEndpoint implements RestEndpoint {
+
+	private static final int DEFAULT_POOL_SIZE = 100;
 
 	/**
 	 * Serializer for converting HTTP messages
@@ -86,6 +92,11 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	private final HttpClient httpClient;
 
 	/**
+	 * Scheduler to be used with io operations
+	 */
+	private final Scheduler scheduler;
+
+	/**
 	 * Default constructor.
 	 *
 	 * @param httpClient   Apache Async Http Client
@@ -106,6 +117,25 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	 */
 	public HttpClientRestEndpoint(HttpClient httpClient, List<Serializer> serializers, ErrorHandler errorHandler, String baseUrl) {
 
+		this(httpClient,
+				serializers,
+				errorHandler,
+				baseUrl,
+				Executors.newFixedThreadPool(DEFAULT_POOL_SIZE, new ThreadFactoryBuilder().setNameFormat("rp-io-%s").build())
+		);
+	}
+
+	/**
+	 * Default constructor.
+	 *
+	 * @param httpClient   Apache Async Http Client
+	 * @param serializers  Serializer for converting HTTP messages. Shouldn't be null
+	 * @param errorHandler Error handler for HTTP messages
+	 * @param baseUrl      REST WebService Base URL
+	 */
+	public HttpClientRestEndpoint(HttpClient httpClient, List<Serializer> serializers, ErrorHandler errorHandler, String baseUrl,
+			ExecutorService executorService) {
+
 		Preconditions.checkArgument(null != serializers && !serializers.isEmpty(), "There is no any serializer provided");
 		//noinspection ConstantConditions
 		this.serializers = ImmutableList.<Serializer>builder().addAll(serializers).add(new VoidSerializer()).build();
@@ -115,9 +145,10 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 		}
 		this.baseUrl = baseUrl;
 
+		this.scheduler = Schedulers.from(executorService);
+
 		this.errorHandler = errorHandler == null ? new DefaultErrorHandler() : errorHandler;
 		this.httpClient = httpClient;
-
 	}
 
 	/*
@@ -463,7 +494,7 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 				LazyByteSource bodySupplier = new LazyByteSource(response.getEntity());
 				closer.register(bodySupplier);
 
-                            /* convert headers to multimap */
+				/* convert headers to multimap */
 				Header[] allHeaders = response.getAllHeaders();
 				ImmutableMultimap.Builder<String, String> headersBuilder = ImmutableMultimap.builder();
 				for (Header header : allHeaders) {
@@ -472,9 +503,8 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 					}
 				}
 
-                            /* convert entire response */
-				Response<ByteSource> rs = new Response<ByteSource>(
-						rq.getURI(),
+				/* convert entire response */
+				Response<ByteSource> rs = new Response<ByteSource>(rq.getURI(),
 						HttpMethod.valueOf(rq.getMethod()),
 						response.getStatusLine().getStatusCode(),
 						response.getStatusLine().getReasonPhrase(),
@@ -482,17 +512,17 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 						bodySupplier
 				);
 
-                            /* check whether there is error in the response */
+				/* check whether there is error in the response */
 				if (errorHandler.hasError(rs)) {
 					errorHandler.handle(rs);
 				}
 
-                            /* parse Content-Type header to be able to find appropriate serializer */
+				/* parse Content-Type header to be able to find appropriate serializer */
 				MediaType contentType = null == response.getEntity().getContentType() ?
 						MediaType.ANY_TYPE :
 						MediaType.parse(response.getEntity().getContentType().getValue());
 
-                            /* build response with converted instance */
+				/* build response with converted instance */
 				return new Response<RS>(rs.getUri(),
 						rs.getHttpMethod(),
 						rs.getStatus(),
@@ -502,7 +532,7 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 				);
 
 			}
-		}).cache().subscribeOn(Schedulers.io());
+		}).cache().subscribeOn(scheduler);
 		rs.subscribe();
 		return rs;
 	}
