@@ -28,6 +28,8 @@ import com.google.common.io.Closer;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.reactivex.Maybe;
+import io.reactivex.MaybeEmitter;
+import io.reactivex.MaybeOnSubscribe;
 import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -56,7 +58,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -484,56 +485,61 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	 */
 	private <RS> Maybe<Response<RS>> executeInternal(final HttpUriRequest rq, final HttpEntityCallback<RS> callback) {
 
-		Maybe<Response<RS>> rs = Maybe.fromCallable(new Callable<Response<RS>>() {
+		Maybe<Response<RS>> rs = Maybe.create(new MaybeOnSubscribe<Response<RS>>() {
 			@Override
-			public Response<RS> call() throws Exception {
+			public void subscribe(MaybeEmitter<Response<RS>> emitter) throws Exception {
 
-				HttpResponse response = httpClient.execute(rq);
-				final Closer closer = Closer.create();
+				try {
 
-				LazyByteSource bodySupplier = new LazyByteSource(response.getEntity());
-				closer.register(bodySupplier);
+					HttpResponse response = httpClient.execute(rq);
+					final Closer closer = Closer.create();
 
-				/* convert headers to multimap */
-				Header[] allHeaders = response.getAllHeaders();
-				ImmutableMultimap.Builder<String, String> headersBuilder = ImmutableMultimap.builder();
-				for (Header header : allHeaders) {
-					for (HeaderElement element : header.getElements()) {
-						headersBuilder.put(header.getName(), null == element.getValue() ? "" : element.getValue());
+					LazyByteSource bodySupplier = new LazyByteSource(response.getEntity());
+					closer.register(bodySupplier);
+
+					/* convert headers to multimap */
+					Header[] allHeaders = response.getAllHeaders();
+					ImmutableMultimap.Builder<String, String> headersBuilder = ImmutableMultimap.builder();
+					for (Header header : allHeaders) {
+						for (HeaderElement element : header.getElements()) {
+							headersBuilder.put(header.getName(), null == element.getValue() ? "" : element.getValue());
+						}
 					}
+
+					/* convert entire response */
+					Response<ByteSource> rs = new Response<ByteSource>(rq.getURI(),
+							HttpMethod.valueOf(rq.getMethod()),
+							response.getStatusLine().getStatusCode(),
+							response.getStatusLine().getReasonPhrase(),
+							headersBuilder.build(),
+							bodySupplier
+					);
+
+					/* check whether there is error in the response */
+					if (errorHandler.hasError(rs)) {
+						errorHandler.handle(rs);
+					}
+
+					/* parse Content-Type header to be able to find appropriate serializer */
+					MediaType contentType = null == response.getEntity().getContentType() ?
+							MediaType.ANY_TYPE :
+							MediaType.parse(response.getEntity().getContentType().getValue());
+
+					/* build response with converted instance */
+					emitter.onSuccess(new Response<RS>(rs.getUri(),
+							rs.getHttpMethod(),
+							rs.getStatus(),
+							rs.getReason(),
+							rs.getHeaders(),
+							callback.callback(contentType, bodySupplier.read())
+					));
+				} catch (Throwable error) {
+
+					emitter.onError(error);
 				}
-
-				/* convert entire response */
-				Response<ByteSource> rs = new Response<ByteSource>(rq.getURI(),
-						HttpMethod.valueOf(rq.getMethod()),
-						response.getStatusLine().getStatusCode(),
-						response.getStatusLine().getReasonPhrase(),
-						headersBuilder.build(),
-						bodySupplier
-				);
-
-				/* check whether there is error in the response */
-				if (errorHandler.hasError(rs)) {
-					errorHandler.handle(rs);
-				}
-
-				/* parse Content-Type header to be able to find appropriate serializer */
-				MediaType contentType = null == response.getEntity().getContentType() ?
-						MediaType.ANY_TYPE :
-						MediaType.parse(response.getEntity().getContentType().getValue());
-
-				/* build response with converted instance */
-				return new Response<RS>(rs.getUri(),
-						rs.getHttpMethod(),
-						rs.getStatus(),
-						rs.getReason(),
-						rs.getHeaders(),
-						callback.callback(contentType, bodySupplier.read())
-				);
-
 			}
 		}).cache().subscribeOn(scheduler);
-		rs.subscribe();
+
 		return rs;
 	}
 
