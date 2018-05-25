@@ -34,7 +34,6 @@ import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import org.apache.http.Header;
-import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -501,9 +500,7 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 					Header[] allHeaders = response.getAllHeaders();
 					ImmutableMultimap.Builder<String, String> headersBuilder = ImmutableMultimap.builder();
 					for (Header header : allHeaders) {
-						for (HeaderElement element : header.getElements()) {
-							headersBuilder.put(header.getName(), null == element.getValue() ? "" : element.getValue());
-						}
+						headersBuilder.put(header.getName(), null == header.getValue() ? "" : header.getValue());
 					}
 
 					/* convert entire response */
