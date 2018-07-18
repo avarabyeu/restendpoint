@@ -47,7 +47,6 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -483,15 +482,15 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	 * @return - Serialized Response Body
 	 */
 	private <RS> Maybe<Response<RS>> executeInternal(final HttpUriRequest rq, final HttpEntityCallback<RS> callback) {
+		final Closer closer = Closer.create();
 
-		Maybe<Response<RS>> rs = Maybe.create(new MaybeOnSubscribe<Response<RS>>() {
+		return Maybe.create(new MaybeOnSubscribe<Response<RS>>() {
 			@Override
 			public void subscribe(MaybeEmitter<Response<RS>> emitter) throws Exception {
 
 				try {
 
 					HttpResponse response = httpClient.execute(rq);
-					final Closer closer = Closer.create();
 
 					LazyByteSource bodySupplier = new LazyByteSource(response.getEntity());
 					closer.register(bodySupplier);
@@ -504,7 +503,8 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 					}
 
 					/* convert entire response */
-					Response<ByteSource> rs = new Response<ByteSource>(rq.getURI(),
+					Response<ByteSource> rs1 = new Response<ByteSource>(
+							rq.getURI(),
 							HttpMethod.valueOf(rq.getMethod()),
 							response.getStatusLine().getStatusCode(),
 							response.getStatusLine().getReasonPhrase(),
@@ -513,8 +513,8 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 					);
 
 					/* check whether there is error in the response */
-					if (errorHandler.hasError(rs)) {
-						errorHandler.handle(rs);
+					if (errorHandler.hasError(rs1)) {
+						errorHandler.handle(rs1);
 					}
 
 					/* parse Content-Type header to be able to find appropriate serializer */
@@ -523,21 +523,20 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 							MediaType.parse(response.getEntity().getContentType().getValue());
 
 					/* build response with converted instance */
-					emitter.onSuccess(new Response<RS>(rs.getUri(),
-							rs.getHttpMethod(),
-							rs.getStatus(),
-							rs.getReason(),
-							rs.getHeaders(),
+					emitter.onSuccess(new Response<RS>(rs1.getUri(),
+							rs1.getHttpMethod(),
+							rs1.getStatus(),
+							rs1.getReason(),
+							rs1.getHeaders(),
 							callback.callback(contentType, bodySupplier.read())
 					));
 				} catch (Throwable error) {
-
 					emitter.onError(error);
+				} finally {
+					closer.close();
 				}
 			}
 		}).cache().subscribeOn(scheduler);
-
-		return rs;
 	}
 
 	@Override
@@ -657,9 +656,8 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	 */
 	public static final class BodyTransformer<T> implements Function<Response<T>, Maybe<T>> {
 
-		@Nonnull
 		@Override
-		public Maybe<T> apply(@Nonnull Response<T> input) {
+		public Maybe<T> apply(Response<T> input) {
 			final T body = input.getBody();
 			return (null == body ? Maybe.<T>empty() : Maybe.just(body));
 		}

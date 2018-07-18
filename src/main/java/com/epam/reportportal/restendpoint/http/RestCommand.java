@@ -19,8 +19,6 @@ package com.epam.reportportal.restendpoint.http;
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 
 /**
@@ -38,16 +36,16 @@ public class RestCommand<RQ, RS> {
 	private final Type responseType;
 	private final boolean multipart;
 
-	public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request, @Nonnull Class<RS> responseClass) {
+	public RestCommand(String uri, HttpMethod method, RQ request, Class<RS> responseClass) {
 		this(uri, method, request, TypeToken.of(responseClass).getType(), false);
 	}
 
-	public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request, @Nonnull Class<RS> responseClass,
+	public RestCommand(String uri, HttpMethod method, RQ request, Class<RS> responseClass,
 			boolean multipart) {
 		this(uri, method, request, TypeToken.of(responseClass).getType(), multipart);
 	}
 
-	public RestCommand(@Nonnull String uri, @Nonnull HttpMethod method, @Nullable RQ request, @Nonnull Type responseType,
+	public RestCommand(String uri, HttpMethod method, RQ request, Type responseType,
 			boolean multipart) {
 		this.httpMethod = method;
 		this.request = request;

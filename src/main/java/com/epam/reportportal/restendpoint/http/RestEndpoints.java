@@ -32,7 +32,6 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 
-import javax.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
 import java.io.InputStream;
 import java.util.List;
@@ -89,7 +88,7 @@ public final class RestEndpoints {
 	 * @param <T>      - Type of interface to be proxied
 	 * @return interface implementation (e.g.) just proxy
 	 */
-	public static <T> T forInterface(@Nonnull Class<T> clazz, RestEndpoint endpoint) {
+	public static <T> T forInterface(Class<T> clazz, RestEndpoint endpoint) {
 		return Reflection.newProxy(clazz, new RestEndpointInvocationHandler(clazz, endpoint));
 	}
 
@@ -219,7 +218,7 @@ public final class RestEndpoints {
 		 * @param <T>   - type of interface to be proxied
 		 * @return - interface implementation based on proxy
 		 */
-		public final <T> T forInterface(@Nonnull Class<T> clazz) {
+		public final <T> T forInterface(Class<T> clazz) {
 			return RestEndpoints.forInterface(clazz, build());
 		}
 

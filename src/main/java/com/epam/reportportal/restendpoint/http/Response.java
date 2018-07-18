@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
-import javax.annotation.concurrent.Immutable;
 import java.net.URI;
 
 /**
@@ -12,7 +11,6 @@ import java.net.URI;
  *
  * @author Andrei Varabyeu
  */
-@Immutable
 public class Response<T> {
 
 	private final URI uri;

@@ -4,7 +4,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.net.UrlEscapers;
 
-import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -108,7 +107,7 @@ public class UrlTemplate {
 			return this;
 		}
 
-		public Merger appendQueryParameters(@Nullable Map<String, ?> parameters) {
+		public Merger appendQueryParameters(Map<String, ?> parameters) {
 			if (null == parameters || parameters.isEmpty()) {
 				return this;
 			}

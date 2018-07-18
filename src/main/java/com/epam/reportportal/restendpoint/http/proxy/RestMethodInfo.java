@@ -16,8 +16,6 @@ import com.google.common.reflect.Parameter;
 import com.google.common.reflect.TypeToken;
 import io.reactivex.Maybe;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -61,8 +59,7 @@ class RestMethodInfo {
 	/* Whether request is multipart */
 	private boolean multiPart;
 
-	@Nonnull
-	public static Map<Method, RestMethodInfo> mapMethods(@Nonnull Class<?> clazz) {
+	public static Map<Method, RestMethodInfo> mapMethods(Class<?> clazz) {
 		Map<Method, RestMethodInfo> methodInfo = new HashMap<Method, RestMethodInfo>();
 		for (Method method : clazz.getMethods()) {
 			if (RestMethodInfo.isRestMethodDefinition(method)) {
@@ -123,11 +120,11 @@ class RestMethodInfo {
 		this.asynchronous = isAsynchronous(method);
 		this.method = request.method();
 
-        /* If instance wrapped with Observable, we should extract generic type parameter */
+		/* If instance wrapped with Observable, we should extract generic type parameter */
 		this.responseType = getResponseType(method);
 		this.returnBodyOnly = bodyOnly(method);
 
-        /* walk through method parameters and find marked with internal annotations */
+		/* walk through method parameters and find marked with internal annotations */
 		ImmutableList<Parameter> methodParameters = method.getParameters();
 		for (int i = 0; i < methodParameters.size(); i++) {
 			Parameter parameter = methodParameters.get(i);
@@ -180,7 +177,7 @@ class RestMethodInfo {
 	@SuppressWarnings("unchecked")
 	private String createUrl(Object... args) {
 
-                /* re-map method arguments. We have argIndex -> argName map, we need to build argName -> argValue map */
+		/* re-map method arguments. We have argIndex -> argName map, we need to build argName -> argValue map */
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		for (Map.Entry<Integer, String> pathVariables : pathArguments.entrySet()) {
 			parameters.put(pathVariables.getValue(), args[pathVariables.getKey()]);
@@ -194,7 +191,6 @@ class RestMethodInfo {
 		return template.build();
 	}
 
-	@Nullable
 	private Object createBody(Object... args) {
 		return bodyArgument.isPresent() ? args[bodyArgument.get()] : null;
 	}

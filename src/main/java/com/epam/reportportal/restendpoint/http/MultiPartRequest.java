@@ -20,7 +20,6 @@ import com.epam.reportportal.restendpoint.serializer.Serializer;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,7 +157,7 @@ public class MultiPartRequest {
 		 * @param data        Part data
 		 * @return This instance
 		 */
-		public Builder addBinaryPart(String partName, String filename, String contentType, @Nonnull ByteSource data) {
+		public Builder addBinaryPart(String partName, String filename, String contentType, ByteSource data) {
 			Preconditions.checkNotNull(data, "Provided data shouldn't be null");
 			binaryRQs.add(new MultiPartBinary(partName, filename, contentType, data));
 			return this;
