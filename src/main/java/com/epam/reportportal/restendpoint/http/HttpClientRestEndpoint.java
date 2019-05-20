@@ -499,7 +499,7 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 					Header[] allHeaders = response.getAllHeaders();
 					ImmutableMultimap.Builder<String, String> headersBuilder = ImmutableMultimap.builder();
 					for (Header header : allHeaders) {
-						headersBuilder.put(header.getName(), null == header.getValue() ? "" : header.getValue());
+						headersBuilder.put(header.getName().toLowerCase(), null == header.getValue() ? "" : header.getValue());
 					}
 
 					/* convert entire response */
