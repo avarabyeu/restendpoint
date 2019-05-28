@@ -93,7 +93,7 @@ public final class RestEndpoints {
 	}
 
 	/**
-	 * Creates default builder which uses Apache Http Commons Async client as endpoint implementation
+	 * Creates default builder which uses Apache Http Commons client as endpoint implementation
 	 *
 	 * @return New Builder instance
 	 */
@@ -130,14 +130,14 @@ public final class RestEndpoints {
 		 * @return Built RestEndpoint
 		 */
 		public final RestEndpoint build() {
-			HttpClient closeableHttpAsyncClient;
+			HttpClient closeableHttpClient;
 			if (null == httpClient) {
-				closeableHttpAsyncClient = httpClientBuilder.build();
+				closeableHttpClient = httpClientBuilder.build();
 			} else {
-				closeableHttpAsyncClient = httpClient;
+				closeableHttpClient = httpClient;
 			}
 
-			return new HttpClientRestEndpoint(closeableHttpAsyncClient, serializers, errorHandler, endpointUrl);
+			return new HttpClientRestEndpoint(closeableHttpClient, serializers, errorHandler, endpointUrl);
 		}
 
 		public final Builder withBaseUrl(String url) {

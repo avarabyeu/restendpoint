@@ -98,7 +98,7 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	/**
 	 * Default constructor.
 	 *
-	 * @param httpClient   Apache Async Http Client
+	 * @param httpClient   Apache Http Client
 	 * @param serializers  Serializer for converting HTTP messages. Shouldn't be null
 	 * @param errorHandler Error handler for HTTP messages
 	 */
@@ -109,7 +109,7 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	/**
 	 * Default constructor.
 	 *
-	 * @param httpClient   Apache Async Http Client
+	 * @param httpClient   Apache Http Client
 	 * @param serializers  Serializer for converting HTTP messages. Shouldn't be null
 	 * @param errorHandler Error handler for HTTP messages
 	 * @param baseUrl      REST WebService Base URL
@@ -127,7 +127,7 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	/**
 	 * Default constructor.
 	 *
-	 * @param httpClient   Apache Async Http Client
+	 * @param httpClient   Apache Http Client
 	 * @param serializers  Serializer for converting HTTP messages. Shouldn't be null
 	 * @param errorHandler Error handler for HTTP messages
 	 * @param baseUrl      REST WebService Base URL

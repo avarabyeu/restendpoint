@@ -7,7 +7,7 @@
     <version>0.2.11-SNAPSHOT</version>
 
     <name>RestEndpoint</name>
-    <description>Asynchronous Rest/HTTP client based on Apache Async HTTP Client</description>
+    <description>Asynchronous Rest/HTTP client based on Apache HTTP Client</description>
     <url>https://github.com/avarabyeu/restendpoint</url>
     <packaging>jar</packaging>
 

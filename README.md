@@ -1,6 +1,6 @@
 # restendpoint [![Build Status](https://travis-ci.org/avarabyeu/restendpoint.svg?branch=master)](https://travis-ci.org/avarabyeu/restendpoint) [![Maven central](https://maven-badges.herokuapp.com/maven-central/com.github.avarabyeu/restendpoint/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.avarabyeu/restendpoint)
 
-Asynchronous REST client based on Apache Http Async Client and Reactive Streams
+Asynchronous REST client based on Apache Http Client and Reactive Streams
 
 
 * [Maven Dependencies](#maven-dependencies)
@@ -9,7 +9,7 @@ Asynchronous REST client based on Apache Http Async Client and Reactive Streams
    * [Creating](#creating)    
       * [Default and Simpliest](#default-and-simpliest)
       * [Using Builder](#using-builder)
-      * [Build HttpAsyncClient explicitly](#build-httpasyncclient-explicitly)      
+      * [Build HttpClient explicitly](#build-httpclient-explicitly)      
    * [Sending Requests](#sending-requests)
       * [GET](#get)
       * [POST/PUT](#post/put)
@@ -18,7 +18,7 @@ Asynchronous REST client based on Apache Http Async Client and Reactive Streams
    * [Serializers](#serializers)
 
 Basically, **restendpoint** is convenient wrapper around 
-[Apache HttpComponents Async Client](http://hc.apache.org/httpcomponents-asyncclient-4.0.x/)
+[Apache HttpComponents Client](https://hc.apache.org/)
 
 ## Maven Dependencies
 
@@ -135,19 +135,12 @@ RestEndpoint endpoint = RestEndpoints.create()
 Creates RestEndpoint with only JSON serializer based on Google GSON, your custom error handler. Each request to server will contain Basic Authentication headers (preemptive authentication, see more details here: [Apache Client Authentication](http://hc.apache.org/httpcomponents-client-ga/tutorial/html/authentication.html))
 
 
-#### Build HttpAsyncClient explicitly
+#### Build HttpClient explicitly
 Sometimes you need more deep http client configuration. Here is the example:
 
 ```java
-HttpAsyncClientBuilder httpClientBuilder = HttpAsyncClientBuilder.create();
-CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("user", "password"));
-httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-httpClientBuilder.setMaxConnTotal(20);
-httpClientBuilder.setMaxConnPerRoute(5);
-
 RestEndpoint endpoint = RestEndpoints.create().withBaseUrl(HTTP_TEST_URK)
-   .withSerializer(new StringSerializer()).withHttpClient(httpClientBuilder.build())
+   .withSerializer(new StringSerializer()).withHttpClient(HttpClients.createDefault())
    .build();
 ```
 So, you are able to configure HttpClient explicitly, but in this case builder's methods like #withBasicAuth() <b>will be overwritten</b>.
