@@ -56,8 +56,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * {@link RestEndpoint} implementation. Uses
@@ -68,7 +67,14 @@ import java.util.concurrent.Executors;
  */
 public class HttpClientRestEndpoint implements RestEndpoint {
 
+
 	private static final int DEFAULT_POOL_SIZE = 100;
+
+	private static final long POOL_DRAIN_TIMEOUT = 1;
+	private static final TimeUnit POOL_DRAIN_TIME_UNIT = TimeUnit.MINUTES;
+
+	private static final long POOL_DRAIN_CHECK_PERIOD = 100;
+	private static final TimeUnit POOL_DRAIN_CHECK_TIME_UNIT = TimeUnit.MILLISECONDS;
 
 	/**
 	 * Serializer for converting HTTP messages
@@ -94,6 +100,8 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	 * Scheduler to be used with io operations
 	 */
 	private final Scheduler scheduler;
+
+	private final ExecutorService executor;
 
 	/**
 	 * Default constructor.
@@ -134,6 +142,7 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	 */
 	public HttpClientRestEndpoint(HttpClient httpClient, List<Serializer> serializers, ErrorHandler errorHandler, String baseUrl,
 			ExecutorService executorService) {
+		executor = executorService;
 
 		Preconditions.checkArgument(null != serializers && !serializers.isEmpty(), "There is no any serializer provided");
 		//noinspection ConstantConditions
@@ -540,11 +549,33 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() {
+		if (executor instanceof ThreadPoolExecutor) {
+			final ThreadPoolExecutor threadedExecutor = (ThreadPoolExecutor) executor;
+			if (threadedExecutor.getActiveCount() > 0) {
+				ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
+						new ThreadFactoryBuilder().setNameFormat("rp-shutdown-%s").setDaemon(true).build()
+				);
+				try {
+					long startTime = System.currentTimeMillis();
+					ScheduledFuture<Boolean> future;
+					do {
+						future = service.schedule(new Callable<Boolean>() {
+							@Override
+							public Boolean call() {
+								return threadedExecutor.getActiveCount() > 0;
+							}
+						}, POOL_DRAIN_CHECK_PERIOD, POOL_DRAIN_CHECK_TIME_UNIT);
+					} while (future.get() && startTime + POOL_DRAIN_TIME_UNIT.toMillis(POOL_DRAIN_TIMEOUT) > System.currentTimeMillis());
+
+				} catch (InterruptedException ignore) {
+				} catch (ExecutionException ignore) {
+				}
+			}
+		}
 		if (httpClient instanceof CloseableHttpClient) {
 			IOUtils.closeQuietly((CloseableHttpClient) this.httpClient);
 		}
-
 	}
 
 	private static abstract class HttpEntityCallback<RS> {
