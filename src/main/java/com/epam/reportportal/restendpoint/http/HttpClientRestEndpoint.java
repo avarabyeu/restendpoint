@@ -567,9 +567,10 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 							}
 						}, POOL_DRAIN_CHECK_PERIOD, POOL_DRAIN_CHECK_TIME_UNIT);
 					} while (future.get() && startTime + POOL_DRAIN_TIME_UNIT.toMillis(POOL_DRAIN_TIMEOUT) > System.currentTimeMillis());
-
 				} catch (InterruptedException ignore) {
 				} catch (ExecutionException ignore) {
+				} finally {
+					service.shutdownNow();
 				}
 			}
 		}
