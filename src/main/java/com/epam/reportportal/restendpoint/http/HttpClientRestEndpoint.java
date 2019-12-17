@@ -67,14 +67,10 @@ import java.util.concurrent.*;
  */
 public class HttpClientRestEndpoint implements RestEndpoint {
 
-
 	private static final int DEFAULT_POOL_SIZE = 100;
 
 	private static final long POOL_DRAIN_TIMEOUT = 1;
 	private static final TimeUnit POOL_DRAIN_TIME_UNIT = TimeUnit.MINUTES;
-
-	private static final long POOL_DRAIN_CHECK_PERIOD = 100;
-	private static final TimeUnit POOL_DRAIN_CHECK_TIME_UNIT = TimeUnit.MILLISECONDS;
 
 	/**
 	 * Serializer for converting HTTP messages
@@ -491,6 +487,10 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	 * @return - Serialized Response Body
 	 */
 	private <RS> Maybe<Response<RS>> executeInternal(final HttpUriRequest rq, final HttpEntityCallback<RS> callback) {
+		if(executor.isShutdown()) {
+			throw new IllegalStateException("Executor pool shut down");
+		}
+
 		final Closer closer = Closer.create();
 
 		return Maybe.create(new MaybeOnSubscribe<Response<RS>>() {
@@ -532,15 +532,20 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 							MediaType.parse(response.getEntity().getContentType().getValue());
 
 					/* build response with converted instance */
-					emitter.onSuccess(new Response<RS>(rs1.getUri(),
-							rs1.getHttpMethod(),
-							rs1.getStatus(),
-							rs1.getReason(),
-							rs1.getHeaders(),
-							callback.callback(contentType, bodySupplier.read())
-					));
+					if(!executor.isShutdown()) {
+						emitter.onSuccess(new Response<RS>(
+								rs1.getUri(),
+								rs1.getHttpMethod(),
+								rs1.getStatus(),
+								rs1.getReason(),
+								rs1.getHeaders(),
+								callback.callback(contentType, bodySupplier.read())
+						));
+					}
 				} catch (Throwable error) {
-					emitter.onError(error);
+					if(!executor.isShutdown()) {
+						emitter.onError(error);
+					}
 				} finally {
 					closer.close();
 				}
@@ -550,29 +555,10 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 
 	@Override
 	public void close() {
-		if (executor instanceof ThreadPoolExecutor) {
-			final ThreadPoolExecutor threadedExecutor = (ThreadPoolExecutor) executor;
-			if (threadedExecutor.getActiveCount() > 0) {
-				ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
-						new ThreadFactoryBuilder().setNameFormat("rp-shutdown-%s").setDaemon(true).build()
-				);
-				try {
-					long startTime = System.currentTimeMillis();
-					ScheduledFuture<Boolean> future;
-					do {
-						future = service.schedule(new Callable<Boolean>() {
-							@Override
-							public Boolean call() {
-								return threadedExecutor.getActiveCount() > 0;
-							}
-						}, POOL_DRAIN_CHECK_PERIOD, POOL_DRAIN_CHECK_TIME_UNIT);
-					} while (future.get() && startTime + POOL_DRAIN_TIME_UNIT.toMillis(POOL_DRAIN_TIMEOUT) > System.currentTimeMillis());
-				} catch (InterruptedException ignore) {
-				} catch (ExecutionException ignore) {
-				} finally {
-					service.shutdownNow();
-				}
-			}
+		executor.shutdown();
+		try {
+			executor.awaitTermination(POOL_DRAIN_TIMEOUT, POOL_DRAIN_TIME_UNIT);
+		} catch (InterruptedException ignore) { // someone halted our execution
 		}
 		if (httpClient instanceof CloseableHttpClient) {
 			IOUtils.closeQuietly((CloseableHttpClient) this.httpClient);
