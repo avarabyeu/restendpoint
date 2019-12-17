@@ -56,8 +56,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * {@link RestEndpoint} implementation. Uses
@@ -69,6 +68,9 @@ import java.util.concurrent.Executors;
 public class HttpClientRestEndpoint implements RestEndpoint {
 
 	private static final int DEFAULT_POOL_SIZE = 100;
+
+	private static final long POOL_DRAIN_TIMEOUT = 1;
+	private static final TimeUnit POOL_DRAIN_TIME_UNIT = TimeUnit.MINUTES;
 
 	/**
 	 * Serializer for converting HTTP messages
@@ -94,6 +96,8 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	 * Scheduler to be used with io operations
 	 */
 	private final Scheduler scheduler;
+
+	private final ExecutorService executor;
 
 	/**
 	 * Default constructor.
@@ -134,6 +138,7 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	 */
 	public HttpClientRestEndpoint(HttpClient httpClient, List<Serializer> serializers, ErrorHandler errorHandler, String baseUrl,
 			ExecutorService executorService) {
+		executor = executorService;
 
 		Preconditions.checkArgument(null != serializers && !serializers.isEmpty(), "There is no any serializer provided");
 		//noinspection ConstantConditions
@@ -482,6 +487,10 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	 * @return - Serialized Response Body
 	 */
 	private <RS> Maybe<Response<RS>> executeInternal(final HttpUriRequest rq, final HttpEntityCallback<RS> callback) {
+		if(executor.isShutdown()) {
+			throw new IllegalStateException("Executor pool shut down");
+		}
+
 		final Closer closer = Closer.create();
 
 		return Maybe.create(new MaybeOnSubscribe<Response<RS>>() {
@@ -523,15 +532,20 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 							MediaType.parse(response.getEntity().getContentType().getValue());
 
 					/* build response with converted instance */
-					emitter.onSuccess(new Response<RS>(rs1.getUri(),
-							rs1.getHttpMethod(),
-							rs1.getStatus(),
-							rs1.getReason(),
-							rs1.getHeaders(),
-							callback.callback(contentType, bodySupplier.read())
-					));
+					if(!executor.isShutdown()) {
+						emitter.onSuccess(new Response<RS>(
+								rs1.getUri(),
+								rs1.getHttpMethod(),
+								rs1.getStatus(),
+								rs1.getReason(),
+								rs1.getHeaders(),
+								callback.callback(contentType, bodySupplier.read())
+						));
+					}
 				} catch (Throwable error) {
-					emitter.onError(error);
+					if(!executor.isShutdown()) {
+						emitter.onError(error);
+					}
 				} finally {
 					closer.close();
 				}
@@ -540,11 +554,15 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() {
+		executor.shutdown();
+		try {
+			executor.awaitTermination(POOL_DRAIN_TIMEOUT, POOL_DRAIN_TIME_UNIT);
+		} catch (InterruptedException ignore) { // someone halted our execution
+		}
 		if (httpClient instanceof CloseableHttpClient) {
 			IOUtils.closeQuietly((CloseableHttpClient) this.httpClient);
 		}
-
 	}
 
 	private static abstract class HttpEntityCallback<RS> {
