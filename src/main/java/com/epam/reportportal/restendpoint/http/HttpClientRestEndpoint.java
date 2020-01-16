@@ -550,7 +550,7 @@ public class HttpClientRestEndpoint implements RestEndpoint {
 					closer.close();
 				}
 			}
-		}).cache().subscribeOn(scheduler);
+		}).subscribeOn(scheduler);
 	}
 
 	@Override
