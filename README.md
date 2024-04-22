@@ -1,4 +1,5 @@
 # restendpoint [![Build Status](https://travis-ci.org/avarabyeu/restendpoint.svg?branch=master)](https://travis-ci.org/avarabyeu/restendpoint) [![Maven central](https://maven-badges.herokuapp.com/maven-central/com.github.avarabyeu/restendpoint/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.avarabyeu/restendpoint)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Favarabyeu%2Frestendpoint.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Favarabyeu%2Frestendpoint?ref=badge_shield)
 
 Asynchronous REST client based on Apache Http Async Client and Reactive Streams
 
@@ -219,3 +220,7 @@ For now, RestEndpoints supports the following list of serializers:
 * Byte Array (ByteArraySerializer)
 
 By the way, you can implement your own serializer (by implementing appropriate interface) and provide it to RestEndpoint. 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Favarabyeu%2Frestendpoint.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Favarabyeu%2Frestendpoint?ref=badge_large)
